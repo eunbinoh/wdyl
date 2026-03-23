@@ -1,7 +1,8 @@
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
-import ProfileCard from '@/components/ProfileCard'
+import MyProfile from '@/components/MyProfile'
+import MyTickets from '@/components/MyTickets'
 
 async function getUser() {
   const cookieStore = await cookies()
@@ -42,16 +43,18 @@ export default async function MainPage() {
   const avatarUrl = user.user_metadata?.avatar_url
   const nickname = profile?.nickname ?? user.user_metadata?.name ?? '사용자'
   const credits = profile?.credits ?? 0
+  const userId = user.user_metadata?.id ?? user.id
 
   return (
     <main className="min-h-screen bg-[#f3efdc]">
-      <ProfileCard
+      <MyProfile
         nickname={nickname}
         email={profile?.email ?? ''}
         avatarUrl={avatarUrl}
         credits={credits}
         tickets={tickets}
       />
+      <MyTickets userId={userId} credits={credits} tickets={tickets} />
     </main>
   )
 }
