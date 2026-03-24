@@ -8,7 +8,7 @@ export default function Home() {
       <div className="text-center space-y-8">
         <LogoAnimation />
         <SubTitleAnimation />
-        
+
         <div className="mt-10">
           <LoginButton />
         </div>

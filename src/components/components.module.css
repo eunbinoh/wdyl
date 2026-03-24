@@ -1,0 +1,276 @@
+@reference "tailwindcss";
+
+/**
+ * LoginButton
+ */
+
+.login-btn-kakao {
+  @apply flex items-center justify-center
+    w-full max-w-xs py-3 px-4
+    bg-[#FEE500] text-[#191919] font-bold
+    rounded-lg hover:bg-[#FADA0A] transition-colors
+    gap-2 mx-auto cursor-pointer;
+}
+
+/**
+ * ProfileCard
+ */
+
+.profile-container {
+  @apply max-w-[480px] mx-auto px-5 pb-10 bg-[#FAFAFA] text-[#1A1A1A];
+}
+
+.profile-nav {
+  @apply flex justify-between items-center py-5;
+}
+
+.profile-logout-btn {
+  @apply flex items-center gap-1 text-xs text-slate-400
+    font-medium bg-transparent border-none cursor-pointer;
+}
+
+.profile-section {
+  @apply flex flex-col items-center text-center py-6;
+}
+
+.profile-avatar-wrap {
+  @apply w-20 h-20 rounded-[28px] overflow-hidden bg-white
+    shadow-[0_10px_25px_-5px_rgba(0,0,0,0.05)]
+    mb-4 border border-slate-100;
+}
+
+.profile-avatar-fallback {
+  @apply w-full h-full flex items-center justify-center
+    text-[32px] bg-slate-50;
+}
+
+.profile-nickname {
+  @apply text-[22px] font-bold mb-1 tracking-tight;
+}
+
+.profile-email {
+  @apply text-sm text-slate-500;
+}
+
+.credit-card {
+  @apply bg-white rounded-3xl p-6 text-[#0062CC]
+    shadow-[0_8px_5px_-1px_rgba(166,192,220,0.8)]
+    border border-[#0062CC] relative overflow-hidden;
+}
+
+.credit-card-label {
+  @apply flex items-center gap-1.5 opacity-80 text-[13px] mb-2;
+}
+
+.credit-card-amount {
+  @apply text-[32px] font-extrabold mb-5;
+}
+
+.credit-card-unit {
+  @apply text-lg font-normal ml-1 opacity-90;
+}
+
+.credit-charge-btn {
+  @apply w-full bg-[#0062CC] text-white border-none rounded-2xl
+    py-3 text-sm font-bold cursor-pointer
+    shadow-[0_4px_6px_rgba(75,88,103,0.56)];
+}
+
+/**
+ * MyTickets
+ */
+
+.tickets-container {
+  @apply max-w-[480px] mx-auto px-5 pb-10 min-h-screen bg-[#FAFAFA] text-[#1A1A1A];
+}
+
+.tickets-new-btn {
+  @apply w-full max-w-[480px] mx-auto mb-5 bg-[#FAFAFA] text-[#F9B233]
+    border border-[#F9B233] rounded-2xl py-3.5 px-5
+    text-base font-bold cursor-pointer
+    flex items-center justify-center
+    shadow-[0_4px_6px_-1px_rgba(249,176,51,0.59)];
+}
+
+.tickets-header {
+  @apply flex justify-between items-center mb-4;
+}
+
+.tickets-header-title {
+  @apply text-[15px] font-bold text-slate-700;
+}
+
+.tickets-header-more {
+  @apply text-xs text-slate-400 flex items-center;
+}
+
+.tickets-empty {
+  @apply text-center py-12 bg-white rounded-3xl
+    border border-dashed border-slate-200
+    text-slate-400 text-sm;
+}
+
+.tickets-list {
+  @apply flex flex-col gap-3;
+}
+
+.ticket-item {
+  @apply bg-white rounded-[20px] p-4 flex items-center gap-4
+    border border-slate-100;
+}
+
+.ticket-icon {
+  @apply w-12 h-12 rounded-[14px] bg-slate-50
+    flex items-center justify-center text-2xl flex-shrink-0;
+}
+
+.ticket-info {
+  @apply flex-1;
+}
+
+.ticket-name {
+  @apply text-[15px] font-semibold text-slate-800 mb-0.5;
+}
+
+.ticket-date {
+  @apply text-xs text-slate-400;
+}
+
+.ticket-badge {
+  @apply text-[11px] font-bold py-1.5 px-3 rounded-[10px];
+}
+
+/**
+ * ModalCreateTicket
+ */
+
+.modal-overlay {
+  @apply fixed inset-0 bg-black/40 z-[100]
+    flex items-end justify-center;
+}
+
+.modal-sheet {
+  @apply bg-[#F4F1EB] rounded-t-3xl w-full max-w-[480px]
+    px-[22px] pt-7 pb-12 max-h-[90vh] overflow-y-auto;
+}
+
+.modal-handle {
+  @apply w-10 h-1 bg-[#DDD8CF] rounded-sm mx-auto mb-6;
+}
+
+.modal-title {
+  @apply text-xl font-extrabold text-[#1C1C1C] mb-8;
+}
+
+.modal-section {
+  @apply mb-7;
+}
+
+.modal-section-label {
+  @apply flex items-center text-sm font-bold text-[#AAA]
+    tracking-[1.2px] uppercase mb-3 relative;
+}
+
+.modal-section-label-text {
+  @apply flex-1;
+}
+
+.modal-tooltip-box {
+  @apply absolute top-[-7px] right-6 bg-black text-white
+    text-sm px-3 py-1.5 rounded-lg z-20 whitespace-nowrap font-normal
+    shadow-[0_4px_12px_rgba(205,202,202,0.85)];
+}
+
+.modal-input-wrap {
+  @apply bg-white border-[1.5px] border-[#EDE9E1] rounded-xl
+    px-4 py-3.5 flex items-center gap-2;
+}
+
+.modal-input {
+  @apply flex-1 border-none bg-white text-[#1C1C1C]
+    text-base outline-none;
+  -webkit-text-fill-color: #1c1c1c;
+}
+
+.modal-input-suffix {
+  @apply text-sm text-[#CCC] whitespace-nowrap;
+}
+
+.modal-trait-list {
+  @apply flex flex-col gap-2;
+}
+
+.modal-trait-item {
+  @apply bg-white border-[1.5px] border-[#EDE9E1] rounded-xl
+    px-4 py-3.5 flex items-center gap-3;
+}
+
+.modal-trait-num {
+  @apply text-xs font-extrabold text-[#DDD8CF] w-[18px] flex-shrink-0;
+}
+
+.modal-trait-hint {
+  @apply text-xs text-[#C0BAB0] mt-2.5 leading-relaxed;
+}
+
+.modal-theme-row {
+  @apply flex gap-2;
+}
+
+.modal-theme-btn {
+  @apply flex-1 bg-white border-[1.5px] border-[#EDE9E1]
+    rounded-xl py-3.5 px-1.5 cursor-pointer text-center;
+}
+
+.modal-theme-btn-active {
+  @apply bg-[#FEF8EC] border-[#F9B233];
+}
+
+.modal-theme-emoji {
+  @apply text-[26px] mb-1.5;
+}
+
+.modal-theme-label {
+  @apply text-[13px] font-semibold text-[#AAA];
+}
+
+.modal-theme-label-active {
+  @apply text-[#F9B233];
+}
+
+.modal-preview-label {
+  @apply text-base font-bold text-[#AAA] tracking-[-0.4px] mb-2.5;
+}
+
+.modal-preview-box {
+  @apply relative rounded-2xl overflow-hidden h-[330px] border border-[#EDE9E1];
+}
+
+.modal-preview-arrow {
+  @apply absolute top-[90%] -translate-y-1/2 bg-white/85
+    border-none rounded-full w-8 h-8 cursor-pointer
+    flex items-center justify-center;
+}
+
+.modal-preview-dots {
+  @apply absolute bottom-2.5 left-1/2 -translate-x-1/2 flex gap-1.5;
+}
+
+.modal-btn-group {
+  @apply flex flex-col gap-2.5;
+}
+
+.modal-btn-preview {
+  @apply w-full bg-[#0062CC] text-white border-none
+    rounded-2xl py-[17px] text-base font-bold cursor-pointer;
+}
+
+.modal-btn-submit {
+  @apply w-full border-none rounded-2xl py-[17px]
+    text-base font-bold;
+}
+
+.modal-btn-cancel {
+  @apply w-full bg-white text-[#888] border-[1.5px] border-[#EDE9E1]
+    rounded-2xl py-[15px] text-base font-bold cursor-pointer;
+}
