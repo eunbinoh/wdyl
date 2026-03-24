@@ -58,9 +58,9 @@ const TRAIT_SUFFIX: Record<Theme, string[]> = {
 };
 
 const TOOLTIPS: Record<string, string> = {
-  CONCEPT: "링크를 받는 친구에게 보여질 말투와 분위기예요.",
-  TO: "선물 받을 친구 이름. 설문 첫 화면 타이틀에 사용돼요.",
-  "ABOUT WHO": "친구 특징 3가지. 결과 화면에 자동 삽입됩니다.",
+  CONCEPT: "컨셉 : 받는분에게 보여질 링크 말투와 분위기에요.",
+  TO: "받는분 이름/애칭: 링크 첫 화면 타이틀에 사용돼요.",
+  WHO: "받는분 특징 3가지: 설문 결과 화면에 적용돼요.",
 };
 
 type Props = {
@@ -98,7 +98,7 @@ export default function ModalCreateTicket({
   }, []);
 
   const handleSubmit = async () => {
-    if (!toName.trim()) return alert("받는 사람 이름을 입력해주세요.");
+    if (!toName.trim()) return alert("받는분 이름을 입력해주세요.");
     if (traits.some((t) => !t.trim()))
       return alert("특징 3가지를 모두 입력해주세요.");
     if (credits < 1) return alert("크레딧이 부족해요. 충전 후 이용해주세요.");
@@ -200,7 +200,7 @@ export default function ModalCreateTicket({
         }}
       >
         {theme === "formal" && "간단한 선택으로\n취향을 알려주세요."}
-        {theme === "friend" && "너의 소원을 말해봐🤝🏻"}
+        {theme === "friend" && "너의 호불호를 알려줘 🤝🏻"}
         {theme === "sweet" && "두근두근 취향 테스트 💕"}
       </div>
       <div
@@ -362,9 +362,9 @@ export default function ModalCreateTicket({
           </div>
         </div>
 
-        {/* ABOUT WHO */}
+        {/* WHO */}
         <div className={styles["modal-section"]}>
-          {sectionLabel("ABOUT WHO")}
+          {sectionLabel("WHO")}
           <div className={styles["modal-trait-list"]}>
             {traits.map((trait, i) => (
               <div key={i} className={styles["modal-trait-item"]}>
@@ -375,16 +375,13 @@ export default function ModalCreateTicket({
                   className={styles["modal-input"]}
                   style={{ fontSize: 15, fontWeight: 400 }}
                   placeholder={
-                    ["ex) 솔직하고", "ex) 센스있고", "ex) 집콕러"][i]
+                    ["ex) 솔직하고", "ex) 센스있는", "ex) 집순이"][i]
                   }
                   value={trait}
                   onChange={(e) => setTrait(i, e.target.value)}
                 />
               </div>
             ))}
-          </div>
-          <div className={styles["modal-trait-hint"]}>
-            ✦ 설문 결과 화면에 적용됩니다
           </div>
         </div>
 
@@ -461,15 +458,17 @@ export default function ModalCreateTicket({
 
         {/* 버튼 */}
         <div className={styles["modal-btn-group"]}>
-          <button
-            className={styles["modal-btn-preview"]}
-            onClick={() => {
-              setShowPreview(true);
-              setPreviewPage(0);
-            }}
-          >
-            티켓 미리보기
-          </button>
+          {!showPreview && (
+            <button
+              className={styles["modal-btn-preview"]}
+              onClick={() => {
+                setShowPreview(true);
+                setPreviewPage(0);
+              }}
+            >
+              티켓 미리보기
+            </button>
+          )}
           {showPreview && (
             <button
               className={styles["modal-btn-submit"]}
@@ -479,9 +478,24 @@ export default function ModalCreateTicket({
                 background: loading ? "#CCC" : "#F9B233",
                 color: "#1C1C1C",
                 cursor: loading ? "not-allowed" : "pointer",
+                opacity: loading ? 0.7 : 1,
               }}
             >
-              {loading ? "생성 중..." : "🎁 티켓 생성하기"}
+              {loading ? (
+                <span
+                  style={{
+                    display: "inline-block",
+                    width: 16,
+                    height: 16,
+                    border: "2px solid #191919",
+                    borderTopColor: "transparent",
+                    borderRadius: "50%",
+                    animation: "loading-spinner 0.9s linear infinite",
+                  }}
+                />
+              ) : (
+                "티켓 생성하기"
+              )}
             </button>
           )}
           <button className={styles["modal-btn-cancel"]} onClick={onClose}>

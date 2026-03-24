@@ -93,11 +93,11 @@
 }
 
 .tickets-header {
-  @apply flex justify-between items-center mb-4;
+  @apply flex justify-between items-center mt-4 mb-2;
 }
 
 .tickets-header-title {
-  @apply text-[15px] font-bold text-slate-700;
+  @apply text-[15px] font-bold text-slate-700 ml-2;
 }
 
 .tickets-header-more {
@@ -125,11 +125,15 @@
 }
 
 .ticket-info {
-  @apply flex-1;
+  @apply flex-1 min-w-0;
 }
 
 .ticket-name {
   @apply text-[15px] font-semibold text-slate-800 mb-0.5;
+}
+
+.ticket-comment {
+  @apply text-xs text-slate-400 mb-0.5 truncate max-w-[180px];
 }
 
 .ticket-date {
@@ -137,13 +141,32 @@
 }
 
 .ticket-badge {
-  @apply text-[11px] font-bold py-1.5 px-3 rounded-[10px];
+  @apply text-[11px] font-bold py-0.5 px-2 rounded-[8px]
+    inline-block mb-1.5;
+}
+
+.ticket-actions {
+  @apply flex flex-col gap-1.5 ml-2 flex-shrink-0;
+}
+
+.ticket-action-btn {
+  @apply text-[11px] font-bold py-1.5 px-3 rounded-[10px]
+    border-none cursor-pointer whitespace-nowrap;
+
+  .yellow {
+    @apply bg-[#fff7ed] text-[#F9B233];
+  }
+  .red {
+    @apply bg-[#fef2f2] text-[#ef4444];
+  }
+  .blue {
+    @apply bg-[#eff6ff] text-[#0062CC];
+  }
 }
 
 /**
  * ModalCreateTicket
  */
-
 .modal-overlay {
   @apply fixed inset-0 bg-black/40 z-[100]
     flex items-end justify-center;
@@ -207,10 +230,6 @@
 
 .modal-trait-num {
   @apply text-xs font-extrabold text-[#DDD8CF] w-[18px] flex-shrink-0;
-}
-
-.modal-trait-hint {
-  @apply text-xs text-[#C0BAB0] mt-2.5 leading-relaxed;
 }
 
 .modal-theme-row {

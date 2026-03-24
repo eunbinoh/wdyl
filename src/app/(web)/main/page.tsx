@@ -28,13 +28,13 @@ async function getUser() {
     .eq("id", user.id)
     .single();
 
-  // 티켓 현황 (init + progress = 사용중, complete = 완료)
   const { data: tickets } = await supabase
     .from("Ticket")
-    .select("id, status, to_name, theme, created_at")
+    .select("ticket_id, receiver_name, comment, theme, status, created_at")
     .eq("user_id", user.id)
+    .eq("deleted_yn", false)
     .order("created_at", { ascending: false })
-    .limit(5);
+    .limit(10);
 
   return { user, profile, tickets: tickets ?? [] };
 }
