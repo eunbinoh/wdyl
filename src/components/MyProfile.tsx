@@ -4,7 +4,7 @@ import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { LogOut, Wallet } from "lucide-react";
-import styles from "./components.module.css";
+import styles from "./allComponents.module.css";
 
 type Props = {
   nickname: string;

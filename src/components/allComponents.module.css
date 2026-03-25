@@ -1,5 +1,12 @@
 @reference "tailwindcss";
 
+:root {
+  --color-yellow: #f9b233;
+  --color-red: #ef4444;
+  --color-blue: #0062cc;
+  --color-gray: #64748b;
+}
+
 /**
  * LoginButton
  */
@@ -85,11 +92,11 @@
 }
 
 .tickets-new-btn {
-  @apply w-full max-w-[480px] mx-auto mb-5 bg-[#FAFAFA] text-[#F9B233]
+  @apply w-full max-w-[480px] mx-auto mb-5 bg-[var(--color-yellow)] text-[#FAFAFA]
     border border-[#F9B233] rounded-2xl py-3.5 px-5
     text-base font-bold cursor-pointer
     flex items-center justify-center
-    shadow-[0_4px_6px_-1px_rgba(249,176,51,0.59)];
+    shadow-[0_4px_4px_-1px_rgba(249,176,51,0.5)];
 }
 
 .tickets-header {
@@ -116,7 +123,10 @@
 
 .ticket-item {
   @apply bg-white rounded-[20px] p-4 flex items-center gap-4
-    border border-slate-100;
+    border border-slate-100 transition-all duration-150;
+  &:hover {
+    @apply bg-neutral-50 shadow-md -translate-y-0.5;
+  }
 }
 
 .ticket-icon {
@@ -125,42 +135,67 @@
 }
 
 .ticket-info {
-  @apply flex-1 min-w-0;
+  @apply flex-1 min-w-0 flex flex-col gap-1;
 }
 
 .ticket-name {
-  @apply text-[15px] font-semibold text-slate-800 mb-0.5;
+  @apply text-[15px] font-semibold text-slate-800 mb-0.5 ml-1 inline-flex items-center gap-2;
 }
 
 .ticket-comment {
-  @apply text-xs text-slate-400 mb-0.5 truncate max-w-[180px];
+  @apply w-full text-xs text-slate-400 mb-0.5 max-w-[180px] ml-1 inline-flex items-center gap-2;
 }
 
 .ticket-date {
-  @apply text-xs text-slate-400;
+  @apply text-xs text-slate-400 ml-1 inline-flex items-center gap-2;
 }
 
 .ticket-badge {
-  @apply text-[11px] font-bold py-0.5 px-2 rounded-[8px]
-    inline-block mb-1.5;
+  @apply text-[11px] font-bold py-0.5 px-2 rounded-full
+    inline-flex items-center gap-1 mb-1.5 bg-transparent ml-[-2px];
+}
+
+.ticket-badge-dot {
+  @apply w-1.5 h-1.5 rounded-full shrink-0;
 }
 
 .ticket-actions {
-  @apply flex flex-col gap-1.5 ml-2 flex-shrink-0;
+  @apply mt-7 flex flex-col gap-1.5 ml-2 flex-shrink-0;
 }
 
 .ticket-action-btn {
-  @apply text-[11px] font-bold py-1.5 px-3 rounded-[10px]
-    border-none cursor-pointer whitespace-nowrap;
+  @apply text-[14px] font-bold py-1 px-3 rounded-[10px]
+    border-none cursor-pointer whitespace-nowrap transition-all duration-150 active:scale-95;
 
-  .yellow {
-    @apply bg-[#fff7ed] text-[#F9B233];
+  &.yellow {
+    @apply bg-[#fff7ed] text-[var(--color-yellow)];
+    border: 1.5px solid var(--color-yellow);
+    &:hover {
+      @apply shadow-md -translate-y-0.5;
+      background-color: var(--color-yellow);
+      border-color: var(--color-yellow);
+      color: #fff;
+    }
   }
-  .red {
-    @apply bg-[#fef2f2] text-[#ef4444];
+  &.gray {
+    @apply bg-[#f1f2f3] text-[var(--color-gray)];
+    border: 1.5px solid var(--color-gray);
+    &:hover {
+      @apply shadow-md -translate-y-0.5;
+      background-color: var(--color-gray);
+      border-color: var(--color-gray);
+      color: #fff;
+    }
   }
-  .blue {
-    @apply bg-[#eff6ff] text-[#0062CC];
+  &.blue {
+    @apply bg-[#eff6ff] text-[var(--color-blue)];
+    border: 1.5px solid var(--color-blue);
+    &:hover {
+      @apply shadow-md -translate-y-0.5;
+      background-color: var(--color-blue);
+      border-color: var(--color-blue);
+      color: #fff;
+    }
   }
 }
 

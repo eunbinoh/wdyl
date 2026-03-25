@@ -1,7 +1,7 @@
 "use client";
 
 import { supabase } from "@/lib/supabase";
-import styles from "./components.module.css";
+import styles from "./allComponents.module.css";
 import { useState } from "react";
 
 export default function LoginButton() {

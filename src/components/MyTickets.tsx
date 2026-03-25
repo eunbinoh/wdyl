@@ -2,10 +2,16 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronRight } from "lucide-react";
-import ModalCreateTicket from "./ModalCreateTicket";
+import {
+  ChevronRight,
+  Mails,
+  MessageSquareMore,
+  CalendarClock,
+} from "lucide-react";
 import { supabase } from "@/lib/supabase";
-import styles from "./components.module.css";
+import styles from "./allComponents.module.css";
+import TicketNewModal from "./TicketNewModal";
+import TicketDetailModal from "./TicketDetailModal";
 
 export type Ticket = {
   ticket_id: string;
@@ -26,10 +32,10 @@ const STATUS_LABEL: Record<
   string,
   { label: string; color: string; bg: string }
 > = {
-  init: { label: "전송대기", color: "#64748b", bg: "#f1f5f9" },
-  progress: { label: "진행중", color: "#0062CC", bg: "#eff6ff" },
-  complete: { label: "완료", color: "#16a34a", bg: "#f0fdf4" },
-  cancelled: { label: "취소됨", color: "#ef4444", bg: "#fef2f2" },
+  init: { label: "발송대기", color: "#64748b", bg: "#f1f5f9" },
+  progress: { label: "진행중", color: "#16a34a", bg: "#f0fdf4" },
+  complete: { label: "작성완료", color: "#0062CC", bg: "#eff6ff" },
+  cancelled: { label: "회수완료", color: "#ef4444", bg: "#fef2f2" },
 };
 
 function formatDate(dateStr: string) {
@@ -39,11 +45,13 @@ function formatDate(dateStr: string) {
   const dd = String(d.getDate()).padStart(2, "0");
   const hh = String(d.getHours()).padStart(2, "0");
   const min = String(d.getMinutes()).padStart(2, "0");
-  return `${yy}-${mm}-${dd} ${hh}:${min}`;
+  const ss = String(d.getSeconds()).padStart(2, "0");
+  return `${yy}-${mm}-${dd} ${hh}:${min}:${ss}`;
 }
 
 export default function MyTickets({ userId, credits, tickets }: Props) {
-  const [showModal, setShowModal] = useState(false);
+  const [showNewModal, setShowNewModal] = useState(false);
+  const [showModalTicketId, setShowModalTicketId] = useState<string>("");
   const [cancellingId, setCancellingId] = useState<string | null>(null);
   const router = useRouter();
 
@@ -93,7 +101,7 @@ export default function MyTickets({ userId, credits, tickets }: Props) {
     <div className={styles["tickets-container"]}>
       <button
         className={styles["tickets-new-btn"]}
-        onClick={() => setShowModal(true)}
+        onClick={() => setShowNewModal(true)}
       >
         NEW 티켓 만들기
       </button>
@@ -114,28 +122,28 @@ export default function MyTickets({ userId, credits, tickets }: Props) {
           {tickets.map((ticket) => {
             const status = STATUS_LABEL[ticket.status] ?? STATUS_LABEL["init"];
             return (
-              <div key={ticket.ticket_id} className={styles["ticket-item"]}>
-                {/* 티켓 정보 */}
+              <div
+                key={ticket.ticket_id}
+                className={styles["ticket-item"]}
+                onClick={() => setShowModalTicketId(ticket.ticket_id)}
+                style={{ cursor: "pointer" }}
+              >
                 <div className={styles["ticket-info"]}>
-                  {/* 상태 배지: 상단 좌측 */}
-                  <div
-                    className={styles["ticket-badge"]}
-                    style={{
-                      color: status.color,
-                      background: "#fff",
-                      border: `1px solid ${status.color}`,
-                    }}
-                  >
-                    {status.label}
+                  <div className={styles["ticket-badge"]}>
+                    <span
+                      className={styles["ticket-badge-dot"]}
+                      style={{ backgroundColor: status.color }}
+                    />
+                    <span style={{ color: status.color }}>{status.label}</span>
                   </div>
                   <div className={styles["ticket-name"]}>
-                    {ticket.receiver_name}에게
+                    <Mails size={14} color={"#64748b"} /> {ticket.receiver_name}
                   </div>
                   <div className={styles["ticket-comment"]}>
-                    {ticket.comment}
+                    <MessageSquareMore size={14} /> {ticket.comment}
                   </div>
                   <div className={styles["ticket-date"]}>
-                    {formatDate(ticket.created_at)}
+                    <CalendarClock size={14} /> {formatDate(ticket.created_at)}
                   </div>
                 </div>
 
@@ -145,19 +153,21 @@ export default function MyTickets({ userId, credits, tickets }: Props) {
                   {ticket.status === "init" && (
                     <>
                       <button
-                        className={styles["ticket-action-btn"]}
-                        style={{ background: "#FEF8EC", color: "#d97706" }}
-                        onClick={() =>
-                          handleSend(ticket.ticket_id, ticket.receiver_name)
-                        }
+                        className={`${styles["ticket-action-btn"]} ${styles["yellow"]}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleSend(ticket.ticket_id, ticket.receiver_name);
+                        }}
                       >
                         발송하기
                       </button>
                       <button
-                        className={styles["ticket-action-btn"]}
-                        style={{ background: "#fef2f2", color: "#ef4444" }}
+                        className={`${styles["ticket-action-btn"]} ${styles["gray"]}`}
                         disabled={cancellingId === ticket.ticket_id}
-                        onClick={() => handleCancel(ticket.ticket_id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleCancel(ticket.ticket_id);
+                        }}
                       >
                         {cancellingId === ticket.ticket_id
                           ? "회수 중…"
@@ -166,25 +176,14 @@ export default function MyTickets({ userId, credits, tickets }: Props) {
                     </>
                   )}
 
-                  {/* progress: 상세보기 */}
-                  {ticket.status === "progress" && (
-                    <button
-                      className={styles["ticket-action-btn"]}
-                      style={{ background: "#eff6ff", color: "#0062CC" }}
-                      onClick={() => router.push(`/survey/${ticket.ticket_id}`)}
-                    >
-                      상세보기
-                    </button>
-                  )}
-
                   {/* complete: 결과보기 */}
                   {ticket.status === "complete" && (
                     <button
-                      className={styles["ticket-action-btn"]}
-                      style={{ background: "#eff6ff", color: "#0062CC" }}
-                      onClick={() =>
-                        router.push(`/survey/${ticket.ticket_id}/result`)
-                      }
+                      className={`${styles["ticket-action-btn"]} ${styles["blue"]}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        router.push(`/survey/${ticket.ticket_id}/result`);
+                      }}
                     >
                       결과보기
                     </button>
@@ -196,13 +195,24 @@ export default function MyTickets({ userId, credits, tickets }: Props) {
         </div>
       )}
 
-      {showModal && (
-        <ModalCreateTicket
+      {showNewModal && (
+        <TicketNewModal
           userId={userId}
           credits={credits}
-          onClose={() => setShowModal(false)}
+          onClose={() => setShowNewModal(false)}
           onSuccess={() => {
-            setShowModal(false);
+            setShowNewModal(false);
+            router.refresh();
+          }}
+        />
+      )}
+      {showModalTicketId && (
+        <TicketDetailModal
+          userId={userId}
+          credits={credits}
+          onClose={() => setShowModalTicketId("")}
+          onFetched={() => {
+            setShowModalTicketId("");
             router.refresh();
           }}
         />
