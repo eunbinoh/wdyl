@@ -51,12 +51,6 @@ const THEME_STYLE: Record<
   },
 };
 
-const TRAIT_SUFFIX: Record<Theme, string[]> = {
-  formal: ["으시며", "시고", "신"],
-  friend: ["하고", "하며", "한"],
-  sweet: ["하고", "하며", "한"],
-};
-
 const TOOLTIPS: Record<string, string> = {
   CONCEPT: "컨셉 : 받는분에게 보여질 링크 말투와 분위기에요.",
   TO: "받는분 이름/애칭: 링크 첫 화면 타이틀에 사용돼요.",
@@ -226,7 +220,6 @@ export default function ModalCreateTicket({
               className={styles["modal-btn-preview"]}
               onClick={() => {
                 setShowPreview(true);
-                setPreviewPage(0);
               }}
             >
               티켓 수정하기
