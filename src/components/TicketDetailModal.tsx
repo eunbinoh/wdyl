@@ -4,7 +4,7 @@ import { useRef, useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { nanoid } from "nanoid";
 import { ChevronLeft, ChevronRight, CircleHelp } from "lucide-react";
-import styles from "./components.module.css";
+import styles from "./allComponents.module.css";
 
 type Theme = "formal" | "friend" | "sweet";
 
@@ -67,14 +67,14 @@ type Props = {
   userId: string;
   credits: number;
   onClose: () => void;
-  onSuccess: () => void;
+  onFetched: () => void;
 };
 
 export default function ModalCreateTicket({
   userId,
   credits,
   onClose,
-  onSuccess,
+  onFetched,
 }: Props) {
   const [theme, setTheme] = useState<Theme>("formal");
   const [toName, setToName] = useState("");
@@ -82,7 +82,6 @@ export default function ModalCreateTicket({
   const [loading, setLoading] = useState(false);
   const [tooltip, setTooltip] = useState<string | null>(null);
   const [showPreview, setShowPreview] = useState(false);
-  const [previewPage, setPreviewPage] = useState(0);
   const tooltipRef = useRef<HTMLDivElement>(null);
 
   const setTrait = (i: number, v: string) =>
@@ -121,7 +120,7 @@ export default function ModalCreateTicket({
         .eq("id", userId);
       if (creditError) throw creditError;
 
-      onSuccess();
+      onFetched();
     } catch (e) {
       console.error(e);
       alert("티켓 생성 중 오류가 발생했어요.");
@@ -149,192 +148,6 @@ export default function ModalCreateTicket({
   );
 
   const ts = THEME_STYLE[theme];
-  const suffix = TRAIT_SUFFIX[theme];
-  const displayName = toName.trim() || "OO";
-  const filledTraits = traits.map((t, i) => t.trim() || `특징${i + 1}`);
-
-  const previewScreens = [
-    <div
-      key="intro"
-      style={{
-        width: "100%",
-        height: "100%",
-        background: ts.bg,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: 28,
-        fontFamily: ts.font,
-      }}
-    >
-      <div
-        style={{
-          fontSize: 12,
-          color: ts.subText,
-          letterSpacing: 3,
-          marginBottom: 20,
-        }}
-      >
-        WDYL
-      </div>
-      <div
-        style={{
-          fontSize: 20,
-          fontWeight: 800,
-          color: ts.text,
-          textAlign: "center",
-          lineHeight: 1.5,
-          marginBottom: 10,
-        }}
-      >
-        <span style={{ color: ts.accent }}>{displayName}</span>님의 취향 분석
-      </div>
-      <div
-        style={{
-          fontSize: 13,
-          color: ts.subText,
-          textAlign: "center",
-          lineHeight: 1.7,
-          marginBottom: 28,
-        }}
-      >
-        {theme === "formal" && "간단한 선택으로\n취향을 알려주세요."}
-        {theme === "friend" && "너의 호불호를 알려줘 🤝🏻"}
-        {theme === "sweet" && "두근두근 취향 테스트 💕"}
-      </div>
-      <div
-        style={{
-          background: ts.accent,
-          color: theme === "formal" ? "#000" : "#fff",
-          borderRadius: 12,
-          padding: "12px 28px",
-          fontSize: 14,
-          fontWeight: 700,
-        }}
-      >
-        START
-      </div>
-    </div>,
-
-    <div
-      key="survey"
-      style={{
-        width: "100%",
-        height: "100%",
-        background: ts.bg,
-        display: "flex",
-        flexDirection: "column",
-        padding: 24,
-        fontFamily: ts.font,
-      }}
-    >
-      <div style={{ fontSize: 11, color: ts.subText, marginBottom: 8 }}>
-        1 / 3
-      </div>
-      <div
-        style={{
-          width: "100%",
-          height: 4,
-          background: ts.cardBg,
-          borderRadius: 2,
-          marginBottom: 20,
-        }}
-      >
-        <div
-          style={{
-            width: "33%",
-            height: "100%",
-            background: ts.accent,
-            borderRadius: 2,
-          }}
-        />
-      </div>
-      <div
-        style={{
-          fontSize: 15,
-          fontWeight: 700,
-          color: ts.text,
-          marginBottom: 16,
-          lineHeight: 1.5,
-        }}
-      >
-        요즘 가장 끌리는 선물은?
-      </div>
-      {["☕ 카페 기프티콘", "🍽️ 맛있는 음식", "📚 책이나 다이어리"].map(
-        (item, i) => (
-          <div
-            key={i}
-            style={{
-              background: i === 0 ? ts.accent : ts.cardBg,
-              borderRadius: 10,
-              padding: "12px 16px",
-              marginBottom: 8,
-              fontSize: 13,
-              fontWeight: 600,
-              color: i === 0 ? (theme === "formal" ? "#000" : "#fff") : ts.text,
-            }}
-          >
-            {item}
-          </div>
-        ),
-      )}
-    </div>,
-
-    <div
-      key="result"
-      style={{
-        width: "100%",
-        height: "100%",
-        background: ts.bg,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: 24,
-        fontFamily: ts.font,
-      }}
-    >
-      <div style={{ fontSize: 28, marginBottom: 12 }}>
-        {theme === "formal" ? "🎩" : theme === "friend" ? "🤝🏻" : "💕"}
-      </div>
-      <div
-        style={{
-          background: ts.cardBg,
-          borderRadius: 16,
-          padding: "20px 16px",
-          width: "100%",
-          textAlign: "center",
-        }}
-      >
-        <div style={{ fontSize: 13, color: ts.subText, lineHeight: 2.0 }}>
-          당신은 <br />
-          <span style={{ color: ts.accent, fontWeight: 700 }}>
-            {filledTraits[0]}
-            {suffix[0]}
-          </span>
-          ,{" "}
-          <span style={{ color: ts.accent, fontWeight: 700 }}>
-            {filledTraits[1]}
-            {suffix[1]}
-          </span>
-          ,<br />
-          <span style={{ color: ts.accent, fontWeight: 700 }}>
-            {filledTraits[2]}
-            {suffix[2]}
-          </span>{" "}
-          사람에게
-          <br />
-          <span style={{ color: ts.text, fontWeight: 800, fontSize: 15 }}>
-            센스있는 선물
-          </span>
-          을 하고 싶은
-          <br />
-          따뜻한 사람이군요!
-        </div>
-      </div>
-    </div>,
-  ];
 
   return (
     <div
@@ -345,7 +158,7 @@ export default function ModalCreateTicket({
     >
       <div ref={tooltipRef} className={styles["modal-sheet"]}>
         <div className={styles["modal-handle"]} />
-        <div className={styles["modal-title"]}>새 티켓 만들기</div>
+        <div className={styles["modal-title"]}>티켓 상세보기</div>
 
         {/* TO */}
         <div className={styles["modal-section"]}>
@@ -406,56 +219,6 @@ export default function ModalCreateTicket({
           </div>
         </div>
 
-        {/* 미리보기 */}
-        {showPreview && (
-          <div style={{ marginBottom: 20 }}>
-            <div className={styles["modal-preview-label"]}>
-              PREVIEW{" "}
-              <span style={{ fontSize: 14, color: "#1C1C1C", marginLeft: 2 }}>
-                {["# START", "# SURVEY", "# FINAL"][previewPage]}
-              </span>
-            </div>
-            <div className={styles["modal-preview-box"]}>
-              {previewScreens[previewPage]}
-              {previewPage > 0 && (
-                <button
-                  className={styles["modal-preview-arrow"]}
-                  style={{ left: 10 }}
-                  onClick={() => setPreviewPage((p) => p - 1)}
-                >
-                  <ChevronLeft size={20} />
-                </button>
-              )}
-              {previewPage < 2 && (
-                <button
-                  className={styles["modal-preview-arrow"]}
-                  style={{ right: 10 }}
-                  onClick={() => setPreviewPage((p) => p + 1)}
-                >
-                  <ChevronRight size={20} />
-                </button>
-              )}
-              <div className={styles["modal-preview-dots"]}>
-                {[0, 1, 2].map((i) => (
-                  <div
-                    key={i}
-                    onClick={() => setPreviewPage(i)}
-                    style={{
-                      width: i === previewPage ? 16 : 6,
-                      height: 6,
-                      borderRadius: 3,
-                      background:
-                        i === previewPage ? ts.accent : "rgba(255,255,255,0.5)",
-                      cursor: "pointer",
-                      transition: "all 0.2s",
-                    }}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-
         {/* 버튼 */}
         <div className={styles["modal-btn-group"]}>
           {!showPreview && (
@@ -466,7 +229,7 @@ export default function ModalCreateTicket({
                 setPreviewPage(0);
               }}
             >
-              티켓 미리보기
+              티켓 수정하기
             </button>
           )}
           {showPreview && (
