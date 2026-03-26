@@ -2,25 +2,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  ChevronRight,
-  Mails,
-  MessageSquareMore,
-  CalendarClock,
-} from "lucide-react";
+import { ChevronRight, Mails, MessageSquareMore, CalendarClock } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import styles from "./allComponents.module.css";
 import TicketNewModal from "./TicketNewModal";
 import TicketDetailModal from "./TicketDetailModal";
-
-export type Ticket = {
-  ticket_id: string;
-  receiver_name: string;
-  comment: string;
-  theme: string;
-  status: "init" | "progress" | "complete" | "cancelled";
-  created_at: string;
-};
+import { Ticket } from "@/types";
 
 type Props = {
   userId: string;
@@ -28,10 +15,7 @@ type Props = {
   tickets: Ticket[];
 };
 
-const STATUS_LABEL: Record<
-  string,
-  { label: string; color: string; bg: string }
-> = {
+const STATUS_LABEL: Record<string, { label: string; color: string; bg: string }> = {
   init: { label: "발송대기", color: "#64748b", bg: "#f1f5f9" },
   progress: { label: "진행중", color: "#16a34a", bg: "#f0fdf4" },
   complete: { label: "작성완료", color: "#0062CC", bg: "#eff6ff" },
@@ -57,9 +41,7 @@ export default function MyTickets({ userId, credits, tickets }: Props) {
 
   const handleSend = async (ticketId: string, receiverName: string) => {
     const url = `${window.location.origin}/survey/${ticketId}`;
-    const confirmed = confirm(
-      `${receiverName}에게 링크를 발송하시겠어요?\n\n${url}`,
-    );
+    const confirmed = confirm(`${receiverName}에게 링크를 발송하시겠어요?\n\n${url}`);
     if (!confirmed) return;
     try {
       await navigator.clipboard.writeText(url);
@@ -70,9 +52,7 @@ export default function MyTickets({ userId, credits, tickets }: Props) {
   };
 
   const handleCancel = async (ticketId: string) => {
-    const confirmed = confirm(
-      "티켓을 회수하면 크레딧 1개가 환급돼요.\n정말 회수하시겠어요?",
-    );
+    const confirmed = confirm("티켓을 회수하면 크레딧 1개가 환급돼요.\n정말 회수하시겠어요?");
     if (!confirmed) return;
 
     setCancellingId(ticketId);
@@ -114,9 +94,7 @@ export default function MyTickets({ userId, credits, tickets }: Props) {
       </div>
 
       {tickets.length === 0 ? (
-        <div className={styles["tickets-empty"]}>
-          아직 생성된 티켓이 없습니다.
-        </div>
+        <div className={styles["tickets-empty"]}>아직 생성된 티켓이 없습니다.</div>
       ) : (
         <div className={styles["tickets-list"]}>
           {tickets.map((ticket) => {
@@ -137,7 +115,11 @@ export default function MyTickets({ userId, credits, tickets }: Props) {
                     <span style={{ color: status.color }}>{status.label}</span>
                   </div>
                   <div className={styles["ticket-name"]}>
-                    <Mails size={14} color={"#64748b"} /> {ticket.receiver_name}
+                    <Mails
+                      size={14}
+                      color={"#64748b"}
+                    />{" "}
+                    {ticket.receiver_name}
                   </div>
                   <div className={styles["ticket-comment"]}>
                     <MessageSquareMore size={14} /> {ticket.comment}
@@ -169,9 +151,7 @@ export default function MyTickets({ userId, credits, tickets }: Props) {
                           handleCancel(ticket.ticket_id);
                         }}
                       >
-                        {cancellingId === ticket.ticket_id
-                          ? "회수 중…"
-                          : "회수하기"}
+                        {cancellingId === ticket.ticket_id ? "회수 중…" : "회수하기"}
                       </button>
                     </>
                   )}
@@ -208,8 +188,7 @@ export default function MyTickets({ userId, credits, tickets }: Props) {
       )}
       {showModalTicketId && (
         <TicketDetailModal
-          userId={userId}
-          credits={credits}
+          ticketId={showModalTicketId}
           onClose={() => setShowModalTicketId("")}
           onFetched={() => {
             setShowModalTicketId("");

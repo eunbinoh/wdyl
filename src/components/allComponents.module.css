@@ -200,7 +200,7 @@
 }
 
 /**
- * ModalCreateTicket
+ * TicketNewModal
  */
 .modal-overlay {
   @apply fixed inset-0 bg-black/40 z-[100]

@@ -5,8 +5,8 @@ import { supabase } from "@/lib/supabase";
 import { nanoid } from "nanoid";
 import { ChevronLeft, ChevronRight, CircleHelp } from "lucide-react";
 import styles from "./allComponents.module.css";
-
-type Theme = "formal" | "friend" | "sweet";
+import { TOOLTIPS, TRAIT_SUFFIX } from "@/lib/constants";
+import { Theme } from "@/types";
 
 const THEMES: { value: Theme; label: string; emoji: string }[] = [
   { value: "formal", label: "정중", emoji: "🎩" },
@@ -51,18 +51,6 @@ const THEME_STYLE: Record<
   },
 };
 
-const TRAIT_SUFFIX: Record<Theme, string[]> = {
-  formal: ["으시며", "시고", "신"],
-  friend: ["하고", "하며", "한"],
-  sweet: ["하고", "하며", "한"],
-};
-
-const TOOLTIPS: Record<string, string> = {
-  TO: "받는 분 이름 - 첫 화면 타이틀에 사용돼요.",
-  WHO: "받는 분 특징 - 설문 결과 화면에 적용돼요.",
-  CONCEPT: "컨셉/테마 - 설문링크의 말투와 분위기에요.",
-};
-
 type Props = {
   userId: string;
   credits: number;
@@ -70,12 +58,7 @@ type Props = {
   onSuccess: () => void;
 };
 
-export default function ModalCreateTicket({
-  userId,
-  credits,
-  onClose,
-  onSuccess,
-}: Props) {
+export default function CreateTicketModal({ userId, credits, onClose, onSuccess }: Props) {
   const [theme, setTheme] = useState<Theme>("formal");
   const [toName, setToName] = useState("");
   const [traits, setTraits] = useState(["", "", ""]);
@@ -85,13 +68,11 @@ export default function ModalCreateTicket({
   const [previewPage, setPreviewPage] = useState(0);
   const tooltipRef = useRef<HTMLDivElement>(null);
 
-  const setTrait = (i: number, v: string) =>
-    setTraits((prev) => prev.map((t, idx) => (idx === i ? v : t)));
+  const setTrait = (i: number, v: string) => setTraits((prev) => prev.map((t, idx) => (idx === i ? v : t)));
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
-      if (tooltipRef.current && !tooltipRef.current.contains(e.target as Node))
-        setTooltip(null);
+      if (tooltipRef.current && !tooltipRef.current.contains(e.target as Node)) setTooltip(null);
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
@@ -106,8 +87,7 @@ export default function ModalCreateTicket({
 
   const handleSubmit = async () => {
     if (!toName.trim()) return alert("받는분 이름을 입력해주세요.");
-    if (traits.some((t) => !t.trim()))
-      return alert("특징 3가지를 모두 입력해주세요.");
+    if (traits.some((t) => !t.trim())) return alert("특징 3가지를 모두 입력해주세요.");
     if (credits < 1) return alert("크레딧이 부족해요. 충전 후 이용해주세요.");
     setLoading(true);
     try {
@@ -147,11 +127,12 @@ export default function ModalCreateTicket({
         }}
         style={{ cursor: "pointer" }}
       >
-        <CircleHelp size={18} color="#1C1C1C" />
+        <CircleHelp
+          size={18}
+          color="#1C1C1C"
+        />
       </span>
-      {tooltip === key && (
-        <div className={styles["modal-tooltip-box"]}>{TOOLTIPS[key]}</div>
-      )}
+      {tooltip === key && <div className={styles["modal-tooltip-box"]}>{TOOLTIPS[key]}</div>}
     </div>
   );
 
@@ -236,9 +217,7 @@ export default function ModalCreateTicket({
         fontFamily: ts.font,
       }}
     >
-      <div style={{ fontSize: 11, color: ts.subText, marginBottom: 8 }}>
-        1 / 3
-      </div>
+      <div style={{ fontSize: 11, color: ts.subText, marginBottom: 8 }}>1 / 3</div>
       <div
         style={{
           width: "100%",
@@ -266,26 +245,24 @@ export default function ModalCreateTicket({
           lineHeight: 1.5,
         }}
       >
-        요즘 가장 끌리는 선물은?
+        요즘 가장 받고싶은 선물은?
       </div>
-      {["☕ 카페 기프티콘", "🍽️ 맛있는 음식", "📚 책이나 다이어리"].map(
-        (item, i) => (
-          <div
-            key={i}
-            style={{
-              background: i === 0 ? ts.accent : ts.cardBg,
-              borderRadius: 10,
-              padding: "12px 16px",
-              marginBottom: 8,
-              fontSize: 13,
-              fontWeight: 600,
-              color: i === 0 ? (theme === "formal" ? "#000" : "#fff") : ts.text,
-            }}
-          >
-            {item}
-          </div>
-        ),
-      )}
+      {["☕ 카페 기프티콘", "🍽️ 맛있는 음식", "📚 데스크 아이템"].map((item, i) => (
+        <div
+          key={i}
+          style={{
+            background: i === 0 ? ts.accent : ts.cardBg,
+            borderRadius: 10,
+            padding: "12px 16px",
+            marginBottom: 8,
+            fontSize: 13,
+            fontWeight: 600,
+            color: i === 0 ? (theme === "formal" ? "#000" : "#fff") : ts.text,
+          }}
+        >
+          {item}
+        </div>
+      ))}
     </div>,
 
     <div
@@ -315,12 +292,11 @@ export default function ModalCreateTicket({
         }}
       >
         <div style={{ fontSize: 13, color: ts.subText, lineHeight: 2.0 }}>
-          당신은 <br />
           <span style={{ color: ts.accent, fontWeight: 700 }}>
             {filledTraits[0]}
             {suffix[0]}
           </span>
-          ,{" "}
+          , <br />
           <span style={{ color: ts.accent, fontWeight: 700 }}>
             {filledTraits[1]}
             {suffix[1]}
@@ -330,14 +306,10 @@ export default function ModalCreateTicket({
             {filledTraits[2]}
             {suffix[2]}
           </span>{" "}
-          사람에게
+          당신에게
           <br />
-          <span style={{ color: ts.text, fontWeight: 800, fontSize: 15 }}>
-            센스있는 선물
-          </span>
-          을 하고 싶은
-          <br />
-          따뜻한 사람이군요!
+          선물을 전하고 싶어하는
+          <br />한 사람이 있어요!
         </div>
       </div>
     </div>,
@@ -350,7 +322,10 @@ export default function ModalCreateTicket({
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div ref={tooltipRef} className={styles["modal-sheet"]}>
+      <div
+        ref={tooltipRef}
+        className={styles["modal-sheet"]}
+      >
         <div className={styles["modal-handle"]} />
         <div className={styles["modal-title"]}>새 티켓 만들기</div>
 
@@ -374,16 +349,15 @@ export default function ModalCreateTicket({
           {sectionLabel("WHO")}
           <div className={styles["modal-trait-list"]}>
             {traits.map((trait, i) => (
-              <div key={i} className={styles["modal-trait-item"]}>
-                <span className={styles["modal-trait-num"]}>
-                  {String(i + 1).padStart(2, "0")}
-                </span>
+              <div
+                key={i}
+                className={styles["modal-trait-item"]}
+              >
+                <span className={styles["modal-trait-num"]}>{String(i + 1).padStart(2, "0")}</span>
                 <input
                   className={styles["modal-input"]}
                   style={{ fontSize: 15, fontWeight: 400 }}
-                  placeholder={
-                    ["ex) 솔직하고", "ex) 센스있는", "ex) 집순이"][i]
-                  }
+                  placeholder={["ex) 솔직하고", "ex) 센스있는", "ex) 집순이"][i]}
                   value={trait}
                   onChange={(e) => setTrait(i, e.target.value)}
                 />
@@ -451,8 +425,7 @@ export default function ModalCreateTicket({
                       width: i === previewPage ? 16 : 6,
                       height: 6,
                       borderRadius: 3,
-                      background:
-                        i === previewPage ? ts.accent : "rgba(255,255,255,0.5)",
+                      background: i === previewPage ? ts.accent : "rgba(255,255,255,0.5)",
                       cursor: "pointer",
                       transition: "all 0.2s",
                     }}
@@ -505,9 +478,6 @@ export default function ModalCreateTicket({
               )}
             </button>
           )}
-          <button className={styles["modal-btn-cancel"]} onClick={onClose}>
-            취소하기
-          </button>
         </div>
       </div>
     </div>
