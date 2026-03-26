@@ -125,7 +125,7 @@ export default function MyTickets({ userId, credits, tickets }: Props) {
                     <MessageSquareMore size={14} /> {ticket.comment}
                   </div>
                   <div className={styles["ticket-date"]}>
-                    <CalendarClock size={14} /> {formatDate(ticket.created_at)}
+                    <CalendarClock size={14} /> {formatDate(ticket.created_at ?? "")}
                   </div>
                 </div>
 

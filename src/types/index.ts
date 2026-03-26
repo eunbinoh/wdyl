@@ -6,7 +6,7 @@ export type Ticket = {
   comment: string;
   theme: string;
   status: Status;
-  created_at: string;
+  created_at?: string;
   user_id?: string;
   result?: string;
 };
