@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { THEME_START_MSG } from "@/lib/constants";
 import { Ticket, Category, Item, Phase } from "@/types";
@@ -91,6 +91,7 @@ export default function SurveyClient({ ticket, categories }: Props) {
 
   const [phase, setPhase] = useState<Phase>(isExpired ? "expired" : "intro");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
 
   // 월드컵
   const [wcItems, setWcItems] = useState<Item[]>([]);
@@ -102,6 +103,15 @@ export default function SurveyClient({ ticket, categories }: Props) {
   const [medals, setMedals] = useState<(Item | null)[]>([null, null, null]);
   const [step3Done, setStep3Done] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const [wcStackLayout, setWcStackLayout] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 560px)");
+    const sync = () => setWcStackLayout(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
 
   const handleStart = async () => {
     if (ticket.status === "init") {
@@ -214,10 +224,21 @@ export default function SurveyClient({ ticket, categories }: Props) {
     maxWidth: 420,
   };
 
-  const accentBtn = {
+  const accentBtnStyle = {
     background: ts.accent,
     color: ts.btnText,
     border: "none",
+    borderRadius: 14,
+    padding: "15px 0",
+    fontSize: 15,
+    fontWeight: 700,
+    cursor: "pointer",
+    width: "100%",
+  };
+  const backBtnStyle = {
+    background: ts.cardBg,
+    color: ts.accent,
+    border: `1.5px solid ${ts.accent}30`,
     borderRadius: 14,
     padding: "15px 0",
     fontSize: 15,
@@ -289,7 +310,7 @@ export default function SurveyClient({ ticket, categories }: Props) {
         </div>
         <div style={{ width: "100%", maxWidth: 320 }}>
           <button
-            style={accentBtn}
+            style={accentBtnStyle}
             onClick={handleStart}
           >
             START
@@ -309,10 +330,12 @@ export default function SurveyClient({ ticket, categories }: Props) {
               fontSize: 18,
               fontWeight: 800,
               color: ts.text,
-              marginBottom: 28,
+              marginTop: 20,
+              marginBottom: 40,
+              textAlign: "center",
             }}
           >
-            어떤 카테고리의 선물이 끌리나요?
+            어떤 종류의 선물이 마음에 드시나요?
           </div>
 
           {/* 카테고리 그리드 */}
@@ -322,32 +345,42 @@ export default function SurveyClient({ ticket, categories }: Props) {
               flexWrap: "wrap",
               gap: 12,
               justifyContent: "center",
-              marginBottom: 36,
+              marginBottom: 80,
             }}
           >
             {categories.map((cat) => {
               const isSelected = selectedCategory === cat.category_code;
+              const isHovered = hoveredCategory === cat.category_code;
               return (
                 <div
                   key={cat.category_code}
                   onClick={() => setSelectedCategory(cat.category_code)}
+                  onMouseEnter={() => setHoveredCategory(cat.category_code)}
+                  onMouseLeave={() => setHoveredCategory(null)}
                   style={{
-                    width: isSelected ? 88 : 76,
-                    height: isSelected ? 88 : 76,
+                    width: isSelected ? 110 : 100,
+                    height: isSelected ? 110 : 100,
                     borderRadius: "50%",
-                    background: isSelected ? ts.accent : ts.cardBg,
+                    background: isSelected ? ts.accent : isHovered ? `${ts.accent}14` : ts.cardBg,
                     color: isSelected ? ts.btnText : ts.text,
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
                     justifyContent: "center",
                     cursor: "pointer",
-                    transition: "all 0.2s",
-                    fontSize: 11,
+                    transition: "transform 0.2s, box-shadow 0.2s, background 0.2s, border 0.2s",
+                    fontSize: 14,
                     fontWeight: 700,
                     gap: 4,
-                    border: isSelected ? "none" : `1.5px solid ${ts.accent}30`,
-                    boxShadow: isSelected ? `0 4px 12px ${ts.accent}40` : "none",
+                    border: isSelected ? "none" : `1.5px solid ${isHovered ? `${ts.accent}70` : `${ts.accent}30`}`,
+                    boxShadow: isSelected
+                      ? isHovered
+                        ? `0 6px 16px ${ts.accent}55`
+                        : `0 4px 12px ${ts.accent}40`
+                      : isHovered
+                        ? `0 3px 10px ${ts.accent}35`
+                        : "none",
+                    transform: isHovered ? (isSelected ? "scale(1.03)" : "scale(1.06)") : "scale(1)",
                   }}
                 >
                   <span style={{ fontSize: 22 }}>{CATEGORY_EMOJI[cat.category_code] ?? "🎁"}</span>
@@ -359,7 +392,7 @@ export default function SurveyClient({ ticket, categories }: Props) {
 
           <button
             style={{
-              ...accentBtn,
+              ...accentBtnStyle,
               opacity: selectedCategory ? 1 : 0.4,
               cursor: selectedCategory ? "pointer" : "not-allowed",
             }}
@@ -383,7 +416,7 @@ export default function SurveyClient({ ticket, categories }: Props) {
 
     return (
       <div style={{ ...pageStyle, justifyContent: "flex-start", paddingTop: 48 }}>
-        <div style={{ width: "100%", maxWidth: 420 }}>
+        <div style={{ width: "100%", maxWidth: 520 }}>
           <div style={{ fontSize: 13, color: ts.subText, marginBottom: 6 }}>STEP 2 · {roundLabel}</div>
           <div
             style={{
@@ -393,7 +426,7 @@ export default function SurveyClient({ ticket, categories }: Props) {
               marginBottom: 16,
             }}
           >
-            더 선호하는 걸 골라주세요!
+            둘 중에 더 선호하는 것을 골라주세요!
           </div>
 
           {/* 진행바 */}
@@ -417,38 +450,115 @@ export default function SurveyClient({ ticket, categories }: Props) {
             />
           </div>
 
-          {/* VS 카드 */}
-          <div style={{ display: "flex", gap: 12, marginBottom: 16 }}>
-            {[itemA, itemB].map((item) => (
-              <div
-                key={item.item_id}
-                onClick={() => handleWcPick(item)}
-                style={{
-                  flex: 1,
-                  background: ts.cardBg,
-                  borderRadius: 20,
-                  padding: "32px 16px",
-                  textAlign: "center",
-                  cursor: "pointer",
-                  border: `1.5px solid ${ts.accent}30`,
-                  transition: "transform 0.15s, box-shadow 0.15s",
-                }}
-                onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLDivElement).style.transform = "scale(1.03)";
-                  (e.currentTarget as HTMLDivElement).style.boxShadow = `0 8px 24px ${ts.accent}30`;
-                }}
-                onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLDivElement).style.transform = "scale(1)";
-                  (e.currentTarget as HTMLDivElement).style.boxShadow = "none";
-                }}
-              >
-                <div style={{ fontSize: 32, marginBottom: 12 }}>🎁</div>
-                <div style={{ fontSize: 15, fontWeight: 700, color: ts.text }}>{item.item_name}</div>
-              </div>
-            ))}
+          {/* VS 카드: 모바일(좁은 화면)에서는 세로 + 사이 VS */}
+          <div
+            style={{
+              display: "flex",
+              flexDirection: wcStackLayout ? "column" : "row",
+              alignItems: wcStackLayout ? "stretch" : undefined,
+              gap: wcStackLayout ? 10 : 14,
+              marginBottom: 16,
+            }}
+          >
+            {[itemA, itemB].map((item, idx) => {
+              const imgSrc = `/items_img/${item.item_id.replace(/_/g, "")}.jpg`;
+              return (
+                <Fragment key={item.item_id}>
+                  <div
+                    onClick={() => handleWcPick(item)}
+                    style={{
+                      flex: wcStackLayout ? undefined : 1,
+                      alignSelf: wcStackLayout ? "center" : undefined,
+                      width: wcStackLayout ? "70%" : undefined,
+                      minWidth: wcStackLayout ? undefined : 0,
+                      background: ts.cardBg,
+                      borderRadius: 20,
+                      overflow: "hidden",
+                      display: "flex",
+                      flexDirection: "column",
+                      textAlign: "center",
+                      cursor: "pointer",
+                      border: `1.5px solid ${ts.accent}30`,
+                      transition: "transform 0.15s, box-shadow 0.15s",
+                    }}
+                    onMouseEnter={(e) => {
+                      (e.currentTarget as HTMLDivElement).style.transform = "scale(1.03)";
+                      (e.currentTarget as HTMLDivElement).style.boxShadow = `0 8px 24px ${ts.accent}30`;
+                    }}
+                    onMouseLeave={(e) => {
+                      (e.currentTarget as HTMLDivElement).style.transform = "scale(1)";
+                      (e.currentTarget as HTMLDivElement).style.boxShadow = "none";
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: "100%",
+                        display: "flex",
+                        justifyContent: "center",
+                        flexShrink: 0,
+                        background: `${ts.accent}12`,
+                      }}
+                    >
+                      <div
+                        style={
+                          wcStackLayout
+                            ? {
+                                position: "relative",
+                                width: "100%",
+                                height: 0,
+                                paddingBottom: "calc(100% - 20px)",
+                                overflow: "hidden",
+                                background: `${ts.accent}12`,
+                              }
+                            : {
+                                position: "relative",
+                                width: 250,
+                                height: 250,
+                                overflow: "hidden",
+                                background: `${ts.accent}12`,
+                              }
+                        }
+                      >
+                        <img
+                          src={imgSrc}
+                          alt={item.item_name}
+                          style={{
+                            position: "absolute",
+                            left: 0,
+                            top: 0,
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "cover",
+                            objectPosition: "center",
+                            display: "block",
+                          }}
+                        />
+                      </div>
+                    </div>
+                    <div style={{ padding: "14px 12px 18px" }}>
+                      <div style={{ fontSize: 15, fontWeight: 700, color: ts.text, lineHeight: 1.35 }}>
+                        {item.item_name}
+                      </div>
+                    </div>
+                  </div>
+                  {wcStackLayout && idx === 0 ? (
+                    <div
+                      style={{
+                        flexShrink: 0,
+                        textAlign: "center",
+                        fontSize: 17,
+                        fontWeight: 900,
+                        color: ts.accent,
+                        padding: "6px 0 2px",
+                      }}
+                    >
+                      VS
+                    </div>
+                  ) : null}
+                </Fragment>
+              );
+            })}
           </div>
-
-          <div style={{ textAlign: "center", fontSize: 12, color: ts.subText }}>클릭!</div>
         </div>
       </div>
     );
@@ -554,14 +664,24 @@ export default function SurveyClient({ ticket, categories }: Props) {
 
           <button
             style={{
-              ...accentBtn,
+              ...accentBtnStyle,
               opacity: step3Done ? 1 : 0.4,
               cursor: step3Done ? "pointer" : "not-allowed",
             }}
             onClick={handleSubmitResult}
             disabled={!step3Done || loading}
           >
-            {loading ? "저장 중..." : "결과 보기 →"}
+            {loading ? "저장 중..." : "결과 보기"}
+          </button>
+          <div style={{ height: 12 }} />
+          <button
+            style={{
+              ...backBtnStyle,
+              cursor: !loading ? "pointer" : "not-allowed",
+            }}
+            onClick={() => setPhase("step1")}
+          >
+            {loading ? "저장 중..." : "다시 하기"}
           </button>
         </div>
       </div>
