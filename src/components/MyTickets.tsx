@@ -8,6 +8,7 @@ import styles from "./allComponents.module.css";
 import TicketNewModal from "./TicketNewModal";
 import TicketDetailModal from "./TicketDetailModal";
 import { Ticket } from "@/types";
+import TicketResultModal from "./TicketResultModal";
 
 type Props = {
   userId: string;
@@ -37,6 +38,7 @@ export default function MyTickets({ userId, credits, tickets }: Props) {
   const [showNewModal, setShowNewModal] = useState(false);
   const [showModalTicketId, setShowModalTicketId] = useState<string>("");
   const [cancellingId, setCancellingId] = useState<string | null>(null);
+  const [resultTicket, setResultTicket] = useState<Ticket | null>(null);
   const router = useRouter();
 
   const handleSend = async (ticketId: string, receiverName: string) => {
@@ -162,7 +164,7 @@ export default function MyTickets({ userId, credits, tickets }: Props) {
                       className={`${styles["ticket-action-btn"]} ${styles["blue"]}`}
                       onClick={(e) => {
                         e.stopPropagation();
-                        router.push(`/survey/${ticket.ticket_id}/result`);
+                        setResultTicket(ticket);
                       }}
                     >
                       결과보기
@@ -172,6 +174,13 @@ export default function MyTickets({ userId, credits, tickets }: Props) {
               </div>
             );
           })}
+          {resultTicket && (
+            <TicketResultModal
+              ticketId={resultTicket.ticket_id}
+              receiverName={resultTicket.receiver_name}
+              onClose={() => setResultTicket(null)}
+            />
+          )}
         </div>
       )}
 
