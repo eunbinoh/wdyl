@@ -3,6 +3,8 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import MyProfile from "@/components/MyProfile";
 import MyTickets from "@/components/MyTickets";
+import { Suspense } from "react";
+import ToastAlert from "@/components/ToastAlert";
 
 async function getUser() {
   const cookieStore = await cookies();
@@ -14,7 +16,7 @@ async function getUser() {
         getAll: () => cookieStore.getAll(),
         setAll: () => {},
       },
-    },
+    }
   );
 
   const {
@@ -22,11 +24,7 @@ async function getUser() {
   } = await supabase.auth.getUser();
   if (!user) redirect("/");
 
-  const { data: profile } = await supabase
-    .from("User")
-    .select("*")
-    .eq("id", user.id)
-    .single();
+  const { data: profile } = await supabase.from("User").select("*").eq("id", user.id).single();
 
   const { data: tickets } = await supabase
     .from("Ticket")
@@ -50,12 +48,20 @@ export default async function MainPage() {
   return (
     <main className="min-h-screen bg-[#f3efdc]">
       <MyProfile
+        userId={userId}
         nickname={nickname}
         email={profile?.email ?? ""}
         avatarUrl={avatarUrl}
         credits={credits}
       />
-      <MyTickets userId={userId} credits={credits} tickets={tickets} />
+      <MyTickets
+        userId={userId}
+        credits={credits}
+        tickets={tickets}
+      />
+      <Suspense fallback={null}>
+        <ToastAlert />
+      </Suspense>
     </main>
   );
 }
