@@ -6,22 +6,30 @@ import { useState } from "react";
 import SubTitleAnimation from "@/components/AnimationSubTitle";
 
 const TIPS = [
-  { emoji: "🤷", title: "뭘 좋아할지 모르겠을 때", desc: "친구의 최근 필요품, 원픽을 대신 알아올게요!" },
-  { emoji: "😳", title: "물어봐도 대답 듣기 어려울 때", desc: "결정장애 친구라도 선택지로 간편하게 초이스!" },
+  {
+    emoji: "🤷",
+    title: "뭘 좋아할지 모르겠을 때",
+    desc: "친구한테 요즘 제일 필요한게 뭔지, 최근 관심사 원픽은 뭔지 콕 짚어드려요.",
+  },
+  {
+    emoji: "😳",
+    title: "물어봐도 대답 듣기 어려울 때",
+    desc: "결정장애 친구라도 취향 월드컵 통해서 쉽고 빠르게 초이스 할 수 있어요.",
+  },
   {
     emoji: "🎯",
     title: "장르만 알려주면 직접 고르고싶을 때",
-    desc: "선물은 내가 직접 고르되, 방향만 잡고 싶을 때 딱 !",
+    desc: "위시리스트는 알겠는데 가격이 부담될때, 차순위 카테고리도 알려드려요.",
   },
   {
     emoji: "💌",
     title: "센스 있는 선물을 하고 싶을 때",
-    desc: "까다로운 친구의 맘에 쏙드는 선물 픽!",
+    desc: "까다로운 친구한테도 알잘딱깔센!",
   },
   {
     emoji: "😅",
-    title: "선물하긴 해야되는데 고르기 살짝 귀찮을 때",
-    desc: "맨날 똑같은 상품권 성의 없어 보이지 않도록.",
+    title: "선물하긴 해야되는데 살짝 귀찮을 때",
+    desc: "매번 똑같은 선물도 좋지만 관심 한스푼+",
   },
 ];
 
@@ -55,7 +63,7 @@ export default function LandingPage() {
         }
         .tip-card { transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); }
         .tip-card:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 12px 32px rgba(249,178,51,0.15); }
-        .plan-card { transition: all 0.2s ease; cursor: pointer; }
+        .plan-card { transition: all 0.2s ease; }
         .plan-card:hover { transform: translateY(-3px); }
         .cta-btn { transition: all 0.2s ease; }
         .cta-btn:hover { transform: scale(1.03); box-shadow: 0 8px 24px rgba(254,229,0,0.5); }
@@ -193,7 +201,9 @@ export default function LandingPage() {
                 <div style={{ fontSize: 26, flexShrink: 0 }}>{tip.emoji}</div>
                 <div>
                   <div style={{ fontSize: 14, fontWeight: 700, color: "#1C1C1C", marginBottom: 3 }}>{tip.title}</div>
-                  <div style={{ fontSize: 13, color: "#64748b", lineHeight: 1.6 }}>{tip.desc}</div>
+                  <div style={{ fontSize: 13, color: "#64748b", lineHeight: 1.6, wordBreak: "keep-all" }}>
+                    {tip.desc}
+                  </div>
                 </div>
               </div>
             ))}
@@ -341,9 +351,9 @@ export default function LandingPage() {
               친구 추천하면 1크레딧 무료!
             </div>
             <div style={{ fontSize: 13, color: "#16a34a", lineHeight: 1.6 }}>
-              친구에게 WDYL을 공유하기 / 추천하기 하면
+              친구에게 WDYL 공유/추천하기 하면
               <br />
-              추천 1회당 크레딧 1개를 드려요 (최대 3개)
+              1회당 크레딧 1개를 드려요 (최대 3개)
             </div>
           </div>
         </div>
@@ -376,7 +386,6 @@ export default function LandingPage() {
         </Link>
       </section>
 
-      {/* 푸터 */}
       <footer
         style={{
           textAlign: "center",
@@ -387,8 +396,31 @@ export default function LandingPage() {
           lineHeight: 2,
         }}
       >
-        문의: jeyUnnie@gmail.com
-        <br />© 2026 WDYL. All rights reserved.
+        <div style={{ marginBottom: 8 }}>
+          <Link
+            href="/terms"
+            style={{ color: "#94A3B8", textDecoration: "none" }}
+          >
+            이용약관
+          </Link>
+          &nbsp;|&nbsp;
+          <Link
+            href="/privacy"
+            style={{ color: "#94A3B8", textDecoration: "none" }}
+          >
+            개인정보처리방침
+          </Link>
+        </div>
+
+        <div
+          className="mb-1 text-slate-500"
+          style={{ wordBreak: "keep-all" }}
+        >
+          레오코퍼레이션 &nbsp;|&nbsp; 대표:노은비 &nbsp;|&nbsp; 사업자번호:717-28-01232
+        </div>
+        <div className="mb-1 text-slate-500">전화번호: 050-26680-0145 &nbsp;|&nbsp; 문의: jeyUnnie@gmail.com</div>
+        <div className="mb-2 text-slate-500">사업장 주소: 서울시 노원구 화랑로51길 78</div>
+        <div className="text-slate-500">© 2026 WDYL. All rights reserved.</div>
       </footer>
     </main>
   );

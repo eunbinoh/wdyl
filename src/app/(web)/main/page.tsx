@@ -5,20 +5,16 @@ import MyProfile from "@/components/MyProfile";
 import MyTickets from "@/components/MyTickets";
 import { Suspense } from "react";
 import ToastAlert from "@/components/ToastAlert";
+import WithdrawButton from "@/components/WithDrawButton";
 
+const cookieStore = await cookies();
+const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
+  cookies: {
+    getAll: () => cookieStore.getAll(),
+    setAll: () => {},
+  },
+});
 async function getUser() {
-  const cookieStore = await cookies();
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll: () => cookieStore.getAll(),
-        setAll: () => {},
-      },
-    }
-  );
-
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -26,19 +22,11 @@ async function getUser() {
 
   const { data: profile } = await supabase.from("User").select("*").eq("id", user.id).single();
 
-  const { data: tickets } = await supabase
-    .from("Ticket")
-    .select("ticket_id, receiver_name, comment, theme, status, created_at")
-    .eq("user_id", user.id)
-    .eq("deleted_yn", false)
-    .order("created_at", { ascending: false })
-    .limit(10);
-
-  return { user, profile, tickets: tickets ?? [] };
+  return { user, profile };
 }
 
 export default async function MainPage() {
-  const { user, profile, tickets } = await getUser();
+  const { user, profile } = await getUser();
 
   const avatarUrl = user.user_metadata?.avatar_url;
   const nickname = profile?.nickname ?? user.user_metadata?.name ?? "사용자";
@@ -57,8 +45,10 @@ export default async function MainPage() {
       <MyTickets
         userId={userId}
         credits={credits}
-        tickets={tickets}
       />
+      <div style={{ display: "flex", justifyContent: "center", padding: "16px 0 32px", marginBottom: 10 }}>
+        <WithdrawButton userId={userId} />
+      </div>
       <Suspense fallback={null}>
         <ToastAlert />
       </Suspense>

@@ -72,14 +72,10 @@ export default function TicketResultModal({ ticketId, receiverName, onClose }: P
       const sorted = itemIds.map((id: string) => itemData?.find((item) => item.item_id === id) ?? null);
       setItems(sorted);
 
-      const categoryCode = itemData?.[0]?.category_code;
-      if (categoryCode) {
-        const { data: cat } = await supabase!
-          .from("Category")
-          .select("name")
-          .eq("category_code", categoryCode)
-          .single();
-        if (cat) setCategoryName(cat.name);
+      const itemLevel = itemData?.[0]?.item_id.slice(0, 5);
+      if (itemLevel) {
+        const { data: item } = await supabase!.from("Item").select("item_name").eq("item_id", itemLevel).single();
+        if (item) setCategoryName(item.item_name);
       }
 
       setLoading(false);
@@ -170,7 +166,7 @@ export default function TicketResultModal({ ticketId, receiverName, onClose }: P
                           textDecoration: "none",
                         }}
                       >
-                        <span style={{ fontSize: 10, fontWeight: 500, color: "#fff" }}>선물하러가기</span>
+                        <span style={{ fontSize: 10, fontWeight: 500, color: "#fff" }}>선물추천링크</span>
                       </a>
                     ) : (
                       <div

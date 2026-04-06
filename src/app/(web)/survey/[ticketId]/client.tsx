@@ -122,7 +122,6 @@ export default function SurveyClient({ ticket, categories }: Props) {
 
   const handleCategoryNext = async () => {
     if (!selectedCategory) return;
-    console.log(5, selectedCategory);
     const { data } = await supabase!
       .from("Item")
       .select("item_id, item_name, category_code")

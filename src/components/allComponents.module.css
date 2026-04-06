@@ -88,7 +88,7 @@
  */
 
 .tickets-container {
-  @apply max-w-[480px] mx-auto px-5 pb-10 min-h-screen bg-[#FAFAFA] text-[#1A1A1A];
+  @apply max-w-[480px] mx-auto px-5 pb-10 bg-[#FAFAFA] text-[#1A1A1A];
 }
 
 .tickets-new-btn {
@@ -108,7 +108,7 @@
 }
 
 .tickets-header-more {
-  @apply text-xs text-slate-400 flex items-center;
+  @apply text-sm text-slate-500 flex items-center cursor-pointer;
 }
 
 .tickets-empty {
