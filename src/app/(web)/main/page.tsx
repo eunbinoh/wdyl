@@ -7,14 +7,18 @@ import { Suspense } from "react";
 import ToastAlert from "@/components/ToastAlert";
 import WithdrawButton from "@/components/WithDrawButton";
 
-const cookieStore = await cookies();
-const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
-  cookies: {
-    getAll: () => cookieStore.getAll(),
-    setAll: () => {},
-  },
-});
 async function getUser() {
+  const cookieStore = await cookies();
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll: () => cookieStore.getAll(),
+        setAll: () => {},
+      },
+    }
+  );
   const {
     data: { user },
   } = await supabase.auth.getUser();
