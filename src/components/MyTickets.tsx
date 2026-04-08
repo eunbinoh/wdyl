@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { Mails, MessageSquareMore, CalendarClock, ChevronDown } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { useRouter } from "next/navigation";
+import { Ticket } from "@/types";
 import styles from "./allComponents.module.css";
 import TicketNewModal from "./TicketNewModal";
 import TicketDetailModal from "./TicketDetailModal";
-import { Ticket } from "@/types";
 import TicketResultModal from "./TicketResultModal";
 
 type Props = {
@@ -43,7 +43,6 @@ export default function MyTickets({ userId, credits }: Props) {
   const [totalTickets, setTotalTickets] = useState(0);
   const [loadingAll, setLoadingAll] = useState(false);
   const visibleTickets = showAll ? tickets : tickets.slice(0, 10);
-
   const router = useRouter();
 
   const getTickets = async (limit?: number) => {
@@ -103,6 +102,7 @@ export default function MyTickets({ userId, credits }: Props) {
       if (creditError) return alert("크레딧 환급 중 오류가 발생했어요.");
 
       await getTickets(10);
+      router.refresh();
     } finally {
       setCancellingId(null);
     }
@@ -112,7 +112,13 @@ export default function MyTickets({ userId, credits }: Props) {
     <div className={styles["tickets-container"]}>
       <button
         className={styles["tickets-new-btn"]}
-        onClick={() => setShowNewModal(true)}
+        onClick={() => {
+          if (credits < 1) {
+            return alert("크레딧이 부족해요. 충전 후 이용해주세요.");
+          } else {
+            setShowNewModal(true);
+          }
+        }}
       >
         NEW 티켓 만들기
       </button>
@@ -238,6 +244,7 @@ export default function MyTickets({ userId, credits }: Props) {
           onClose={() => setShowNewModal(false)}
           onSuccess={() => {
             setShowNewModal(false);
+            getTickets(10);
             router.refresh();
           }}
         />
@@ -248,6 +255,7 @@ export default function MyTickets({ userId, credits }: Props) {
           onClose={() => setShowModalTicketId("")}
           onFetched={() => {
             setShowModalTicketId("");
+            getTickets(10);
             router.refresh();
           }}
         />

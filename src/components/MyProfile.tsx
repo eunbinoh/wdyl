@@ -2,11 +2,11 @@
 
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { LogOut, Wallet, IterationCcw } from "lucide-react";
 import Image from "next/image";
-import { LogOut, Wallet } from "lucide-react";
 import styles from "./allComponents.module.css";
 import CreditChargeModal from "./ChargeCreditModal";
-import { useState } from "react";
 
 type Props = {
   userId: string;
@@ -23,8 +23,13 @@ export default function ProfileCard({ userId, nickname, email, avatarUrl, credit
     router.push("/");
     router.refresh();
   };
+  const handleGuest = () => {
+    router.push("/login");
+    router.refresh();
+  };
 
   const [showCharge, setShowCharge] = useState(false);
+  const [isRefund, setIsRefund] = useState(false);
 
   return (
     <>
@@ -32,18 +37,19 @@ export default function ProfileCard({ userId, nickname, email, avatarUrl, credit
         {/* 상단 네비게이션 */}
         <div className={styles["profile-nav"]}>
           <Image
+            onClick={() => router.push("/")}
             src="/wdyl_logo.png"
             alt="WDYL"
             width={80}
             height={38}
-            style={{ objectFit: "contain" }}
+            style={{ objectFit: "contain", cursor: "pointer" }}
           />
           <button
             className={styles["profile-logout-btn"]}
-            onClick={handleLogout}
+            onClick={nickname !== "GUEST" ? handleLogout : handleGuest}
           >
             <LogOut size={14} />
-            <span>로그아웃</span>
+            <span>{nickname !== "GUEST" ? "로그아웃" : "회원 로그인"}</span>
           </button>
         </div>
 
@@ -70,22 +76,56 @@ export default function ProfileCard({ userId, nickname, email, avatarUrl, credit
             <Wallet size={14} />
             <span>내 지갑</span>
           </div>
-          <div className={styles["credit-card-amount"]}>
-            {credits.toLocaleString()}
-            <span className={styles["credit-card-unit"]}>크레딧</span>
+          <div
+            className={styles["credit-card-amount"]}
+            style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}
+          >
+            <div>
+              {credits.toLocaleString()}
+              <span className={styles["credit-card-unit"]}>크레딧</span>
+            </div>
+            <button
+              onClick={() => {
+                setIsRefund(true);
+              }}
+              style={{
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "flex-end",
+                marginTop: 16,
+                gap: 4,
+                fontSize: 11,
+                color: "#0062CC",
+                opacity: 0.7,
+              }}
+            >
+              <IterationCcw size={14} />
+              RETURN
+            </button>
           </div>
+
           <button
             className={styles["credit-charge-btn"]}
-            onClick={() => setShowCharge(true)}
+            onClick={() => {
+              setShowCharge(true);
+              setIsRefund(false);
+            }}
           >
             크레딧 충전하기
           </button>
         </div>
       </div>
-      {showCharge && (
+      {(showCharge || isRefund) && (
         <CreditChargeModal
           userId={userId}
-          onClose={() => setShowCharge(false)}
+          isRefund={isRefund}
+          onClose={() => {
+            setShowCharge(false);
+            setIsRefund(false);
+          }}
         />
       )}
     </>

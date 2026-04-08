@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import SubTitleAnimation from "@/components/AnimationSubTitle";
+import { Share2 } from "lucide-react";
 
 const TIPS = [
   {
@@ -285,7 +286,16 @@ export default function LandingPage() {
         >
           PRICING
         </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 20 }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 10,
+            marginBottom: 20,
+            maxWidth: 400,
+            margin: "0 auto 20px",
+          }}
+        >
           {PLANS.map((plan, i) => (
             <div
               key={i}
@@ -331,31 +341,61 @@ export default function LandingPage() {
         {/* 추천 크레딧 */}
         <div
           style={{
-            background: "#F0FDF4",
-            border: "1px solid #BBF7D0",
+            background: "#EFF6FF",
+            border: "1px solid #BFDBFE",
             borderRadius: 14,
             padding: "16px 20px",
             display: "flex",
-            alignItems: "center",
-            gap: 14,
+            flexDirection: "column",
+            gap: 12,
+            maxWidth: 400,
+            margin: "0 auto",
           }}
         >
-          <div
-            className="promo-tag"
-            style={{ fontSize: 28 }}
+          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+            <div
+              className="promo-tag"
+              style={{ fontSize: 28 }}
+            >
+              🎉
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 14, fontWeight: 700, color: "#1e40af", marginBottom: 3 }}>
+                공유하기 / 추천하기 이벤트로 무료 크레딧 획득하세요 !
+              </div>
+              <div style={{ fontSize: 13, color: "#3b82f6", lineHeight: 1.6 }}>
+                친구에게 WDYL 공유/추천 하면
+                <br />
+                1회당 크레딧 1개를 드려요
+                <br />
+                (최대 3회, 회원 로그인)
+              </div>
+            </div>
+          </div>
+          <button
+            onClick={() => {
+              navigator.clipboard.writeText(window.location.origin);
+              alert("링크가 복사됐어요!");
+            }}
+            style={{
+              background: "#1d4ed8",
+              border: "none",
+              borderRadius: 10,
+              padding: "10px 0",
+              width: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 6,
+              cursor: "pointer",
+            }}
           >
-            🎉
-          </div>
-          <div>
-            <div style={{ fontSize: 14, fontWeight: 700, color: "#166534", marginBottom: 3 }}>
-              친구 추천하면 1크레딧 무료!
-            </div>
-            <div style={{ fontSize: 13, color: "#16a34a", lineHeight: 1.6 }}>
-              친구에게 WDYL 공유/추천하기 하면
-              <br />
-              1회당 크레딧 1개를 드려요 (최대 3개)
-            </div>
-          </div>
+            <Share2
+              size={16}
+              color="#fff"
+            />
+            <span style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>공유하기</span>
+          </button>
         </div>
       </section>
 
@@ -372,12 +412,12 @@ export default function LandingPage() {
           className="cta-btn"
           style={{
             display: "inline-block",
-            background: "#FEE500",
-            color: "#1C1C1C",
+            background: "#f9b233",
+            color: "#fff",
             fontWeight: 800,
             fontSize: 16,
             borderRadius: 16,
-            padding: "18px 48px",
+            padding: "14px 48px",
             textDecoration: "none",
             letterSpacing: -0.3,
           }}

@@ -14,10 +14,11 @@ const CREDIT_PLANS = [
 
 type Props = {
   userId: string;
+  isRefund: boolean;
   onClose: () => void;
 };
 
-export default function CreditChargeModal({ userId, onClose }: Props) {
+export default function CreditChargeModal({ userId, isRefund, onClose }: Props) {
   const [selected, setSelected] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -57,7 +58,8 @@ export default function CreditChargeModal({ userId, onClose }: Props) {
   };
 
   const handleRefundRequest = () => {
-    window.location.href = `mailto:jeyunnie@gmail.com?subject=[WDYL] 크레딧 환불 요청&body=사용자 ID: ${userId}%0A구매 내역:%0A환불 사유:`;
+    const creditText = selectedPlan ? `${selectedPlan.credits}크레딧 (${selectedPlan.price.toLocaleString()}원)` : "";
+    window.location.href = `mailto:jeyunnie@gmail.com?subject=[WDYL] 크레딧 환불 요청&body=사용자 ID: ${userId}%0A환불 요청 크레딧: ${creditText}%0A구매일자 7일이내 확인여부:%0A환불 사유:`;
   };
   const [showExamples, setShowExamples] = useState(false);
 
@@ -111,7 +113,7 @@ export default function CreditChargeModal({ userId, onClose }: Props) {
                   <div>
                     <div style={{ fontSize: 15, fontWeight: 700, color: "#1C1C1C" }}>{plan.label}</div>
                     <div style={{ fontSize: 12, color: "#AAA", marginTop: 2 }}>
-                      {i === 0 ? "티켓 1장" : i === 1 ? "티켓 5장" : "티켓 10장"} 획득
+                      ( {i === 0 ? "티켓 1장" : i === 1 ? "티켓 5장" : "티켓 10장"} )
                     </div>
                   </div>
                 </div>
@@ -166,43 +168,46 @@ export default function CreditChargeModal({ userId, onClose }: Props) {
           )}
         </div>
 
-        {/* 버튼 */}
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-          <button
-            onClick={handlePayment}
-            disabled={!selected || loading}
-            style={{
-              width: "100%",
-              background: selected ? "#0062CC" : "#E2E8F0",
-              color: selected ? "#fff" : "#94A3B8",
-              border: "none",
-              borderRadius: 14,
-              padding: "14px 0",
-              fontSize: 15,
-              fontWeight: 700,
-              cursor: selected ? "pointer" : "not-allowed",
-              transition: "all 0.15s",
-            }}
-          >
-            {loading ? "결제 중..." : selectedPlan ? `${selectedPlan.price.toLocaleString()}원 결제하기` : "결제하기"}
-          </button>
+          {!isRefund && (
+            <button
+              onClick={handlePayment}
+              disabled={!selected || loading}
+              style={{
+                width: "100%",
+                background: selected ? "#0062CC" : "#E2E8F0",
+                color: selected ? "#fff" : "#94A3B8",
+                border: "none",
+                borderRadius: 14,
+                padding: "14px 0",
+                fontSize: 15,
+                fontWeight: 700,
+                cursor: selected ? "pointer" : "not-allowed",
+                transition: "all 0.15s",
+              }}
+            >
+              {loading ? "결제 중..." : selectedPlan ? `${selectedPlan.price.toLocaleString()}원 결제하기` : "결제하기"}
+            </button>
+          )}
 
-          <button
-            onClick={handleRefundRequest}
-            style={{
-              width: "100%",
-              background: "#fff",
-              color: "#94A3B8",
-              border: "1.5px solid #EDE9E1",
-              borderRadius: 14,
-              padding: "13px 0",
-              fontSize: 13,
-              fontWeight: 600,
-              cursor: "pointer",
-            }}
-          >
-            환불 요청하기
-          </button>
+          {isRefund && (
+            <button
+              onClick={handleRefundRequest}
+              style={{
+                width: "100%",
+                background: selected ? "#000" : "#fff",
+                color: selected ? "#fff" : "#94A3B8",
+                border: "1.5px solid #EDE9E1",
+                borderRadius: 14,
+                padding: "13px 0",
+                fontSize: 13,
+                fontWeight: 600,
+                cursor: "pointer",
+              }}
+            >
+              환불 요청하기
+            </button>
+          )}
         </div>
       </div>
     </div>

@@ -86,8 +86,8 @@ export default function CreateTicketModal({ userId, credits, onClose, onSuccess 
   }, [tooltip]);
 
   const handleSubmit = async () => {
-    if (!toName.trim()) return alert("받는분 이름을 입력해주세요.");
-    if (traits.some((t) => !t.trim())) return alert("특징 3가지를 모두 입력해주세요.");
+    if (!toName?.trim()) return alert("받는분 이름을 입력해주세요.");
+    if (traits?.some((t) => !t?.trim())) return alert("특징 3가지를 모두 입력해주세요.");
     if (credits < 1) return alert("크레딧이 부족해요. 충전 후 이용해주세요.");
     setLoading(true);
     try {

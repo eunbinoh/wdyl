@@ -1,9 +1,8 @@
 import { createServerClient } from "@supabase/ssr";
+import { Suspense } from "react";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 import MyProfile from "@/components/MyProfile";
 import MyTickets from "@/components/MyTickets";
-import { Suspense } from "react";
 import ToastAlert from "@/components/ToastAlert";
 import WithdrawButton from "@/components/WithDrawButton";
 
@@ -19,12 +18,25 @@ async function getUser() {
       },
     }
   );
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) redirect("/");
+  const { data } = await supabase.auth.getUser();
+  const guestId = "6efe9d03-0070-44a2-9896-21f655834288";
+  const user = data?.user
+    ? data.user
+    : {
+        id: guestId,
+        user_metadata: {
+          id: guestId,
+          name: "비회원",
+          email: "guest@wdyl.com",
+          avatar_url: "",
+        },
+      };
 
-  const { data: profile } = await supabase.from("User").select("*").eq("id", user.id).single();
+  const { data: profile } = await supabase
+    .from("User")
+    .select("*")
+    .eq("id", user?.id ?? guestId)
+    .single();
 
   return { user, profile };
 }
@@ -32,10 +44,10 @@ async function getUser() {
 export default async function MainPage() {
   const { user, profile } = await getUser();
 
-  const avatarUrl = user.user_metadata?.avatar_url;
-  const nickname = profile?.nickname ?? user.user_metadata?.name ?? "사용자";
+  const avatarUrl = user?.user_metadata?.avatar_url;
+  const nickname = profile?.nickname;
   const credits = profile?.credits ?? 0;
-  const userId = user.user_metadata?.id ?? user.id;
+  const userId = user?.id;
 
   return (
     <main className="min-h-screen bg-[#f3efdc]">
@@ -50,9 +62,11 @@ export default async function MainPage() {
         userId={userId}
         credits={credits}
       />
-      <div style={{ display: "flex", justifyContent: "center", padding: "16px 0 32px", marginBottom: 10 }}>
-        <WithdrawButton userId={userId} />
-      </div>
+      {nickname !== "GUEST" && (
+        <div style={{ display: "flex", justifyContent: "center", padding: "16px 0 32px", marginBottom: 10 }}>
+          <WithdrawButton userId={userId} />
+        </div>
+      )}
       <Suspense fallback={null}>
         <ToastAlert />
       </Suspense>

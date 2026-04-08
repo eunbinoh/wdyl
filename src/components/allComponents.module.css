@@ -19,6 +19,13 @@
     gap-2 mx-auto cursor-pointer;
 }
 
+.login-btn-guest {
+  @apply flex items-center justify-center
+    w-full max-w-xs py-3 px-4
+    bg-[#64748b] text-[#fff] font-bold
+    rounded-lg hover:bg-[#000] transition-colors
+    gap-2 mx-auto cursor-pointer;
+}
 /**
  * ProfileCard
  */
