@@ -43,6 +43,7 @@ export default function MyTickets({ userId, credits }: Props) {
   const [totalTickets, setTotalTickets] = useState(0);
   const [loadingAll, setLoadingAll] = useState(false);
   const visibleTickets = showAll ? tickets : tickets.slice(0, 10);
+
   const router = useRouter();
 
   const getTickets = async (limit?: number) => {
@@ -61,24 +62,30 @@ export default function MyTickets({ userId, credits }: Props) {
     getTickets(10);
   }, [userId]);
 
+  const handleKakaoSend = (ticketId: string, receiverName: string) => {
+    const surveyUrl = `https://wdyl.vercel.app/survey/${ticketId}`;
+    if (!window.Kakao) {
+      return;
+    }
+    if (!window.Kakao.isInitialized()) {
+      window.Kakao.init(process.env.NEXT_PUBLIC_KAKAO_JS_KEY);
+    }
+    window.Kakao.Share.sendDefault({
+      objectType: "text",
+      text: `${receiverName}님, 취향을 분석해드려요🎁`,
+      link: {
+        mobileWebUrl: surveyUrl,
+        webUrl: surveyUrl,
+      },
+    });
+  };
+
   const handleShowAll = async () => {
     setShowAll((prev) => !prev);
     setLoadingAll(true);
     await getTickets(showAll ? 10 : undefined);
 
     setLoadingAll(false);
-  };
-
-  const handleSend = async (ticketId: string, receiverName: string) => {
-    const url = `${window.location.origin}/survey/${ticketId}`;
-    const confirmed = confirm(`${receiverName}에게 링크를 발송하시겠어요?\n\n${url}`);
-    if (!confirmed) return;
-    try {
-      await navigator.clipboard.writeText(url);
-      alert("링크가 클립보드에 복사됐어요! 친구에게 보내주세요 🎁");
-    } catch {
-      alert(`링크를 직접 복사해주세요:\n${url}`);
-    }
   };
 
   const handleCancel = async (ticketId: string) => {
@@ -173,7 +180,7 @@ export default function MyTickets({ userId, credits }: Props) {
                           className={`${styles["ticket-action-btn"]} ${styles["yellow"]}`}
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleSend(ticket.ticket_id, ticket.receiver_name);
+                            handleKakaoSend(ticket.ticket_id, ticket.receiver_name);
                           }}
                         >
                           발송하기

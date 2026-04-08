@@ -23,3 +23,9 @@ export type Item = {
   level?: number;
 };
 export type Phase = "intro" | "step1" | "step2" | "step3" | "result" | "expired";
+
+declare global {
+  interface Window {
+    Kakao: any;
+  }
+}

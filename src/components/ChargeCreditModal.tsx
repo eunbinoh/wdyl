@@ -143,10 +143,14 @@ export default function CreditChargeModal({ userId, isRefund, onClose }: Props) 
             lineHeight: 1.8,
           }}
         >
-          <div style={{ color: "#475569", marginBottom: 6 }}>
+          <div
+            style={{ color: "#475569", marginBottom: 6 }}
+            className="break-keep break-words"
+          >
             💡 미사용 크레딧은 구매 후 7일 이내 환불 가능해요.
             <br />
-            ⚠️ 1회 이상 사용된 크레딧은 부분환불이 불가능해요.
+            ⚠️ 크레딧의 유효기간은 결제일로부터 12개월이며, 만료시 잔여 크레딧은 소멸됩니다.
+            <br />❌ 1회 이상 사용된 크레딧은 부분환불이 불가능해요.
           </div>
           <div
             onClick={() => setShowExamples((prev) => !prev)}

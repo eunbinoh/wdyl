@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SubTitleAnimation from "@/components/AnimationSubTitle";
 import { Share2 } from "lucide-react";
 
@@ -43,6 +43,21 @@ const PLANS = [
 export default function LandingPage() {
   const [hoveredTip, setHoveredTip] = useState<number | null>(null);
   const [hoveredPlan, setHoveredPlan] = useState<number | null>(null);
+
+  const handleKakaoShare = () => {
+    if (!window.Kakao) return;
+    if (!window.Kakao.isInitialized()) {
+      window.Kakao.init(process.env.NEXT_PUBLIC_KAKAO_JS_KEY);
+    }
+    window.Kakao.Share.sendDefault({
+      objectType: "text",
+      text: "친구가 원하는 선물을 물어보세요!\n🎁 WDYL - 너가 뭘 좋아할지 몰라서",
+      link: {
+        mobileWebUrl: "https://wdyl.vercel.app/",
+        webUrl: "https://wdyl.vercel.app/",
+      },
+    });
+  };
 
   return (
     <main
@@ -359,10 +374,7 @@ export default function LandingPage() {
             >
               🎉
             </div>
-            <div
-              style={{ flex: 1 }}
-              className="break-keep break-words"
-            >
+            <div className="flex-1 break-keep break-words">
               <div style={{ fontSize: 14, fontWeight: 700, color: "#1e40af", marginBottom: 3 }}>
                 공유하기 / 추천하기 이벤트로 무료 크레딧 획득하세요 !
               </div>
@@ -376,10 +388,7 @@ export default function LandingPage() {
             </div>
           </div>
           <button
-            onClick={() => {
-              navigator.clipboard.writeText(window.location.origin);
-              alert("링크가 복사됐어요!");
-            }}
+            onClick={handleKakaoShare}
             style={{
               background: "#1d4ed8",
               border: "none",
