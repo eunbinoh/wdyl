@@ -359,7 +359,10 @@ export default function LandingPage() {
             >
               🎉
             </div>
-            <div style={{ flex: 1 }}>
+            <div
+              style={{ flex: 1 }}
+              className="break-keep break-words"
+            >
               <div style={{ fontSize: 14, fontWeight: 700, color: "#1e40af", marginBottom: 3 }}>
                 공유하기 / 추천하기 이벤트로 무료 크레딧 획득하세요 !
               </div>
