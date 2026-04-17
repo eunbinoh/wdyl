@@ -4,6 +4,7 @@ import { Fragment, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { THEME_START_MSG } from "@/lib/constants";
 import { Ticket, Category, Item, Phase } from "@/types";
+import Image from "next/image";
 
 type Props = {
   ticket: Ticket;
@@ -112,6 +113,18 @@ export default function SurveyClient({ ticket, categories }: Props) {
     mq.addEventListener("change", sync);
     return () => mq.removeEventListener("change", sync);
   }, []);
+
+  useEffect(() => {
+    if (wcRound >= 4) return;
+    const nextBase = (wcRound + 1) * 2;
+    [wcItems[nextBase], wcItems[nextBase + 1]].forEach((item) => {
+      if (!item) return;
+      const link = document.createElement("link");
+      link.rel = "prefetch";
+      link.href = `/items_img/${item.item_id.replace(/_/g, "")}.jpg`;
+      document.head.appendChild(link);
+    });
+  }, [wcRound]);
 
   const handleStart = async () => {
     if (ticket.status === "init") {
@@ -336,7 +349,6 @@ export default function SurveyClient({ ticket, categories }: Props) {
           >
             어떤 종류의 선물이 마음에 드시나요?
           </div>
-
           {/* 카테고리 그리드 */}
           <div
             style={{
@@ -388,7 +400,6 @@ export default function SurveyClient({ ticket, categories }: Props) {
               );
             })}
           </div>
-
           <button
             style={{
               ...accentBtnStyle,
@@ -398,7 +409,7 @@ export default function SurveyClient({ ticket, categories }: Props) {
             onClick={handleCategoryNext}
             disabled={!selectedCategory}
           >
-            다음 →
+            다음
           </button>
         </div>
       </div>
@@ -518,19 +529,13 @@ export default function SurveyClient({ ticket, categories }: Props) {
                               }
                         }
                       >
-                        <img
+                        <Image
                           src={imgSrc}
                           alt={item.item_name}
-                          style={{
-                            position: "absolute",
-                            left: 0,
-                            top: 0,
-                            width: "100%",
-                            height: "100%",
-                            objectFit: "cover",
-                            objectPosition: "center",
-                            display: "block",
-                          }}
+                          fill
+                          style={{ objectFit: "cover", objectPosition: "center" }}
+                          sizes="(max-width: 560px) 70vw, 250px"
+                          priority={wcRound === 0} // 첫 라운드만 priority
                         />
                       </div>
                     </div>
@@ -558,6 +563,18 @@ export default function SurveyClient({ ticket, categories }: Props) {
               );
             })}
           </div>
+          <button
+            style={{
+              ...backBtnStyle,
+              opacity: selectedCategory ? 1 : 0.4,
+              cursor: selectedCategory ? "pointer" : "not-allowed",
+              marginTop: 40,
+            }}
+            onClick={() => setPhase("step1")}
+            disabled={!selectedCategory}
+          >
+            다시 하기
+          </button>
         </div>
       </div>
     );
