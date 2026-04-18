@@ -72,7 +72,7 @@ export default function CreditChargeModal({ userId, isRefund, onClose }: Props) 
     >
       <div className={styles["modal-sheet"]}>
         <div className={styles["modal-handle"]} />
-        <div className={styles["modal-title"]}>크레딧 충전</div>
+        <div className={styles["modal-title"]}>크레딧 {isRefund ? "환불" : "충전"}</div>
 
         {/* 상품 목록 */}
         <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 24 }}>

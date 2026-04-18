@@ -1,7 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
-import SurveyClient from "./client";
+import SurveyClient from "./SurveyClient";
 
 export default async function SurveyPage({ params }: { params: Promise<{ ticketId: string }> }) {
   const { ticketId } = await params;
