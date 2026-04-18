@@ -2,7 +2,13 @@
 
 import { Fragment, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { THEME_START_MSG } from "@/lib/constants";
+import {
+  THEME_MAIN_INFO,
+  THEME_CATEGORY_MSG,
+  THEME_STEP_MSG,
+  THEME_STEP_TITLE,
+  THEME_RESULT_MSG,
+} from "@/lib/constants";
 import { Ticket, Category, Item, Phase } from "@/types";
 import Image from "next/image";
 
@@ -23,16 +29,25 @@ const THEME_STYLE: Record<
     font: string;
   }
 > = {
-  formal: {
-    bg: "#1C1C1C",
-    accent: "#FFFFFF",
-    text: "#FFFFFF",
-    subText: "#888",
-    cardBg: "#2A2A2A",
-    btnText: "#000000",
-    font: "Georgia, serif",
+  MOOD: {
+    bg: "#FFF8F0",
+    accent: "#F4845F",
+    text: "#3D2010",
+    subText: "#B07050",
+    cardBg: "#FFFFFF",
+    btnText: "#FFFFFF",
+    font: "inherit",
   },
-  friend: {
+  LUCK: {
+    bg: "#FFFBF0",
+    accent: "#E8AC30",
+    text: "#3D2E00",
+    subText: "#B09040",
+    cardBg: "#FFFFFF",
+    btnText: "#FFFFFF",
+    font: "inherit",
+  },
+  PERSONA: {
     bg: "#EDE9F8",
     accent: "#7C5CBF",
     text: "#2D1F5E",
@@ -41,11 +56,20 @@ const THEME_STYLE: Record<
     btnText: "#FFFFFF",
     font: "inherit",
   },
-  sweet: {
-    bg: "#FFF0F5",
-    accent: "#E8639A",
-    text: "#8B2252",
-    subText: "#D4879E",
+  FAVORITE: {
+    bg: "#1C1C1C",
+    accent: "#FFFFFF",
+    text: "#FFFFFF",
+    subText: "#888",
+    cardBg: "#2A2A2A",
+    btnText: "#000000",
+    font: "Georgia, serif",
+  },
+  SURVIVAL: {
+    bg: "#F0F8F2",
+    accent: "#3DAA6B",
+    text: "#0D3320",
+    subText: "#6BA080",
     cardBg: "#FFFFFF",
     btnText: "#FFFFFF",
     font: "inherit",
@@ -53,9 +77,11 @@ const THEME_STYLE: Record<
 };
 
 const THEME_EMOJI: Record<string, string> = {
-  formal: "🎩",
-  friend: "🤝🏻",
-  sweet: "💕",
+  MOOD: "🌿",
+  LUCK: "🍀",
+  PERSONA: "🎭",
+  FAVORITE: "📊",
+  SURVIVAL: "⚔️",
 };
 
 const CATEGORY_EMOJI: Record<string, string> = {
@@ -74,20 +100,18 @@ const MEDAL = ["🥇", "🥈", "🥉"];
 const MEDAL_LABEL = ["1순위", "2순위", "3순위"];
 const MEDAL_COLOR = ["#F9B233", "#94a3b8", "#cd7f32"];
 
-function buildResultMsg(comment: string, theme: string): string {
-  const parts = comment.split("/").map((s) => s.trim());
-  const [t1, t2, t3] = parts;
-  if (theme === "formal") {
-    return `${t1 ?? ""}으시며, ${t2 ?? ""}시고, ${t3 ?? ""}한 당신께\n센스있는 선물을 드리고 싶은분이 있어요.`;
-  }
-  if (theme === "friend") {
-    return `${t1 ?? ""}하고, ${t2 ?? ""}하며,\n${t3 ?? ""}한 당신의\n 맘에 쏙드는 선물을 고르는 중 🤝🏻`;
-  }
-  return `${t1 ?? ""}하고, ${t2 ?? ""}하며,\n${t3 ?? ""}한 사람에게\n드릴 달콤한 선물을 준비하고 있어요 💕`;
+function buildResultMsg(comment: string, theme: string, topItem?: string): string {
+  const keyword = comment
+    .split("/")
+    .map((s) => s.trim())
+    .filter(Boolean)
+    .join(", ");
+  const template = THEME_RESULT_MSG[theme] ?? "";
+  return template.replace("[ITEM]", topItem ?? "").replace("[FRIEND_KEYWORD]", keyword);
 }
 
 export default function SurveyClient({ ticket, categories }: Props) {
-  const ts = THEME_STYLE[ticket.theme] ?? THEME_STYLE.formal;
+  const ts = THEME_STYLE[ticket.theme] ?? "MOOD";
   const isExpired = ticket.status === "complete" || ticket.status === "cancelled";
 
   const [phase, setPhase] = useState<Phase>(isExpired ? "expired" : "intro");
@@ -148,28 +172,21 @@ export default function SurveyClient({ ticket, categories }: Props) {
     setPhase("step2");
   };
 
-  // 월드컵 선택 wcRound
-  // round 0,1,2 → 2:2:2 (pairs: [0,1],[2,3],[4,5])
-  // round 3 → winner[0] vs winner[1]
-  // round 4 → round3_winner vs winner[2]
   const getCurrentPair = (): [Item, Item] | null => {
     if (wcRound < 3) {
       const base = wcRound * 2;
       return [wcItems[base], wcItems[base + 1]];
     }
-    if (wcRound === 3) return [wcWinners[0], wcWinners[1]];
-    if (wcRound === 4) return [wcWinners[3], wcWinners[2]];
     return null;
   };
 
   const handleWcPick = async (picked: Item) => {
-    const newWinners = [...wcWinners, picked];
-
-    if (wcRound < 4) {
-      setWcWinners(newWinners);
+    if (wcRound < 3) {
+      setWcWinners([...wcWinners, picked]);
       setWcRound(wcRound + 1);
       return;
     }
+    // 파이널: picked가 최종 winner
     const finalWinner = picked;
     const prefix = finalWinner.item_id;
     const { data } = await supabase!
@@ -188,7 +205,6 @@ export default function SurveyClient({ ticket, categories }: Props) {
 
   const handleMedalPick = (item: Item, rank: number) => {
     const newMedals = [...medals];
-    // 이미 다른 순위에 있으면 제거
     const prevIdx = newMedals.findIndex((m) => m?.item_id === item.item_id);
     if (prevIdx !== -1) newMedals[prevIdx] = null;
     newMedals[rank] = item;
@@ -247,6 +263,7 @@ export default function SurveyClient({ ticket, categories }: Props) {
     cursor: "pointer",
     width: "100%",
   };
+
   const backBtnStyle = {
     background: ts.cardBg,
     color: ts.accent,
@@ -263,15 +280,7 @@ export default function SurveyClient({ ticket, categories }: Props) {
     return (
       <div style={pageStyle}>
         <div style={{ fontSize: 40, marginBottom: 20 }}>🔒</div>
-        <div
-          style={{
-            fontSize: 18,
-            fontWeight: 700,
-            color: ts.text,
-            marginBottom: 8,
-            textAlign: "center",
-          }}
-        >
+        <div style={{ fontSize: 18, fontWeight: 700, color: ts.text, marginBottom: 8, textAlign: "center" }}>
           이미 사용된 티켓이에요
         </div>
         <div style={{ fontSize: 14, color: ts.subText, textAlign: "center" }}>
@@ -282,18 +291,10 @@ export default function SurveyClient({ ticket, categories }: Props) {
   }
 
   if (phase === "intro") {
+    const info = THEME_MAIN_INFO[ticket.theme];
     return (
       <div style={pageStyle}>
-        <div
-          style={{
-            fontSize: 13,
-            color: ts.subText,
-            letterSpacing: 3,
-            marginBottom: 24,
-          }}
-        >
-          WDYL
-        </div>
+        <div style={{ fontSize: 13, color: ts.subText, letterSpacing: 3, marginBottom: 24 }}>WDYL</div>
         <div
           style={{
             fontSize: 24,
@@ -314,12 +315,31 @@ export default function SurveyClient({ ticket, categories }: Props) {
             color: ts.subText,
             textAlign: "center",
             lineHeight: 1.8,
-            marginBottom: 40,
+            marginBottom: 16,
             whiteSpace: "pre-line",
           }}
         >
-          {THEME_START_MSG[ticket.theme]}
+          {info?.title}
         </div>
+        {info?.keywords && (
+          <div style={{ display: "flex", gap: 8, marginBottom: 40, flexWrap: "wrap", justifyContent: "center" }}>
+            {info.keywords.map((kw) => (
+              <span
+                key={kw}
+                style={{
+                  fontSize: 12,
+                  color: ts.accent,
+                  background: `${ts.accent}18`,
+                  padding: "4px 10px",
+                  borderRadius: 20,
+                  fontWeight: 600,
+                }}
+              >
+                {kw}
+              </span>
+            ))}
+          </div>
+        )}
         <div style={{ width: "100%", maxWidth: 320 }}>
           <button
             style={accentBtnStyle}
@@ -333,32 +353,25 @@ export default function SurveyClient({ ticket, categories }: Props) {
   }
 
   if (phase === "step1") {
+    const categoryMsg = THEME_CATEGORY_MSG[ticket.theme];
     return (
       <div style={{ ...pageStyle, justifyContent: "flex-start", paddingTop: 48 }}>
         <div style={{ width: "100%", maxWidth: 420 }}>
           <div style={{ fontSize: 13, color: ts.subText, marginBottom: 6 }}>STEP 1</div>
+          <div style={{ fontSize: 13, color: ts.subText, marginTop: 4, marginBottom: 6 }}>{categoryMsg?.sub}</div>
           <div
             style={{
               fontSize: 18,
               fontWeight: 800,
               color: ts.text,
-              marginTop: 20,
+              marginTop: 8,
               marginBottom: 40,
               textAlign: "center",
             }}
           >
-            어떤 종류의 선물이 마음에 드시나요?
+            {categoryMsg?.question}
           </div>
-          {/* 카테고리 그리드 */}
-          <div
-            style={{
-              display: "flex",
-              flexWrap: "wrap",
-              gap: 12,
-              justifyContent: "center",
-              marginBottom: 80,
-            }}
-          >
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 12, justifyContent: "center", marginBottom: 80 }}>
             {categories.map((cat) => {
               const isSelected = selectedCategory === cat.category_code;
               const isHovered = hoveredCategory === cat.category_code;
@@ -417,38 +430,27 @@ export default function SurveyClient({ ticket, categories }: Props) {
   }
 
   if (phase === "step2") {
-    const pair = getCurrentPair();
-    if (!pair) return null;
-    const [itemA, itemB] = pair;
-    const progress = (wcRound / 5) * 100;
+    const isFinal = wcRound === 3;
+    const progress = (wcRound / 4) * 100;
+    const stepTitle = THEME_STEP_TITLE[ticket.theme];
+    const stepMsg = THEME_STEP_MSG[ticket.theme];
+    const titleKey = (["step1", "step2", "step3"] as const)[Math.min(wcRound, 2)];
+    const title = isFinal ? stepMsg?.step2 : stepTitle?.[titleKey];
 
-    const roundLabel = wcRound < 3 ? `${wcRound + 1}/3 라운드` : wcRound === 3 ? "준결승" : "결승";
+    const displayItems = isFinal
+      ? wcWinners
+      : (() => {
+          const pair = getCurrentPair();
+          return pair ?? [];
+        })();
 
     return (
       <div style={{ ...pageStyle, justifyContent: "flex-start", paddingTop: 48 }}>
         <div style={{ width: "100%", maxWidth: 520 }}>
-          <div style={{ fontSize: 13, color: ts.subText, marginBottom: 6 }}>STEP 2 · {roundLabel}</div>
-          <div
-            style={{
-              fontSize: 18,
-              fontWeight: 800,
-              color: ts.text,
-              marginBottom: 16,
-            }}
-          >
-            둘 중에 더 선호하는 것을 골라주세요!
-          </div>
+          <div style={{ fontSize: 13, color: ts.subText, marginBottom: 6 }}>STEP 2 · {title}</div>
 
           {/* 진행바 */}
-          <div
-            style={{
-              width: "100%",
-              height: 4,
-              background: `${ts.accent}20`,
-              borderRadius: 2,
-              marginBottom: 28,
-            }}
-          >
+          <div style={{ width: "100%", height: 4, background: `${ts.accent}20`, borderRadius: 2, marginBottom: 28 }}>
             <div
               style={{
                 width: `${progress}%`,
@@ -460,29 +462,26 @@ export default function SurveyClient({ ticket, categories }: Props) {
             />
           </div>
 
-          {/* VS 카드: 모바일(좁은 화면)에서는 세로 + 사이 VS */}
+          {/* 카드 */}
           <div
             style={{
               display: "flex",
-              flexDirection: wcStackLayout ? "column" : "row",
-              alignItems: wcStackLayout ? "stretch" : undefined,
-              gap: wcStackLayout ? 10 : 14,
+              flexDirection: !isFinal && wcStackLayout ? "column" : "row",
+              gap: isFinal ? 8 : 12,
               marginBottom: 16,
             }}
           >
-            {[itemA, itemB].map((item, idx) => {
+            {displayItems.map((item, idx) => {
               const imgSrc = `/items_img/${item.item_id.replace(/_/g, "")}.jpg`;
+              const stackMode = !isFinal && wcStackLayout;
               return (
                 <Fragment key={item.item_id}>
                   <div
                     onClick={() => handleWcPick(item)}
                     style={{
-                      flex: wcStackLayout ? undefined : 1,
-                      alignSelf: wcStackLayout ? "center" : undefined,
-                      width: wcStackLayout ? "70%" : undefined,
-                      minWidth: wcStackLayout ? undefined : 0,
+                      flex: 1,
                       background: ts.cardBg,
-                      borderRadius: 20,
+                      borderRadius: 16,
                       overflow: "hidden",
                       display: "flex",
                       flexDirection: "column",
@@ -502,76 +501,53 @@ export default function SurveyClient({ ticket, categories }: Props) {
                   >
                     <div
                       style={{
+                        position: "relative",
                         width: "100%",
-                        display: "flex",
-                        justifyContent: "center",
-                        flexShrink: 0,
+                        paddingBottom: "100%",
                         background: `${ts.accent}12`,
                       }}
                     >
-                      <div
-                        style={
-                          wcStackLayout
-                            ? {
-                                position: "relative",
-                                width: "100%",
-                                height: 0,
-                                paddingBottom: "calc(100% - 20px)",
-                                overflow: "hidden",
-                                background: `${ts.accent}12`,
-                              }
-                            : {
-                                position: "relative",
-                                width: 250,
-                                height: 250,
-                                overflow: "hidden",
-                                background: `${ts.accent}12`,
-                              }
-                        }
-                      >
-                        <Image
-                          src={imgSrc}
-                          alt={item.item_name}
-                          fill
-                          style={{ objectFit: "cover", objectPosition: "center" }}
-                          sizes="(max-width: 560px) 70vw, 250px"
-                          priority={wcRound === 0} // 첫 라운드만 priority
-                        />
-                      </div>
+                      <Image
+                        src={imgSrc}
+                        alt={item.item_name}
+                        fill
+                        style={{ objectFit: "cover", objectPosition: "center" }}
+                        sizes={isFinal ? "30vw" : "(max-width: 560px) 70vw, 250px"}
+                        priority={wcRound === 0}
+                      />
                     </div>
-                    <div style={{ padding: "14px 12px 18px" }}>
-                      <div style={{ fontSize: 15, fontWeight: 700, color: ts.text, lineHeight: 1.35 }}>
+                    <div style={{ padding: isFinal ? "8px 6px 12px" : "12px 8px 16px" }}>
+                      <div style={{ fontSize: isFinal ? 12 : 15, fontWeight: 700, color: ts.text, lineHeight: 1.35 }}>
                         {item.item_name}
                       </div>
                     </div>
                   </div>
-                  {wcStackLayout && idx === 0 ? (
+
+                  {!isFinal && idx === 0 && (
                     <div
                       style={{
                         flexShrink: 0,
-                        textAlign: "center",
-                        fontSize: 17,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: stackMode ? 17 : 14,
                         fontWeight: 900,
                         color: ts.accent,
-                        padding: "6px 0 2px",
+                        padding: stackMode ? "6px 0" : "0 4px",
+                        minWidth: stackMode ? undefined : 24,
                       }}
                     >
                       VS
                     </div>
-                  ) : null}
+                  )}
                 </Fragment>
               );
             })}
           </div>
+
           <button
-            style={{
-              ...backBtnStyle,
-              opacity: selectedCategory ? 1 : 0.4,
-              cursor: selectedCategory ? "pointer" : "not-allowed",
-              marginTop: 40,
-            }}
+            style={{ ...backBtnStyle, marginTop: 40 }}
             onClick={() => setPhase("step1")}
-            disabled={!selectedCategory}
           >
             다시 하기
           </button>
@@ -581,30 +557,17 @@ export default function SurveyClient({ ticket, categories }: Props) {
   }
 
   if (phase === "step3") {
+    const stepMsg = THEME_STEP_MSG[ticket.theme];
     return (
       <div style={{ ...pageStyle, justifyContent: "flex-start", paddingTop: 48 }}>
         <div style={{ width: "100%", maxWidth: 420 }}>
           <div style={{ fontSize: 13, color: ts.subText, marginBottom: 6 }}>STEP 3 · 최종 선택</div>
-          <div
-            style={{
-              fontSize: 18,
-              fontWeight: 800,
-              color: ts.text,
-              marginBottom: 8,
-            }}
-          >
-            순위를 매겨봐요!
+          <div style={{ fontSize: 18, fontWeight: 800, color: ts.text, marginBottom: 8 }}>
+            {stepMsg?.step3 ?? "순위를 매겨봐요!"}
           </div>
           <div style={{ fontSize: 13, color: ts.subText, marginBottom: 28 }}>1순위부터 차례로 탭해주세요</div>
 
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: 12,
-              marginBottom: 28,
-            }}
-          >
+          <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 28 }}>
             {step3Items.map((item) => {
               const medalIdx = medals.findIndex((m) => m?.item_id === item.item_id);
               const hasMedal = medalIdx !== -1;
@@ -613,12 +576,10 @@ export default function SurveyClient({ ticket, categories }: Props) {
                   key={item.item_id}
                   onClick={() => {
                     if (hasMedal) {
-                      // 취소
                       const newMedals = medals.map((m) => (m?.item_id === item.item_id ? null : m));
                       setMedals(newMedals);
                       setStep3Done(false);
                     } else {
-                      // 다음 빈 순위에 배정
                       const nextRank = medals.findIndex((m) => m === null);
                       if (nextRank === -1) return;
                       handleMedalPick(item, nextRank);
@@ -640,13 +601,7 @@ export default function SurveyClient({ ticket, categories }: Props) {
                   <div style={{ flex: 1 }}>
                     <div style={{ fontSize: 15, fontWeight: 700, color: ts.text }}>{item.item_name}</div>
                     {hasMedal && (
-                      <div
-                        style={{
-                          fontSize: 12,
-                          color: MEDAL_COLOR[medalIdx],
-                          marginTop: 2,
-                        }}
-                      >
+                      <div style={{ fontSize: 12, color: MEDAL_COLOR[medalIdx], marginTop: 2 }}>
                         {MEDAL_LABEL[medalIdx]}
                       </div>
                     )}
@@ -657,19 +612,13 @@ export default function SurveyClient({ ticket, categories }: Props) {
             })}
           </div>
 
-          {/* 현재 순위 미리보기 */}
           {medals.some((m) => m !== null) && (
             <div style={{ ...cardStyle, marginBottom: 20, padding: "16px 20px" }}>
               <div style={{ fontSize: 11, color: ts.subText, marginBottom: 10 }}>현재 순위</div>
               {medals.map((m, i) => (
                 <div
                   key={i}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 8,
-                    marginBottom: 6,
-                  }}
+                  style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}
                 >
                   <span style={{ fontSize: 16 }}>{MEDAL[i]}</span>
                   <span style={{ fontSize: 14, color: m ? ts.text : ts.subText }}>{m ? m.item_name : "미선택"}</span>
@@ -679,11 +628,7 @@ export default function SurveyClient({ ticket, categories }: Props) {
           )}
 
           <button
-            style={{
-              ...accentBtnStyle,
-              opacity: step3Done ? 1 : 0.4,
-              cursor: step3Done ? "pointer" : "not-allowed",
-            }}
+            style={{ ...accentBtnStyle, opacity: step3Done ? 1 : 0.4, cursor: step3Done ? "pointer" : "not-allowed" }}
             onClick={handleSubmitResult}
             disabled={!step3Done || loading}
           >
@@ -691,10 +636,7 @@ export default function SurveyClient({ ticket, categories }: Props) {
           </button>
           <div style={{ height: 12 }} />
           <button
-            style={{
-              ...backBtnStyle,
-              cursor: !loading ? "pointer" : "not-allowed",
-            }}
+            style={{ ...backBtnStyle, cursor: !loading ? "pointer" : "not-allowed" }}
             onClick={() => setPhase("step1")}
           >
             {loading ? "저장 중..." : "다시 하기"}
@@ -705,36 +647,18 @@ export default function SurveyClient({ ticket, categories }: Props) {
   }
 
   if (phase === "result") {
-    const resultMsg = buildResultMsg(ticket.comment, ticket.theme);
+    const resultMsg = buildResultMsg(ticket.comment, ticket.theme, medals[0]?.item_name);
     return (
       <div style={pageStyle}>
         <div style={{ fontSize: 48, marginBottom: 20 }}>{THEME_EMOJI[ticket.theme] ?? "🎁"}</div>
-        <div
-          style={{
-            fontSize: 13,
-            color: ts.subText,
-            letterSpacing: 2,
-            marginBottom: 20,
-          }}
-        >
-          RESULT
-        </div>
+        <div style={{ fontSize: 13, color: ts.subText, letterSpacing: 2, marginBottom: 20 }}>RESULT</div>
 
         <div style={{ ...cardStyle, textAlign: "center", marginBottom: 20 }}>
-          <div
-            style={{
-              fontSize: 14,
-              color: ts.subText,
-              lineHeight: 2,
-              whiteSpace: "pre-line",
-              marginBottom: 16,
-            }}
-          >
+          <div style={{ fontSize: 14, color: ts.subText, lineHeight: 2, whiteSpace: "pre-line", marginBottom: 16 }}>
             {resultMsg}
           </div>
         </div>
 
-        {/* 최종 순위 */}
         <div style={{ ...cardStyle }}>
           <div style={{ fontSize: 11, color: ts.subText, marginBottom: 12 }}>내가 고른 선물 순위</div>
           {medals.map(
@@ -742,12 +666,7 @@ export default function SurveyClient({ ticket, categories }: Props) {
               m && (
                 <div
                   key={i}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 10,
-                    marginBottom: 8,
-                  }}
+                  style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}
                 >
                   <span style={{ fontSize: 20 }}>{MEDAL[i]}</span>
                   <span style={{ fontSize: 14, fontWeight: 600, color: ts.text }}>{m.item_name}</span>
@@ -756,14 +675,7 @@ export default function SurveyClient({ ticket, categories }: Props) {
           )}
         </div>
 
-        <div
-          style={{
-            fontSize: 12,
-            color: ts.subText,
-            marginTop: 24,
-            textAlign: "center",
-          }}
-        >
+        <div style={{ fontSize: 12, color: ts.subText, marginTop: 24, textAlign: "center" }}>
           선물을 준비 중인 누군가에게
           <br />이 결과가 전달될 거예요 {THEME_EMOJI[ticket.theme]}
         </div>
