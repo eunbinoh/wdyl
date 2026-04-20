@@ -37,7 +37,7 @@ export function useSurvey(ticket: Ticket) {
   }, [wcRound, wcItems]);
 
   const handleStart = async () => {
-    if (ticket.status === "init") {
+    if (ticket.status === "sent") {
       await supabase!.from("Ticket").update({ status: "progress" }).eq("ticket_id", ticket.ticket_id);
     }
     setPhase("step1");

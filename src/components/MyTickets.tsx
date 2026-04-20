@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Mails, MessageSquareMore, CalendarClock, ChevronDown } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
-import { Ticket } from "@/types";
+import { Status, Ticket } from "@/types";
 import styles from "./allComponents.module.css";
 import TicketNewModal from "./TicketNewModal";
 import TicketDetailModal from "./TicketDetailModal";
@@ -15,11 +15,12 @@ type Props = {
   credits: number;
 };
 
-const STATUS_LABEL: Record<string, { label: string; color: string; bg: string }> = {
-  init: { label: "발송대기", color: "#64748b", bg: "#f1f5f9" },
-  progress: { label: "진행중", color: "#16a34a", bg: "#f0fdf4" },
-  complete: { label: "작성완료", color: "#0062CC", bg: "#eff6ff" },
-  cancelled: { label: "회수완료", color: "#ef4444", bg: "#fef2f2" },
+const STATUS_LABEL: Record<Status, { label: string; color: string; bg: string }> = {
+  created: { label: "발송대기", color: "#64748b", bg: "#f1f5f9" },
+  sent: { label: "발송완료", color: "#64748b", bg: "#f1f5f9" },
+  progress: { label: "참여중", color: "#16a34a", bg: "#f0fdf4" },
+  complete: { label: "참여완료", color: "#0062CC", bg: "#eff6ff" },
+  cancelled: { label: "발송취소", color: "#ef4444", bg: "#fef2f2" },
 };
 
 function formatDate(dateStr: string) {
@@ -59,8 +60,14 @@ export default function MyTickets({ userId, credits }: Props) {
   };
 
   useEffect(() => {
-    getTickets(10);
-  }, [userId]);
+    const handleFocus = () => {
+      getTickets(10);
+      router.refresh();
+    };
+
+    window.addEventListener("focus", handleFocus);
+    return () => window.removeEventListener("focus", handleFocus);
+  }, []);
 
   const handleKakaoSend = (ticketId: string, receiverName: string) => {
     const surveyUrl = `https://wdyl.vercel.app/survey/${ticketId}`;
@@ -76,6 +83,10 @@ export default function MyTickets({ userId, credits }: Props) {
       link: {
         mobileWebUrl: surveyUrl,
         webUrl: surveyUrl,
+      },
+      serverCallbackArgs: {
+        type: "send",
+        ticket_id: ticketId,
       },
     });
   };
@@ -140,7 +151,7 @@ export default function MyTickets({ userId, credits }: Props) {
       ) : (
         <div className={styles["tickets-list"]}>
           {visibleTickets.map((ticket, index) => {
-            const status = STATUS_LABEL[ticket.status] ?? STATUS_LABEL["init"];
+            const status = STATUS_LABEL[ticket.status] ?? STATUS_LABEL["created"];
             return (
               <div key={ticket.ticket_id}>
                 <div
@@ -173,8 +184,8 @@ export default function MyTickets({ userId, credits }: Props) {
 
                   {/* 액션 버튼 */}
                   <div className={styles["ticket-actions"]}>
-                    {/* init: 발송하기 + 회수하기 */}
-                    {ticket.status === "init" && (
+                    {/* created: 발송하기 + 회수하기 */}
+                    {ticket.status === "created" && (
                       <>
                         <button
                           className={`${styles["ticket-action-btn"]} ${styles["yellow"]}`}

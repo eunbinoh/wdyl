@@ -26,7 +26,7 @@ type Props = {
 export default function DetailTicketModal({ ticketId, onClose, onFetched }: Props) {
   const [toName, setToName] = useState("");
   const [traits, setTraits] = useState(["", "", ""]);
-  const [status, setStatus] = useState<Status>("init");
+  const [status, setStatus] = useState<Status>("created");
   const [fetchLoading, setFetchLoading] = useState(true);
   const [loading, setLoading] = useState(false);
   const [tooltip, setTooltip] = useState<string | null>(null);
@@ -37,7 +37,7 @@ export default function DetailTicketModal({ ticketId, onClose, onFetched }: Prop
   const [previewPage, setPreviewPage] = useState(0);
   const setTrait = (i: number, v: string) => setTraits((prev) => prev.map((t, idx) => (idx === i ? v : t)));
 
-  const isEditable = status === "init";
+  const isEditable = status === "created" || status === "sent";
   const displayName = toName.trim() || "OO";
   const filledTraits = traits.map((t, i) => t.trim() || `특징${i + 1}`);
 
@@ -53,7 +53,7 @@ export default function DetailTicketModal({ ticketId, onClose, onFetched }: Prop
       if (data) {
         setToName(data.receiver_name ?? "");
         setTheme((data.theme as ThemeId) ?? "MOOD");
-        setStatus((data.status as Status) ?? "init");
+        setStatus((data.status as Status) ?? "created");
         // comment "텍스트1 / 텍스트2 / 텍스트3" → 배열로 분리
         const parts = (data.comment ?? "").split("/").map((s: string) => s.trim());
         setTraits([parts[0] ?? "", parts[1] ?? "", parts[2] ?? ""]);

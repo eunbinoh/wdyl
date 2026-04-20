@@ -68,7 +68,7 @@ export default function CreateTicketModal({ userId, credits, onClose, onSuccess 
         theme,
         receiver_name: toName.trim(),
         comment: traits.map((t) => t.trim()).join(" / "),
-        status: "init",
+        status: "created",
       });
       if (ticketError) throw ticketError;
 

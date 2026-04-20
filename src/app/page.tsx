@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useEffect, useState } from "react";
 import SubTitleAnimation from "@/components/AnimationSubTitle";
+import { useEffect, useState } from "react";
 import { Share2 } from "lucide-react";
+import { supabase } from "@/lib/supabase";
 
 const TIPS = [
   {
@@ -44,6 +45,20 @@ export default function LandingPage() {
   const [hoveredTip, setHoveredTip] = useState<number | null>(null);
   const [hoveredPlan, setHoveredPlan] = useState<number | null>(null);
 
+  const [user, setUser] = useState<{ id: string; nickname: string } | null>(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const {
+        data: { user: authUser },
+      } = await supabase!.auth.getUser();
+      if (!authUser) return;
+      const { data } = await supabase!.from("User").select("id, nickname").eq("id", authUser.id).single();
+      if (data) setUser(data);
+    };
+    fetchUser();
+  }, []);
+
   const handleKakaoShare = () => {
     if (!window.Kakao) return;
     if (!window.Kakao.isInitialized()) {
@@ -55,6 +70,10 @@ export default function LandingPage() {
       link: {
         mobileWebUrl: "https://wdyl.vercel.app/",
         webUrl: "https://wdyl.vercel.app/",
+      },
+      serverCallbackArgs: {
+        type: "share",
+        user_id: user?.id,
       },
     });
   };
@@ -84,7 +103,7 @@ export default function LandingPage() {
         .cta-btn { transition: all 0.2s ease; }
         .cta-btn:hover { transform: scale(1.03); box-shadow: 0 8px 24px rgba(254,229,0,0.5); }
         .login-btn { transition: all 0.2s ease; }
-        .login-btn:hover { background: #f9b233 !important; color: #fff !important; }
+        .login-btn:hover, .login-btn:active { background: #f9b233 !important; color: #fff !important; }
         .promo-tag { animation: float 3s ease-in-out infinite; }
       `}</style>
 
@@ -108,20 +127,22 @@ export default function LandingPage() {
           style={{ objectFit: "contain" }}
         />
         <Link
-          href="/login"
+          href={user ? "/main" : "/login"}
           className="login-btn"
           style={{
             fontSize: 13,
             fontWeight: 700,
             color: "#f9b233",
             background: "rgb(250, 243, 230)",
-            border: "1.5px solid #f9b233",
-            borderRadius: 20,
-            padding: "8px 20px",
+            border: "1px solid #f9b233",
+            borderRadius: "12px",
+            height: "32px",
+            padding: "6px 12px",
             textDecoration: "none",
+            whiteSpace: "nowrap",
           }}
         >
-          로그인
+          {user ? `${user.nickname}님의 마이페이지` : "로그인"}
         </Link>
       </header>
 

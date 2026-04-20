@@ -1,5 +1,5 @@
 export type Theme = "formal" | "friend" | "sweet";
-export type Status = "init" | "progress" | "complete" | "cancelled";
+export type Status = "created" | "sent" | "progress" | "complete" | "cancelled";
 export type Ticket = {
   ticket_id: string;
   receiver_name: string;
