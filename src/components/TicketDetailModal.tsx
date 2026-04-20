@@ -2,16 +2,20 @@
 
 import { useRef, useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
-import { CircleHelp } from "lucide-react";
+import { CircleHelp, ChevronLeft, ChevronRight } from "lucide-react";
 import styles from "./allComponents.module.css";
-import { TOOLTIPS } from "@/lib/constants";
-import { Theme, Status } from "@/types";
+import { TOOLTIPS, THEMES } from "@/lib/constants";
+import { Status } from "@/types";
+import { THEME_EMOJI, THEME_STYLE } from "@/app/(web)/survey/[ticketId]/_styles";
+import { TicketPreview } from "./TicketPreview";
 
-const THEMES: { value: Theme; label: string; emoji: string }[] = [
-  { value: "formal", label: "정중", emoji: "🎩" },
-  { value: "friend", label: "친근", emoji: "🤝🏻" },
-  { value: "sweet", label: "스윗", emoji: "💕" },
-];
+type ThemeId = "MOOD" | "LUCK" | "PERSONA" | "FAVORITE" | "SURVIVAL";
+
+const THEME_LIST = Object.values(THEMES).map((t) => ({
+  value: t.id as ThemeId,
+  label: t.name,
+  emoji: THEME_EMOJI[t.id],
+}));
 
 type Props = {
   ticketId: string;
@@ -20,7 +24,6 @@ type Props = {
 };
 
 export default function DetailTicketModal({ ticketId, onClose, onFetched }: Props) {
-  const [theme, setTheme] = useState<Theme>("formal");
   const [toName, setToName] = useState("");
   const [traits, setTraits] = useState(["", "", ""]);
   const [status, setStatus] = useState<Status>("init");
@@ -28,10 +31,15 @@ export default function DetailTicketModal({ ticketId, onClose, onFetched }: Prop
   const [loading, setLoading] = useState(false);
   const [tooltip, setTooltip] = useState<string | null>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
+  const [theme, setTheme] = useState<ThemeId>("MOOD");
 
+  const [showPreview, setShowPreview] = useState(false);
+  const [previewPage, setPreviewPage] = useState(0);
   const setTrait = (i: number, v: string) => setTraits((prev) => prev.map((t, idx) => (idx === i ? v : t)));
 
   const isEditable = status === "init";
+  const displayName = toName.trim() || "OO";
+  const filledTraits = traits.map((t, i) => t.trim() || `특징${i + 1}`);
 
   // 티켓 조회
   useEffect(() => {
@@ -44,7 +52,7 @@ export default function DetailTicketModal({ ticketId, onClose, onFetched }: Prop
 
       if (data) {
         setToName(data.receiver_name ?? "");
-        setTheme((data.theme as Theme) ?? "formal");
+        setTheme((data.theme as ThemeId) ?? "MOOD");
         setStatus((data.status as Status) ?? "init");
         // comment "텍스트1 / 텍스트2 / 텍스트3" → 배열로 분리
         const parts = (data.comment ?? "").split("/").map((s: string) => s.trim());
@@ -144,7 +152,6 @@ export default function DetailTicketModal({ ticketId, onClose, onFetched }: Prop
             {status === "complete" ? "완료" : status === "progress" ? "진행중" : "대기중"}
           </div>
         </div>
-
         {/* TO */}
         <div className={styles["modal-section"]}>
           {sectionLabel("TO")}
@@ -161,7 +168,6 @@ export default function DetailTicketModal({ ticketId, onClose, onFetched }: Prop
             <span className={styles["modal-input-suffix"]}>에게</span>
           </div>
         </div>
-
         {/* WHO */}
         <div className={styles["modal-section"]}>
           {sectionLabel("WHO")}
@@ -184,12 +190,11 @@ export default function DetailTicketModal({ ticketId, onClose, onFetched }: Prop
             ))}
           </div>
         </div>
-
         {/* CONCEPT */}
         <div className={styles["modal-section"]}>
           {sectionLabel("CONCEPT")}
           <div className={styles["modal-theme-row"]}>
-            {THEMES.map((t) => (
+            {THEME_LIST.map((t) => (
               <button
                 key={t.value}
                 onClick={() => isEditable && setTheme(t.value)}
@@ -209,6 +214,58 @@ export default function DetailTicketModal({ ticketId, onClose, onFetched }: Prop
             ))}
           </div>
         </div>
+        {isEditable && (
+          <div style={{ marginBottom: 20 }}>
+            <div className={styles["modal-preview-label"]}>
+              PREVIEW{" "}
+              <span style={{ fontSize: 14, color: "#1C1C1C", marginLeft: 2 }}>
+                {["# START", "# SURVEY", "# FINAL"][previewPage]}
+              </span>
+            </div>
+            <div className={styles["modal-preview-box"]}>
+              <TicketPreview
+                theme={theme}
+                displayName={displayName}
+                filledTraits={filledTraits}
+                page={previewPage}
+              />
+              {previewPage > 0 && (
+                <button
+                  className={styles["modal-preview-arrow"]}
+                  style={{ left: 10 }}
+                  onClick={() => setPreviewPage((p) => p - 1)}
+                >
+                  <ChevronLeft size={20} />
+                </button>
+              )}
+              {previewPage < 2 && (
+                <button
+                  className={styles["modal-preview-arrow"]}
+                  style={{ right: 10 }}
+                  onClick={() => setPreviewPage((p) => p + 1)}
+                >
+                  <ChevronRight size={20} />
+                </button>
+              )}
+              <div className={styles["modal-preview-dots"]}>
+                {[0, 1, 2].map((i) => (
+                  <div
+                    key={i}
+                    onClick={() => setPreviewPage(i)}
+                    style={{
+                      width: i === previewPage ? 16 : 6,
+                      height: 6,
+                      borderRadius: 3,
+                      background: i === previewPage ? THEME_STYLE[theme].accent : "rgba(255,255,255,0.5)",
+                      cursor: "pointer",
+                      transition: "all 0.2s",
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
         <div className={styles["modal-btn-group"]}>
           {isEditable && (
             <button

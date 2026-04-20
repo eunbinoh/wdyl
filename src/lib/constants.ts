@@ -14,11 +14,11 @@ export const TRAIT_SUFFIX: Record<Theme, string[]> = {
 
 // 1. 테마 정보 정의 (순서 및 단축 네이밍 반영)
 export const THEMES = {
-  1: { id: "MOOD", name: "일상 무드 분석" },
-  2: { id: "LUCK", name: "행운 탐지기" },
-  3: { id: "PERSONA", name: "페르소나 테스트" },
-  4: { id: "FAVORITE", name: "취향 분석" },
-  5: { id: "SURVIVAL", name: "생존 장비 진단" },
+  1: { id: "MOOD", name: "일상 무드" },
+  2: { id: "LUCK", name: "행운 아이템" },
+  3: { id: "PERSONA", name: "페르소나" },
+  4: { id: "FAVORITE", name: "AI 취향분석" },
+  5: { id: "SURVIVAL", name: "생존 장비" },
 } as const;
 
 // 2. [화면 2] 테마별 10가지 카테고리 네이밍 (Update)
@@ -183,9 +183,9 @@ export const THEME_STEP_MSG: Record<string, { step1: string; step2: string; step
 
 // 6. [화면 6] 결과 화면 베이스
 export const THEME_RESULT_MSG: Record<string, string> = {
-  MOOD: "현재 무드는 [ITEM]. [FRIEND_KEYWORD] 같은 분위기가 감도는 중입니다.",
-  LUCK: "축하합니다! 당신의 수호템은 [ITEM]! 행운의 기운이 가득하네요.",
-  PERSONA: "당신은 [ITEM] 타입! 주변에서 보는 당신은 [FRIEND_KEYWORD] 하군요.",
-  FAVORITE: "분석 완료. 당신은 [FRIEND_KEYWORD] 기반의 [ITEM] 선호형입니다.",
-  SURVIVAL: "생존 랭크 S! [ITEM] 장착 완료. [FRIEND_KEYWORD] 능력이 상승합니다.",
+  MOOD: "현재 당신의 일상은 [ITEM]. [FRIEND_KEYWORD] \n 세 가지 무드가 감도는 중입니다.",
+  LUCK: "축하합니다! \n당신의 수호템은 [ITEM]! \n행운의 기운이 가득하네요.",
+  PERSONA: "당신은 [ITEM] 타입! \n주변에서 보는 당신은 [FRIEND_KEYWORD] 하군요.",
+  FAVORITE: "분석 완료. \n당신은 [FRIEND_KEYWORD] 기반의 [ITEM] 선호형입니다.",
+  SURVIVAL: "생존 랭크 S, [ITEM] 장착 완료. \n [FRIEND_KEYWORD] 능력이 상승합니다.",
 };

@@ -21,9 +21,9 @@
 
 .login-btn-guest {
   @apply flex items-center justify-center
-    w-full max-w-xs py-3 px-4
-    bg-[#64748b] text-[#fff] font-bold
-    rounded-lg hover:bg-[#000] transition-colors
+    w-full max-w-xs h-[44px] py-[10px] px-4
+    bg-gray-400 text-[#fff] font-bold
+    rounded-lg hover:bg-gray-500 transition-colors
     gap-2 mx-auto cursor-pointer;
 }
 /**

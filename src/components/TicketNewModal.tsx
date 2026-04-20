@@ -5,51 +5,17 @@ import { supabase } from "@/lib/supabase";
 import { nanoid } from "nanoid";
 import { ChevronLeft, ChevronRight, CircleHelp } from "lucide-react";
 import styles from "./allComponents.module.css";
-import { TOOLTIPS, TRAIT_SUFFIX } from "@/lib/constants";
-import { Theme } from "@/types";
+import { TOOLTIPS, THEMES } from "@/lib/constants";
+import { THEME_STYLE, THEME_EMOJI } from "@/app/(web)/survey/[ticketId]/_styles";
+import { TicketPreview } from "./TicketPreview";
 
-const THEMES: { value: Theme; label: string; emoji: string }[] = [
-  { value: "formal", label: "정중", emoji: "🎩" },
-  { value: "friend", label: "친근", emoji: "🤝🏻" },
-  { value: "sweet", label: "스윗", emoji: "💕" },
-];
+type ThemeId = "MOOD" | "LUCK" | "PERSONA" | "FAVORITE" | "SURVIVAL";
 
-const THEME_STYLE: Record<
-  Theme,
-  {
-    bg: string;
-    accent: string;
-    text: string;
-    subText: string;
-    cardBg: string;
-    font: string;
-  }
-> = {
-  formal: {
-    bg: "#1C1C1C",
-    accent: "#FFFFFF",
-    text: "#FFFFFF",
-    subText: "#888",
-    cardBg: "#2A2A2A",
-    font: "Georgia, serif",
-  },
-  friend: {
-    bg: "#EDE9F8",
-    accent: "#7C5CBF",
-    text: "#2D1F5E",
-    subText: "#9B8EC4",
-    cardBg: "#FFFFFF",
-    font: "inherit",
-  },
-  sweet: {
-    bg: "#FFF0F5",
-    accent: "#E8639A",
-    text: "#8B2252",
-    subText: "#D4879E",
-    cardBg: "#FFFFFF",
-    font: "inherit",
-  },
-};
+const THEME_LIST = Object.values(THEMES).map((t) => ({
+  value: t.id as ThemeId,
+  label: t.name,
+  emoji: THEME_EMOJI[t.id],
+}));
 
 type Props = {
   userId: string;
@@ -59,7 +25,7 @@ type Props = {
 };
 
 export default function CreateTicketModal({ userId, credits, onClose, onSuccess }: Props) {
-  const [theme, setTheme] = useState<Theme>("formal");
+  const [theme, setTheme] = useState<ThemeId>("MOOD");
   const [toName, setToName] = useState("");
   const [traits, setTraits] = useState(["", "", ""]);
   const [loading, setLoading] = useState(false);
@@ -67,6 +33,10 @@ export default function CreateTicketModal({ userId, credits, onClose, onSuccess 
   const [showPreview, setShowPreview] = useState(false);
   const [previewPage, setPreviewPage] = useState(0);
   const tooltipRef = useRef<HTMLDivElement>(null);
+
+  const ts = THEME_STYLE[theme];
+  const displayName = toName.trim() || "OO";
+  const filledTraits = traits.map((t, i) => t.trim() || `특징${i + 1}`);
 
   const setTrait = (i: number, v: string) => setTraits((prev) => prev.map((t, idx) => (idx === i ? v : t)));
 
@@ -136,185 +106,6 @@ export default function CreateTicketModal({ userId, credits, onClose, onSuccess 
     </div>
   );
 
-  const ts = THEME_STYLE[theme];
-  const suffix = TRAIT_SUFFIX[theme];
-  const displayName = toName.trim() || "OO";
-  const filledTraits = traits.map((t, i) => t.trim() || `특징${i + 1}`);
-
-  const previewScreens = [
-    <div
-      key="intro"
-      style={{
-        width: "100%",
-        height: "100%",
-        background: ts.bg,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: 28,
-        fontFamily: ts.font,
-      }}
-    >
-      <div
-        style={{
-          fontSize: 12,
-          color: ts.subText,
-          letterSpacing: 3,
-          marginBottom: 20,
-        }}
-      >
-        WDYL
-      </div>
-      <div
-        style={{
-          fontSize: 20,
-          fontWeight: 800,
-          color: ts.text,
-          textAlign: "center",
-          lineHeight: 1.5,
-          marginBottom: 10,
-        }}
-      >
-        <span style={{ color: ts.accent }}>{displayName}</span>님의 취향 분석
-      </div>
-      <div
-        style={{
-          fontSize: 13,
-          color: ts.subText,
-          textAlign: "center",
-          lineHeight: 1.7,
-          marginBottom: 28,
-        }}
-      >
-        {theme === "formal" && "간단한 선택으로\n취향을 알려주세요."}
-        {theme === "friend" && "너의 호불호를 알려줘 🤝🏻"}
-        {theme === "sweet" && "두근두근 취향 테스트 💕"}
-      </div>
-      <div
-        style={{
-          background: ts.accent,
-          color: theme === "formal" ? "#000" : "#fff",
-          borderRadius: 12,
-          padding: "12px 28px",
-          fontSize: 14,
-          fontWeight: 700,
-        }}
-      >
-        START
-      </div>
-    </div>,
-
-    <div
-      key="survey"
-      style={{
-        width: "100%",
-        height: "100%",
-        background: ts.bg,
-        display: "flex",
-        flexDirection: "column",
-        padding: 24,
-        fontFamily: ts.font,
-      }}
-    >
-      <div style={{ fontSize: 11, color: ts.subText, marginBottom: 8 }}>1 / 3</div>
-      <div
-        style={{
-          width: "100%",
-          height: 4,
-          background: ts.cardBg,
-          borderRadius: 2,
-          marginBottom: 20,
-        }}
-      >
-        <div
-          style={{
-            width: "33%",
-            height: "100%",
-            background: ts.accent,
-            borderRadius: 2,
-          }}
-        />
-      </div>
-      <div
-        style={{
-          fontSize: 15,
-          fontWeight: 700,
-          color: ts.text,
-          marginBottom: 16,
-          lineHeight: 1.5,
-        }}
-      >
-        요즘 가장 받고싶은 선물은?
-      </div>
-      {["☕ 카페 기프티콘", "🍽️ 맛있는 음식", "📚 데스크 아이템"].map((item, i) => (
-        <div
-          key={i}
-          style={{
-            background: i === 0 ? ts.accent : ts.cardBg,
-            borderRadius: 10,
-            padding: "12px 16px",
-            marginBottom: 8,
-            fontSize: 13,
-            fontWeight: 600,
-            color: i === 0 ? (theme === "formal" ? "#000" : "#fff") : ts.text,
-          }}
-        >
-          {item}
-        </div>
-      ))}
-    </div>,
-
-    <div
-      key="result"
-      style={{
-        width: "100%",
-        height: "100%",
-        background: ts.bg,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: 24,
-        fontFamily: ts.font,
-      }}
-    >
-      <div style={{ fontSize: 28, marginBottom: 12 }}>
-        {theme === "formal" ? "🎩" : theme === "friend" ? "🤝🏻" : "💕"}
-      </div>
-      <div
-        style={{
-          background: ts.cardBg,
-          borderRadius: 16,
-          padding: "20px 16px",
-          width: "100%",
-          textAlign: "center",
-        }}
-      >
-        <div style={{ fontSize: 13, color: ts.subText, lineHeight: 2.0 }}>
-          <span style={{ color: ts.accent, fontWeight: 700 }}>
-            {filledTraits[0]}
-            {suffix[0]}
-          </span>
-          , <br />
-          <span style={{ color: ts.accent, fontWeight: 700 }}>
-            {filledTraits[1]}
-            {suffix[1]}
-          </span>
-          ,<br />
-          <span style={{ color: ts.accent, fontWeight: 700 }}>
-            {filledTraits[2]}
-            {suffix[2]}
-          </span>{" "}
-          당신에게
-          <br />
-          선물을 전하고 싶어하는
-          <br />한 사람이 있어요!
-        </div>
-      </div>
-    </div>,
-  ];
-
   return (
     <div
       className={styles["modal-overlay"]}
@@ -357,7 +148,7 @@ export default function CreateTicketModal({ userId, credits, onClose, onSuccess 
                 <input
                   className={styles["modal-input"]}
                   style={{ fontSize: 15, fontWeight: 400 }}
-                  placeholder={["ex) 솔직하고", "ex) 센스있는", "ex) 집순이"][i]}
+                  placeholder={["ex) 명사", "ex) 형용사", "ex) 떠오르는 이미지"][i]}
                   value={trait}
                   onChange={(e) => setTrait(i, e.target.value)}
                 />
@@ -370,7 +161,7 @@ export default function CreateTicketModal({ userId, credits, onClose, onSuccess 
         <div className={styles["modal-section"]}>
           {sectionLabel("CONCEPT")}
           <div className={styles["modal-theme-row"]}>
-            {THEMES.map((t) => (
+            {THEME_LIST.map((t) => (
               <button
                 key={t.value}
                 onClick={() => setTheme(t.value)}
@@ -397,7 +188,12 @@ export default function CreateTicketModal({ userId, credits, onClose, onSuccess 
               </span>
             </div>
             <div className={styles["modal-preview-box"]}>
-              {previewScreens[previewPage]}
+              <TicketPreview
+                theme={theme}
+                displayName={displayName}
+                filledTraits={filledTraits}
+                page={previewPage}
+              />
               {previewPage > 0 && (
                 <button
                   className={styles["modal-preview-arrow"]}

@@ -39,6 +39,7 @@ type ResultItem = {
   item_id: string;
   item_name: string;
   link_url: string | null;
+  link_url2: string | null;
   category_code: string;
 };
 
@@ -66,7 +67,7 @@ export default function TicketResultModal({ ticketId, receiverName, onClose }: P
 
       const { data: itemData } = await supabase!
         .from("Item")
-        .select("item_id, item_name, link_url, category_code")
+        .select("item_id, item_name, link_url, link_url2, category_code")
         .in("item_id", itemIds);
 
       const sorted = itemIds.map((id: string) => itemData?.find((item) => item.item_id === id) ?? null);
@@ -150,40 +151,78 @@ export default function TicketResultModal({ ticketId, receiverName, onClose }: P
                         {item?.item_name ?? "-"}
                       </div>
                     </div>
-                    {item?.link_url ? (
-                      <a
-                        href={item.link_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{
-                          background: p.barColor,
-                          width: "100%",
-                          height: 35,
-                          borderRadius: isFirst ? "0 0 0 6px" : isLast ? "0 0 6px 0" : 0,
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          textDecoration: "none",
-                        }}
-                      >
-                        <span style={{ fontSize: 10, fontWeight: 500, color: "#fff" }}>선물추천링크</span>
-                      </a>
-                    ) : (
-                      <div
-                        style={{
-                          background: p.barColor,
-                          width: "100%",
-                          height: 56,
-                          borderRadius: isFirst ? "0 0 0 6px" : isLast ? "0 0 6px 0" : 0,
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          opacity: 0.5,
-                        }}
-                      >
-                        <span style={{ fontSize: 10, color: "#fff" }}>링크 준비중</span>
-                      </div>
-                    )}
+                    <>
+                      {item?.link_url ? (
+                        <>
+                          <a
+                            href={item.link_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{
+                              background: p.barColor,
+                              width: "100%",
+                              height: 35,
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              textDecoration: "none",
+                            }}
+                          >
+                            <span style={{ fontSize: 10, fontWeight: 500, color: "#fff" }}>선물추천링크</span>
+                          </a>
+                          {item?.link_url2 ? (
+                            <a
+                              href={item.link_url2}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{
+                                background: p.barColor,
+                                width: "100%",
+                                height: 35,
+                                borderRadius: isFirst ? "0 0 0 6px" : isLast ? "0 0 6px 0" : 0,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                textDecoration: "none",
+                                opacity: 0.75,
+                              }}
+                            >
+                              <span style={{ fontSize: 10, fontWeight: 500, color: "#fff" }}>직접구매링크</span>
+                            </a>
+                          ) : (
+                            <div
+                              style={{
+                                background: p.barColor,
+                                width: "100%",
+                                height: 35,
+                                borderRadius: isFirst ? "0 0 0 6px" : isLast ? "0 0 6px 0" : 0,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                opacity: 0.3,
+                              }}
+                            >
+                              <span style={{ fontSize: 10, color: "#fff" }}>링크 준비중</span>
+                            </div>
+                          )}
+                        </>
+                      ) : (
+                        <div
+                          style={{
+                            background: p.barColor,
+                            width: "100%",
+                            height: 56,
+                            borderRadius: isFirst ? "0 0 0 6px" : isLast ? "0 0 6px 0" : 0,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            opacity: 0.5,
+                          }}
+                        >
+                          <span style={{ fontSize: 10, color: "#fff" }}>링크 준비중</span>
+                        </div>
+                      )}
+                    </>
                   </div>
                 );
               })}
