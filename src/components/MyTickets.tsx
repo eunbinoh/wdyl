@@ -89,9 +89,6 @@ export default function MyTickets({ userId, credits }: Props) {
         type: "send",
         ticket_id: ticketId,
       },
-      pickerSettings: {
-        limit: 1,
-      },
     });
   };
 
