@@ -150,8 +150,9 @@ export function TicketPreview({ theme, displayName, filledTraits, page }: Props)
       >
         <div style={{ fontSize: 13, color: ts.subText, lineHeight: 2.0, whiteSpace: "pre-line" }}>
           {THEME_RESULT_MSG[theme]
-            ?.replace("[ITEM]", filledTraits[0])
-            .replace("[FRIEND_KEYWORD]", filledTraits.join(", "))}
+            ?.replace("[KEYWORD1]", filledTraits[0])
+            .replace("[KEYWORD2]", filledTraits[1])
+            .replace("[KEYWORD3]", filledTraits[2])}
         </div>
       </div>
     </div>,

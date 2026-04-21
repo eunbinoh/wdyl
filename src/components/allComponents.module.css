@@ -255,6 +255,11 @@
   @apply flex-1 border-none bg-white text-[#1C1C1C]
     text-base outline-none;
   -webkit-text-fill-color: #1c1c1c;
+  &::placeholder {
+    color: gray;
+    -webkit-text-fill-color: gray;
+    opacity: 1;
+  }
 }
 
 .modal-input-suffix {

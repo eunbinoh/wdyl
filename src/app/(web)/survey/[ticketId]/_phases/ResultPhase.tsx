@@ -1,6 +1,7 @@
 import React from "react";
 import { Item, Ticket } from "@/types";
-import { buildResultMsg, MEDAL, THEME_EMOJI, ThemeStyle } from "../_styles";
+import { MEDAL, THEME_EMOJI, ThemeStyle } from "../_styles";
+import { THEME_RESULT_MSG, THEME_RESULT_SUB } from "@/lib/constants";
 
 type Props = {
   ticket: Ticket;
@@ -11,18 +12,30 @@ type Props = {
 };
 
 export function ResultPhase({ ticket, ts, pageStyle, cardStyle, medals }: Props) {
-  const resultMsg = buildResultMsg(ticket.comment, ticket.theme, medals[0]?.item_name);
+  const keywords = ticket.comment.split("/").map((s) => s.trim());
+
   return (
     <div style={pageStyle}>
       <div style={{ fontSize: 48, marginBottom: 20 }}>{THEME_EMOJI[ticket.theme] ?? "🎁"}</div>
-      <div style={{ fontSize: 13, color: ts.subText, letterSpacing: 2, marginBottom: 20 }}>RESULT</div>
+      <div style={{ fontSize: 14, fontWeight: 700, color: ts.subText, letterSpacing: 2, marginBottom: 20 }}>
+        분석 결과
+      </div>
       <div style={{ ...cardStyle, textAlign: "center", marginBottom: 20 }}>
         <div style={{ fontSize: 14, color: ts.subText, lineHeight: 2, whiteSpace: "pre-line", marginBottom: 16 }}>
-          {resultMsg}
+          {THEME_RESULT_MSG[ticket.theme]
+            ?.replace("[KEYWORD1]", keywords[0])
+            .replace("[KEYWORD2]", keywords[1])
+            .replace("[KEYWORD3]", keywords[2])}
+        </div>
+        <div style={{ fontSize: 14, color: ts.subText, lineHeight: 2, whiteSpace: "pre-line" }}>
+          {THEME_RESULT_SUB[ticket.theme]
+            ?.replace("[ITEM]", medals[0]?.item_name ?? "")
+            .replace("[KEYWORD2]", keywords[1])
+            .replace("[KEYWORD3]", keywords[2])}
         </div>
       </div>
       <div style={{ ...cardStyle }}>
-        <div style={{ fontSize: 11, color: ts.subText, marginBottom: 12 }}>내가 고른 선물 순위</div>
+        <div style={{ fontSize: 11, color: ts.subText, marginBottom: 12 }}>PICK's TOP 3</div>
         {medals.map((m, i) =>
           m ? (
             <div
@@ -36,8 +49,8 @@ export function ResultPhase({ ticket, ts, pageStyle, cardStyle, medals }: Props)
         )}
       </div>
       <div style={{ fontSize: 12, color: ts.subText, marginTop: 24, textAlign: "center" }}>
-        선물을 준비 중인 누군가에게
-        <br />이 결과가 전달될 거예요 {THEME_EMOJI[ticket.theme]}
+        어쩌면, 이미 누군가가 당신을 위해
+        <br />이 선물을 준비하고 있을지도 몰라요! {THEME_EMOJI[ticket.theme]}
       </div>
     </div>
   );

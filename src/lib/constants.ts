@@ -183,9 +183,20 @@ export const THEME_STEP_MSG: Record<string, { step1: string; step2: string; step
 
 // 6. [화면 6] 결과 화면 베이스
 export const THEME_RESULT_MSG: Record<string, string> = {
-  MOOD: "현재 당신의 일상은 [ITEM]. [FRIEND_KEYWORD] \n 세 가지 무드가 감도는 중입니다.",
-  LUCK: "축하합니다! \n당신의 수호템은 [ITEM]! \n행운의 기운이 가득하네요.",
-  PERSONA: "당신은 [ITEM] 타입! \n주변에서 보는 당신은 [FRIEND_KEYWORD] 하군요.",
-  FAVORITE: "분석 완료. \n당신은 [FRIEND_KEYWORD] 기반의 [ITEM] 선호형입니다.",
-  SURVIVAL: "생존 랭크 S, [ITEM] 장착 완료. \n [FRIEND_KEYWORD] 능력이 상승합니다.",
+  MOOD: "현재 당신의 일상은 [KEYWORD2] [KEYWORD3]. \n [KEYWORD1] 무드가 감도는 중입니다.",
+  LUCK: "축하합니다! \n당신의 럭키 모먼트는 [KEYWORD3]! \n[KEYWORD2] [KEYWORD1] 기운이 가득하네요.",
+  PERSONA: "당신은 [KEYWORD1] 타입! \n친구가 보는 당신은 [KEYWORD2] [KEYWORD3] 같은 사람이에요.",
+  FAVORITE: "분석 완료. \n당신은 [KEYWORD1] 기반의 [KEYWORD2] [KEYWORD3] 스타일 입니다.",
+  SURVIVAL: "생존 랭크 S, [KEYWORD1] 장착 완료. \n [KEYWORD2] [KEYWORD3] 능력이 상승합니다.",
+};
+// 7. [부연설명]
+export const THEME_RESULT_SUB: Record<string, string> = {
+  MOOD: "이 무드에 딱 어울리는 [ITEM](으)로 당신의 공간을 채워보세요. \n [KEYWORD2] 감성이 더해져 일상이 한층 더 특별해질 거예요.",
+  LUCK: "행운 아이템인 [ITEM]이(가) [KEYWORD3] 에너지를 증폭시켜 줄 거예요. \n 선물로 받는다면 더 없이 [KEYWORD2] UP 되는 날입니다.",
+  PERSONA:
+    "[ITEM] 시너지는 주변 사람들에게도 [KEYWORD3] 같은 인상을 줄 수 있어요. \n 당신의 [KEYWORD2] 매력에 부스터가 되어줄거에요.",
+  FAVORITE:
+    "[KEYWORD1] 취향을 저격한 [ITEM]은(는) 당신의 아이덴티티 그 자체입니다. \n [KEYWORD2] 스타일을 완성해주는 이 아이템으로 [KEYWORD3] 라이프를 즐겨보세요.",
+  SURVIVAL:
+    "[KEYWORD2] 전략을 바탕으로 당신이 오늘 승리할 가능성은 99%. \n [KEYWORD3] 같은 당신에게 [ITEM]만 있다면 이제 100% 든든합니다. \n 전투 준비 완료!",
 };

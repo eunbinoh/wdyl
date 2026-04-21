@@ -1,4 +1,4 @@
-import { Ticket } from "@/types";
+import React from "react";
 
 export const THEME_STYLE: Record<
   string,
@@ -117,15 +117,3 @@ export function makeStyles(ts: ThemeStyle) {
   };
 }
 
-export function buildResultMsg(comment: string, theme: string, topItem?: string): string {
-  const keyword = comment
-    .split("/")
-    .map((s) => s.trim())
-    .filter(Boolean)
-    .join(", ");
-  const template = (THEME_RESULT_MSG as Record<string, string>)[theme] ?? "";
-  return template.replace("[ITEM]", topItem ?? "").replace("[FRIEND_KEYWORD]", keyword);
-}
-
-import { THEME_RESULT_MSG } from "@/lib/constants";
-import React from "react";

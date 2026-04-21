@@ -148,7 +148,7 @@ export default function CreateTicketModal({ userId, credits, onClose, onSuccess 
                 <input
                   className={styles["modal-input"]}
                   style={{ fontSize: 15, fontWeight: 400 }}
-                  placeholder={["ex) 명사", "ex) 형용사", "ex) 떠오르는 이미지"][i]}
+                  placeholder={["한마디로 표현한 명사 (집순이,패피,..)", "매력/장점을 나타내는 형용사 (귀여운,똑똑한,..)", "떠오르는 이미지 (햄찌,짱구,..)"][i]}
                   value={trait}
                   onChange={(e) => setTrait(i, e.target.value)}
                 />
