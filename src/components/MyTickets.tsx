@@ -9,6 +9,7 @@ import styles from "./allComponents.module.css";
 import TicketNewModal from "./TicketNewModal";
 import TicketDetailModal from "./TicketDetailModal";
 import TicketResultModal from "./TicketResultModal";
+import TicketSendModal from "./TicketSendModal";
 
 type Props = {
   userId: string;
@@ -44,6 +45,7 @@ export default function MyTickets({ userId, credits }: Props) {
   const [totalTickets, setTotalTickets] = useState(0);
   const [loadingAll, setLoadingAll] = useState(false);
   const visibleTickets = showAll ? tickets : tickets.slice(0, 10);
+  const [resendTicket, setResendTicket] = useState<Ticket | null>(null);
 
   const router = useRouter();
 
@@ -55,12 +57,14 @@ export default function MyTickets({ userId, credits }: Props) {
       .eq("deleted_yn", false)
       .order("created_at", { ascending: false })
       .limit(limit ?? 99);
-    console.log(data);
+
     setTickets(data ?? []);
     setTotalTickets(count ?? 0);
   };
 
   useEffect(() => {
+    getTickets(10);
+
     const handleFocus = () => {
       getTickets(10);
       router.refresh();
@@ -186,16 +190,18 @@ export default function MyTickets({ userId, credits }: Props) {
                   {/* 액션 버튼 */}
                   <div className={styles["ticket-actions"]}>
                     {/* created: 발송하기 + 회수하기 */}
-                    {ticket.status === "created" && (
+                    {(ticket.status === "created" || ticket.status === "sent") && (
                       <>
                         <button
-                          className={`${styles["ticket-action-btn"]} ${styles["yellow"]}`}
+                          className={`${styles["ticket-action-btn"]} ${ticket.status === "created" ? styles["yellow"] : styles["green"]}`}
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleKakaoSend(ticket.ticket_id, ticket.receiver_name);
+                            ticket.status === "created"
+                              ? handleKakaoSend(ticket.ticket_id, ticket.receiver_name)
+                              : setResendTicket(ticket);
                           }}
                         >
-                          발송하기
+                          {ticket.status === "created" ? "발송하기" : "재발송"}
                         </button>
                         <button
                           className={`${styles["ticket-action-btn"]} ${styles["gray"]}`}
@@ -251,6 +257,13 @@ export default function MyTickets({ userId, credits }: Props) {
               ticketId={resultTicket.ticket_id}
               receiverName={resultTicket.receiver_name}
               onClose={() => setResultTicket(null)}
+            />
+          )}
+          {resendTicket && (
+            <TicketSendModal
+              ticketId={resendTicket.ticket_id}
+              receiverName={resendTicket.receiver_name}
+              onClose={() => setResendTicket(null)}
             />
           )}
         </div>

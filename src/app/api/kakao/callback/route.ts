@@ -36,17 +36,16 @@ export async function GET(request: NextRequest) {
       return new NextResponse("OK", { status: 200 });
     }
 
-    if (user.share_cnt < 4) {
-      const { error } = await supabase
-        .from("User")
-        .update({
-          share_cnt: user.share_cnt + 1,
-          credits: user.credits + 1,
-        })
-        .eq("id", user_id);
+    //추천,공유 이벤트는 3회까지만 크레딧 추가 제공하는 프로모션 진행.
+    const { error } = await supabase
+      .from("User")
+      .update({
+        share_cnt: user.share_cnt + 1,
+        credits: user.share_cnt < 4 ? user.credits + 1 : user.credits,
+      })
+      .eq("id", user_id);
 
-      if (error) console.error("[kakao-callback] user update error:", error);
-    }
+    if (error) console.error("[kakao-callback] user update error:", error);
   }
 
   return new NextResponse("OK", { status: 200 });

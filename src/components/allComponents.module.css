@@ -5,6 +5,7 @@
   --color-red: #ef4444;
   --color-blue: #0062cc;
   --color-gray: #64748b;
+  --color-green: #16a34a;
 }
 
 /**
@@ -204,6 +205,16 @@
       color: #fff;
     }
   }
+  &.green {
+    @apply bg-[#eff6ff] text-[var(--color-green)];
+    border: 1.5px solid var(--color-green);
+    &:hover {
+      @apply shadow-md -translate-y-0.5;
+      background-color: var(--color-green);
+      border-color: var(--color-green);
+      color: #fff;
+    }
+  }
 }
 
 /**
@@ -339,4 +350,89 @@
 .modal-btn-cancel {
   @apply w-full bg-white text-[#888] border-[1.5px] border-[#EDE9E1]
     rounded-2xl py-[15px] text-base font-bold cursor-pointer;
+}
+
+/**
+ * TicketSendModal
+ */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  position: relative;
+  width: 90%;
+  max-width: 400px;
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #64748b;
+  padding: 4px;
+}
+
+.modal-close:hover {
+  color: #0f172a;
+}
+.resend-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.resend-desc {
+  font-size: 13px;
+  color: #64748b;
+  margin-bottom: 16px;
+}
+
+.resend-link-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+}
+
+.resend-link-text {
+  flex: 1;
+  font-size: 13px;
+  color: #334155;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.resend-copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  font-size: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  background: white;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.resend-copy-btn:hover {
+  background: #f1f5f9;
 }
