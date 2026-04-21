@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
     const { error } = await supabase
       .from("Ticket")
       .update({ status: "sent" })
-      .eq("id", ticket_id)
+      .eq("ticket_id", ticket_id)
       .eq("status", "created");
 
     if (error) console.error("[kakao-callback] ticket update error:", error);
