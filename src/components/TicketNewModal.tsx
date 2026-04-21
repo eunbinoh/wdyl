@@ -8,6 +8,7 @@ import styles from "./allComponents.module.css";
 import { TOOLTIPS, THEMES } from "@/lib/constants";
 import { THEME_STYLE, THEME_EMOJI } from "@/app/(web)/survey/[ticketId]/_styles";
 import { TicketPreview } from "./TicketPreview";
+import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 
 type ThemeId = "MOOD" | "LUCK" | "PERSONA" | "FAVORITE" | "SURVIVAL";
 
@@ -25,6 +26,7 @@ type Props = {
 };
 
 export default function CreateTicketModal({ userId, credits, onClose, onSuccess }: Props) {
+  useLockBodyScroll();
   const [theme, setTheme] = useState<ThemeId>("MOOD");
   const [toName, setToName] = useState("");
   const [traits, setTraits] = useState(["", "", ""]);
@@ -148,7 +150,13 @@ export default function CreateTicketModal({ userId, credits, onClose, onSuccess 
                 <input
                   className={styles["modal-input"]}
                   style={{ fontSize: 15, fontWeight: 400 }}
-                  placeholder={["한마디로 표현한 명사 (집순이,패피,..)", "매력/장점을 나타내는 형용사 (귀여운,똑똑한,..)", "떠오르는 이미지 (햄찌,짱구,..)"][i]}
+                  placeholder={
+                    [
+                      "한마디로 표현한 명사 (집순이,패피,..)",
+                      "매력/장점을 나타내는 형용사 (귀여운,똑똑한,..)",
+                      "떠오르는 이미지 (햄찌,짱구,..)",
+                    ][i]
+                  }
                   value={trait}
                   onChange={(e) => setTrait(i, e.target.value)}
                 />

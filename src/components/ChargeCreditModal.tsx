@@ -5,6 +5,7 @@ import { loadTossPayments } from "@tosspayments/tosspayments-sdk";
 import { nanoid } from "nanoid";
 import styles from "./allComponents.module.css";
 import { ChevronDown } from "lucide-react";
+import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 
 const CREDIT_PLANS = [
   { id: "plan_1", label: "1 크레딧", credits: 1, price: 990 },
@@ -19,6 +20,7 @@ type Props = {
 };
 
 export default function CreditChargeModal({ userId, isRefund, onClose }: Props) {
+  useLockBodyScroll();
   const [selected, setSelected] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 

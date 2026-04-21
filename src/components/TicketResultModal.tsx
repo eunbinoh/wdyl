@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import Image from "next/image";
 import styles from "./allComponents.module.css";
+import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 
 const PODIUM = [
   {
@@ -50,6 +51,7 @@ type Props = {
 };
 
 export default function TicketResultModal({ ticketId, receiverName, onClose }: Props) {
+  useLockBodyScroll();
   const [items, setItems] = useState<(ResultItem | null)[]>([null, null, null]);
   const [categoryName, setCategoryName] = useState("");
   const [loading, setLoading] = useState(true);

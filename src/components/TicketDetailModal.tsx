@@ -8,6 +8,7 @@ import { TOOLTIPS, THEMES } from "@/lib/constants";
 import { Status } from "@/types";
 import { THEME_EMOJI, THEME_STYLE } from "@/app/(web)/survey/[ticketId]/_styles";
 import { TicketPreview } from "./TicketPreview";
+import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 
 type ThemeId = "MOOD" | "LUCK" | "PERSONA" | "FAVORITE" | "SURVIVAL";
 
@@ -24,6 +25,7 @@ type Props = {
 };
 
 export default function DetailTicketModal({ ticketId, onClose, onFetched }: Props) {
+  useLockBodyScroll();
   const [toName, setToName] = useState("");
   const [traits, setTraits] = useState(["", "", ""]);
   const [status, setStatus] = useState<Status>("created");
@@ -181,7 +183,13 @@ export default function DetailTicketModal({ ticketId, onClose, onFetched }: Prop
                 <input
                   className={styles["modal-input"]}
                   style={{ fontSize: 15, fontWeight: 400, opacity: isEditable ? 1 : 0.6 }}
-                  placeholder={["한마디로 표현한 명사 (집순이,패피,..)", "매력/장점을 나타내는 형용사 (귀여운,똑똑한,..)", "떠오르는 이미지 (햄찌,짱구,..)"][i]}
+                  placeholder={
+                    [
+                      "한마디로 표현한 명사 (집순이,패피,..)",
+                      "매력/장점을 나타내는 형용사 (귀여운,똑똑한,..)",
+                      "떠오르는 이미지 (햄찌,짱구,..)",
+                    ][i]
+                  }
                   value={trait}
                   onChange={(e) => isEditable && setTrait(i, e.target.value)}
                   readOnly={!isEditable}
