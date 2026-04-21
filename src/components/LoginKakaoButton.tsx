@@ -2,11 +2,13 @@
 
 import { supabase } from "@/lib/supabase";
 import styles from "./allComponents.module.css";
-import { useState } from "react";
 
-export default function LoginButton() {
-  const [loading, setLoading] = useState(false);
+type Props = {
+  loading: boolean;
+  setLoading: (loading: boolean) => void;
+};
 
+export default function LoginKakaoButton({ loading, setLoading }: Props) {
   const handleKakaoLogin = async () => {
     if (loading) return;
     setLoading(true);
