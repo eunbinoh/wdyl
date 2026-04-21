@@ -6,7 +6,7 @@ import { nanoid } from "nanoid";
 import { ChevronLeft, ChevronRight, CircleHelp } from "lucide-react";
 import styles from "./allComponents.module.css";
 import { TOOLTIPS, THEMES } from "@/lib/constants";
-import { THEME_STYLE, THEME_EMOJI } from "@/app/(web)/survey/[ticketId]/_styles";
+import { THEME_STYLE, THEME_ICON } from "@/app/(web)/survey/[ticketId]/_styles";
 import { TicketPreview } from "./TicketPreview";
 import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 
@@ -15,7 +15,7 @@ type ThemeId = "MOOD" | "LUCK" | "PERSONA" | "FAVORITE" | "SURVIVAL";
 const THEME_LIST = Object.values(THEMES).map((t) => ({
   value: t.id as ThemeId,
   label: t.name,
-  emoji: THEME_EMOJI[t.id],
+  icon: THEME_ICON[t.id],
 }));
 
 type Props = {
@@ -37,6 +37,7 @@ export default function CreateTicketModal({ userId, credits, onClose, onSuccess 
   const tooltipRef = useRef<HTMLDivElement>(null);
 
   const ts = THEME_STYLE[theme];
+  const { icon: Icon, color } = THEME_ICON[theme] ?? THEME_ICON.MOOD;
   const displayName = toName.trim() || "OO";
   const filledTraits = traits.map((t, i) => t.trim() || `특징${i + 1}`);
 
@@ -175,7 +176,11 @@ export default function CreateTicketModal({ userId, credits, onClose, onSuccess 
                 onClick={() => setTheme(t.value)}
                 className={`${styles["modal-theme-btn"]} ${theme === t.value ? styles["modal-theme-btn-active"] : ""}`}
               >
-                <div className={styles["modal-theme-emoji"]}>{t.emoji}</div>
+                <div className={styles["modal-theme-emoji"]}>
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: 4, color: t.icon.color }}>
+                    <t.icon.icon size={24} />
+                  </span>
+                </div>
                 <div
                   className={`${styles["modal-theme-label"]} ${theme === t.value ? styles["modal-theme-label-active"] : ""}`}
                 >
@@ -192,7 +197,7 @@ export default function CreateTicketModal({ userId, credits, onClose, onSuccess 
             <div className={styles["modal-preview-label"]}>
               PREVIEW{" "}
               <span style={{ fontSize: 14, color: "#1C1C1C", marginLeft: 2 }}>
-                {["# START", "# SURVEY", "# FINAL"][previewPage]}
+                {["# START", "# STEP 2-1", "# RESULT"][previewPage]}
               </span>
             </div>
             <div className={styles["modal-preview-box"]}>

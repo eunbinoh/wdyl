@@ -2,11 +2,11 @@
 
 import { useRef, useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
-import { CircleHelp, ChevronLeft, ChevronRight } from "lucide-react";
+import { CircleHelp, ChevronLeft, ChevronRight, Icon } from "lucide-react";
 import styles from "./allComponents.module.css";
 import { TOOLTIPS, THEMES } from "@/lib/constants";
 import { Status } from "@/types";
-import { THEME_EMOJI, THEME_STYLE } from "@/app/(web)/survey/[ticketId]/_styles";
+import { THEME_ICON, THEME_STYLE } from "@/app/(web)/survey/[ticketId]/_styles";
 import { TicketPreview } from "./TicketPreview";
 import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 
@@ -15,7 +15,7 @@ type ThemeId = "MOOD" | "LUCK" | "PERSONA" | "FAVORITE" | "SURVIVAL";
 const THEME_LIST = Object.values(THEMES).map((t) => ({
   value: t.id as ThemeId,
   label: t.name,
-  emoji: THEME_EMOJI[t.id],
+  icon: THEME_ICON[t.id],
 }));
 
 type Props = {
@@ -42,6 +42,8 @@ export default function DetailTicketModal({ ticketId, onClose, onFetched }: Prop
   const isEditable = status === "created" || status === "sent";
   const displayName = toName.trim() || "OO";
   const filledTraits = traits.map((t, i) => t.trim() || `특징${i + 1}`);
+
+  const { icon: Icon, color } = THEME_ICON[theme] ?? THEME_ICON.MOOD;
 
   // 티켓 조회
   useEffect(() => {
@@ -134,13 +136,14 @@ export default function DetailTicketModal({ ticketId, onClose, onFetched }: Prop
         className={styles["modal-sheet"]}
       >
         <div className={styles["modal-handle"]} />
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div
             className={styles["modal-title"]}
             style={{ marginBottom: 0 }}
           >
             티켓 상세보기
           </div>
+
           <div
             style={{
               fontSize: 11,
@@ -151,8 +154,23 @@ export default function DetailTicketModal({ ticketId, onClose, onFetched }: Prop
               background: status === "complete" ? "#eff6ff" : status === "progress" ? "#f0fdf4" : "#f1f5f9",
             }}
           >
-            {status === "complete" ? "완료" : status === "progress" ? "진행중" : "대기중"}
+            {status === "complete"
+              ? "참여완료"
+              : status === "progress"
+                ? "참여중"
+                : status === "sent"
+                  ? "발송완료"
+                  : "발송대기"}
           </div>
+        </div>
+        <div style={{ fontSize: 11, color: "#64748b", textAlign: "end", marginTop: 8, marginBottom: 32 }}>
+          {status === "progress"
+            ? "참여가 시작된 티켓은 수정하거나 회수 할 수 없어요."
+            : status === "sent"
+              ? "참여 전 티켓은 수정 / 회수 / 재발송 할 수 있어요."
+              : status === "created"
+                ? "발송 전 티켓은 수정 할 수 있어요. 확인 후 발송을 완료해주세요."
+                : "참여가 완료된 티켓이에요. 결과보기 모달을 확인해주세요."}
         </div>
         {/* TO */}
         <div className={styles["modal-section"]}>
@@ -212,7 +230,11 @@ export default function DetailTicketModal({ ticketId, onClose, onFetched }: Prop
                   opacity: !isEditable && theme !== t.value ? 0.4 : 1,
                 }}
               >
-                <div className={styles["modal-theme-emoji"]}>{t.emoji}</div>
+                <div className={styles["modal-theme-emoji"]}>
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: 4, color: t.icon.color }}>
+                    <t.icon.icon size={24} />
+                  </span>
+                </div>
                 <div
                   className={`${styles["modal-theme-label"]} ${theme === t.value ? styles["modal-theme-label-active"] : ""}`}
                 >
@@ -227,7 +249,7 @@ export default function DetailTicketModal({ ticketId, onClose, onFetched }: Prop
             <div className={styles["modal-preview-label"]}>
               PREVIEW{" "}
               <span style={{ fontSize: 14, color: "#1C1C1C", marginLeft: 2 }}>
-                {["# START", "# SURVEY", "# FINAL"][previewPage]}
+                {["# START", "# STEP 2-1", "# RESULT"][previewPage]}
               </span>
             </div>
             <div className={styles["modal-preview-box"]}>

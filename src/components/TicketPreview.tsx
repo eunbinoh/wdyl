@@ -1,6 +1,7 @@
 import React from "react";
-import { THEME_MAIN_INFO, THEME_RESULT_MSG, THEME_STEP_MSG } from "@/lib/constants";
-import { THEME_STYLE, THEME_EMOJI } from "@/app/(web)/survey/[ticketId]/_styles";
+import { THEME_MAIN_INFO, THEME_RESULT_MSG, THEME_RESULT_SUB, THEME_STEP_MSG } from "@/lib/constants";
+import { THEME_STYLE, THEME_ICON } from "@/app/(web)/survey/[ticketId]/_styles";
+import { renderParts } from "@/lib/renderParts";
 
 type ThemeId = "MOOD" | "LUCK" | "PERSONA" | "FAVORITE" | "SURVIVAL";
 
@@ -13,9 +14,8 @@ type Props = {
 
 export function TicketPreview({ theme, displayName, filledTraits, page }: Props) {
   const ts = THEME_STYLE[theme];
-
+  const { icon: Icon, color } = THEME_ICON[theme] ?? THEME_ICON.MOOD;
   const screens = [
-    // START
     <div
       key="intro"
       style={{
@@ -30,7 +30,7 @@ export function TicketPreview({ theme, displayName, filledTraits, page }: Props)
         fontFamily: ts.font,
       }}
     >
-      <div style={{ fontSize: 12, color: ts.subText, letterSpacing: 3, marginBottom: 20 }}>WDYL</div>
+      <div style={{ fontSize: 12, fontWeight: 700, color: ts.subText, letterSpacing: 3, marginBottom: 20 }}>WDYL</div>
       <div
         style={{
           fontSize: 20,
@@ -144,15 +144,66 @@ export function TicketPreview({ theme, displayName, filledTraits, page }: Props)
         fontFamily: ts.font,
       }}
     >
-      <div style={{ fontSize: 28, marginBottom: 12 }}>{THEME_EMOJI[theme]}</div>
+      <div style={{ fontSize: 28, marginBottom: 12 }}>
+        <span
+          style={{ display: "inline-flex", alignItems: "center", gap: 4, color: theme === "SURVIVAL" ? "#fff" : color }}
+        >
+          <Icon size={20} />
+        </span>
+      </div>
       <div
         style={{ background: ts.cardBg, borderRadius: 16, padding: "20px 16px", width: "100%", textAlign: "center" }}
       >
-        <div style={{ fontSize: 13, color: ts.subText, lineHeight: 2.0, whiteSpace: "pre-line" }}>
-          {THEME_RESULT_MSG[theme]
-            ?.replace("[KEYWORD1]", filledTraits[0])
-            .replace("[KEYWORD2]", filledTraits[1])
-            .replace("[KEYWORD3]", filledTraits[2])}
+        <div
+          style={{
+            fontSize: 13,
+            color: ts.subText,
+            lineHeight: 2.0,
+            whiteSpace: "pre-line",
+            wordBreak: "keep-all",
+            overflowWrap: "break-word",
+          }}
+        >
+          {renderParts(
+            THEME_RESULT_MSG[theme]?.parts,
+            {
+              KEYWORD1: filledTraits[0],
+              KEYWORD2: filledTraits[1],
+              KEYWORD3: filledTraits[2],
+            },
+            {
+              default: {
+                color: theme === "SURVIVAL" ? "#fff" : ts.accent,
+                fontWeight: 700,
+              },
+            }
+          )}
+        </div>
+
+        <div
+          style={{
+            fontSize: 12,
+            color: ts.subText,
+            lineHeight: 1.8,
+            whiteSpace: "pre-line",
+            wordBreak: "keep-all",
+            overflowWrap: "break-word",
+            fontWeight: 600,
+          }}
+        >
+          {renderParts(
+            THEME_RESULT_SUB[theme]?.parts,
+            {
+              ITEM: "[아이템]",
+              KEYWORD1: filledTraits[0],
+              KEYWORD2: filledTraits[1],
+              KEYWORD3: filledTraits[2],
+            },
+            {
+              ITEM: { color: ts.text, fontWeight: 900, fontSize: 14 },
+              default: { color: ts.accent, fontWeight: 700 },
+            }
+          )}
         </div>
       </div>
     </div>,

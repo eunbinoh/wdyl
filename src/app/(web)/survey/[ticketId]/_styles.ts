@@ -1,14 +1,15 @@
 import React from "react";
+import { Leaf, Star, Drama, Bot, Swords, LucideIcon } from "lucide-react";
 
 export const THEME_STYLE: Record<
   string,
   { bg: string; accent: string; text: string; subText: string; cardBg: string; btnText: string; font: string }
 > = {
   MOOD: {
-    bg: "#FFF8F0",
-    accent: "#F4845F",
-    text: "#3D2010",
-    subText: "#B07050",
+    bg: "#F0F8F2",
+    accent: "#3DAA6B",
+    text: "#0D3320",
+    subText: "#6BA080",
     cardBg: "#FFFFFF",
     btnText: "#FFFFFF",
     font: "inherit",
@@ -32,6 +33,15 @@ export const THEME_STYLE: Record<
     font: "inherit",
   },
   FAVORITE: {
+    bg: "#F0F6FF",
+    accent: "#3B82F6",
+    text: "#0F1E3D",
+    subText: "#5B7BA8",
+    cardBg: "#FFFFFF",
+    btnText: "#FFFFFF",
+    font: "inherit",
+  },
+  SURVIVAL: {
     bg: "#1C1C1C",
     accent: "#FFFFFF",
     text: "#FFFFFF",
@@ -40,23 +50,14 @@ export const THEME_STYLE: Record<
     btnText: "#000000",
     font: "inherit",
   },
-  SURVIVAL: {
-    bg: "#F0F8F2",
-    accent: "#3DAA6B",
-    text: "#0D3320",
-    subText: "#6BA080",
-    cardBg: "#FFFFFF",
-    btnText: "#FFFFFF",
-    font: "inherit",
-  },
 };
 
-export const THEME_EMOJI: Record<string, string> = {
-  MOOD: "🌿",
-  LUCK: "🍀",
-  PERSONA: "🎭",
-  FAVORITE: "📊",
-  SURVIVAL: "⚔️",
+export const THEME_ICON: Record<string, { icon: LucideIcon; color: string }> = {
+  MOOD: { icon: Leaf, color: "#16a34a" },
+  LUCK: { icon: Star, color: "#eab308" },
+  PERSONA: { icon: Drama, color: "#9333ea" },
+  FAVORITE: { icon: Bot, color: "#0062cc" },
+  SURVIVAL: { icon: Swords, color: "#0f172a" },
 };
 
 export const MEDAL = ["🥇", "🥈", "🥉"];
@@ -116,4 +117,3 @@ export function makeStyles(ts: ThemeStyle) {
     } as React.CSSProperties,
   };
 }
-

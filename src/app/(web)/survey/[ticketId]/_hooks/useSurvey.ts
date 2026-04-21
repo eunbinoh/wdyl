@@ -38,7 +38,13 @@ export function useSurvey(ticket: Ticket) {
 
   const handleStart = async () => {
     if (ticket.status === "sent") {
-      await supabase!.from("Ticket").update({ status: "progress" }).eq("ticket_id", ticket.ticket_id);
+      const { error, data } = await supabase!
+        .from("Ticket")
+        .update({ status: "progress" })
+        .eq("ticket_id", ticket.ticket_id)
+        .select();
+
+      console.log("[start] update result:", { error, data });
     }
     setPhase("step1");
   };
