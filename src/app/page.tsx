@@ -75,6 +75,9 @@ export default function LandingPage() {
         type: "share",
         user_id: user?.id,
       },
+      pickerSettings: {
+        limit: 1,
+      },
     });
   };
 

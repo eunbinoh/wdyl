@@ -55,6 +55,7 @@ export default function MyTickets({ userId, credits }: Props) {
       .eq("deleted_yn", false)
       .order("created_at", { ascending: false })
       .limit(limit ?? 99);
+    console.log(data);
     setTickets(data ?? []);
     setTotalTickets(count ?? 0);
   };
@@ -87,6 +88,9 @@ export default function MyTickets({ userId, credits }: Props) {
       serverCallbackArgs: {
         type: "send",
         ticket_id: ticketId,
+      },
+      pickerSettings: {
+        limit: 1,
       },
     });
   };
