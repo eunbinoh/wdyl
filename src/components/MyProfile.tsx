@@ -7,6 +7,7 @@ import { LogOut, Wallet, IterationCcw } from "lucide-react";
 import Image from "next/image";
 import styles from "./allComponents.module.css";
 import CreditChargeModal from "./ChargeCreditModal";
+import ReturnCreditModal from "./ReturnCreditModal";
 
 type Props = {
   userId: string;
@@ -29,7 +30,7 @@ export default function ProfileCard({ userId, nickname, email, avatarUrl, credit
   };
 
   const [showCharge, setShowCharge] = useState(false);
-  const [isRefund, setIsRefund] = useState(false);
+  const [showRefund, setShowRefund] = useState(false);
 
   return (
     <>
@@ -86,7 +87,7 @@ export default function ProfileCard({ userId, nickname, email, avatarUrl, credit
             </div>
             <button
               onClick={() => {
-                setIsRefund(true);
+                setShowRefund(true);
               }}
               style={{
                 background: "none",
@@ -111,21 +112,24 @@ export default function ProfileCard({ userId, nickname, email, avatarUrl, credit
             className={styles["credit-charge-btn"]}
             onClick={() => {
               setShowCharge(true);
-              setIsRefund(false);
             }}
           >
             크레딧 충전하기
           </button>
         </div>
       </div>
-      {(showCharge || isRefund) && (
+      {showCharge && (
         <CreditChargeModal
           userId={userId}
-          isRefund={isRefund}
           onClose={() => {
             setShowCharge(false);
-            setIsRefund(false);
           }}
+        />
+      )}
+      {showRefund && (
+        <ReturnCreditModal
+          userId={userId}
+          onClose={() => setShowRefund(false)}
         />
       )}
     </>
