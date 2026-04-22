@@ -1,8 +1,9 @@
-import React, { Fragment, useEffect } from "react";
+import React, { Fragment } from "react";
 import Image from "next/image";
 import { THEME_STEP_MSG, THEME_STEP_TITLE } from "@/lib/constants";
 import { Item, Ticket } from "@/types";
 import { ThemeStyle } from "../_styles";
+import styles from "../survey.module.css";
 
 type Props = {
   ticket: Ticket;
@@ -11,7 +12,6 @@ type Props = {
   backBtnStyle: React.CSSProperties;
   wcRound: number;
   wcWinners: Item[];
-  wcStackLayout: boolean;
   getCurrentPair: () => [Item, Item] | null;
   onPick: (item: Item) => void;
   onBack: () => void;
@@ -24,7 +24,6 @@ export function Step2Phase({
   backBtnStyle,
   wcRound,
   wcWinners,
-  wcStackLayout,
   getCurrentPair,
   onPick,
   onBack,
@@ -65,17 +64,9 @@ export function Step2Phase({
         <div style={{ fontSize: 13, color: ts.subText, marginBottom: 4, fontWeight: 800 }}>STEP 2</div>
         <div style={{ fontSize: 14, color: ts.subText, fontWeight: 800, marginBottom: 20 }}>{title}</div>
 
-        <div
-          style={{
-            display: "flex",
-            flexDirection: !isFinal && wcStackLayout ? "column" : "row",
-            gap: isFinal ? 8 : 12,
-            marginBottom: 16,
-          }}
-        >
+        <div className={`${styles["wc-grid"]} ${isFinal ? styles.final : ""}`}>
           {displayItems.map((item, idx) => {
             const imgSrc = `/items_img/${item.item_id.replace(/_/g, "")}.jpg`;
-            const stackMode = !isFinal && wcStackLayout;
             return (
               <Fragment key={item.item_id}>
                 <div
@@ -127,17 +118,8 @@ export function Step2Phase({
 
                 {!isFinal && idx === 0 && (
                   <div
-                    style={{
-                      flexShrink: 0,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: stackMode ? 17 : 14,
-                      fontWeight: 900,
-                      color: ts.accent,
-                      padding: stackMode ? "6px 0" : "0 4px",
-                      minWidth: stackMode ? undefined : 24,
-                    }}
+                    className={styles["wc-vs"]}
+                    style={{ color: ts.accent }}
                   >
                     VS
                   </div>

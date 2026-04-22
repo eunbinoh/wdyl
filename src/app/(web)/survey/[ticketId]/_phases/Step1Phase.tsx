@@ -76,7 +76,7 @@ export function Step1Phase({
               >
                 {/* 배경 이미지 */}
                 <Image
-                  src={`/category/${cat.category_code}.png`}
+                  src={`/category/${cat.category_code}.webp`}
                   alt={cat.category_code}
                   fill
                   style={{ objectFit: "cover", objectPosition: "center" }}

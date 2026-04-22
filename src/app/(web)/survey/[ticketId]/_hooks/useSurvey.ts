@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { Ticket, Category, Item, Phase } from "@/types";
 
@@ -16,25 +16,6 @@ export function useSurvey(ticket: Ticket) {
   const [medals, setMedals] = useState<(Item | null)[]>([null, null, null]);
   const [step3Done, setStep3Done] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [wcStackLayout, setWcStackLayout] = useState(false);
-
-  useEffect(() => {
-    const mq = window.matchMedia("(max-width: 560px)");
-    const sync = () => setWcStackLayout(mq.matches);
-    sync();
-    mq.addEventListener("change", sync);
-    return () => mq.removeEventListener("change", sync);
-  }, []);
-
-  useEffect(() => {
-    if (wcRound >= 3) return;
-    const nextBase = (wcRound + 1) * 2;
-    [wcItems[nextBase], wcItems[nextBase + 1]].forEach((item) => {
-      if (!item) return;
-      const img = new window.Image();
-      img.src = `/items_img/${item.item_id.replace(/_/g, "")}.jpg`;
-    });
-  }, [wcRound, wcItems]);
 
   const handleStart = async () => {
     if (ticket.status === "sent") {
@@ -43,8 +24,6 @@ export function useSurvey(ticket: Ticket) {
         .update({ status: "progress" })
         .eq("ticket_id", ticket.ticket_id)
         .select();
-
-      console.log("[start] update result:", { error, data });
     }
     setPhase("step1");
   };
@@ -58,10 +37,18 @@ export function useSurvey(ticket: Ticket) {
       .eq("level", 2)
       .order("item_id", { ascending: true });
     if (!data || data.length < 6) return alert("아이템 데이터를 불러오지 못했어요.");
+
+    //이미지 프리로드
+    data.slice(0, 6).forEach((item) => {
+      const img = new window.Image();
+      const src = `/items_img/${item.item_id.replace(/_/g, "")}.jpg`;
+      img.src = `/_next/image?url=${encodeURIComponent(src)}&w=640&q=75`;
+    });
+
     setWcItems(data);
     setWcRound(0);
     setWcWinners([]);
-    setPhase("step2");
+    setTimeout(() => setPhase("step2"), 50);
   };
 
   const getCurrentPair = (): [Item, Item] | null => {
@@ -131,7 +118,6 @@ export function useSurvey(ticket: Ticket) {
     step3Done,
     setStep3Done,
     loading,
-    wcStackLayout,
     handleStart,
     handleCategoryNext,
     getCurrentPair,

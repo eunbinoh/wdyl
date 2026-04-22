@@ -9,6 +9,8 @@ import { Step1Phase } from "./_phases/Step1Phase";
 import { Step2Phase } from "./_phases/Step2Phase";
 import { Step3Phase } from "./_phases/Step3Phase";
 import { ResultPhase } from "./_phases/ResultPhase";
+import { PreloadImages } from "@/components/PreloadImages";
+import { useEffect } from "react";
 
 type Props = { ticket: Ticket; categories: Category[] };
 
@@ -16,6 +18,15 @@ export default function SurveyClient({ ticket, categories }: Props) {
   const ts = getTs(ticket.theme);
   const s = makeStyles(ts);
   const survey = useSurvey(ticket);
+
+  // 이미지 프리로드 (페이지 진입 즉시)
+  useEffect(() => {
+    categories.forEach((cat) => {
+      const img = new window.Image();
+      const src = `/category/${cat.category_code}.webp`;
+      img.src = `/_next/image?url=${encodeURIComponent(src)}&w=640&q=75`;
+    });
+  }, [categories]);
 
   const commonProps = {
     ticket,
@@ -52,15 +63,19 @@ export default function SurveyClient({ ticket, categories }: Props) {
     );
   if (survey.phase === "step2")
     return (
-      <Step2Phase
-        {...commonProps}
-        wcRound={survey.wcRound}
-        wcWinners={survey.wcWinners}
-        wcStackLayout={survey.wcStackLayout}
-        getCurrentPair={survey.getCurrentPair}
-        onPick={survey.handleWcPick}
-        onBack={() => survey.setPhase("step1")}
-      />
+      <>
+        <Step2Phase
+          {...commonProps}
+          wcRound={survey.wcRound}
+          wcWinners={survey.wcWinners}
+          getCurrentPair={survey.getCurrentPair}
+          onPick={survey.handleWcPick}
+          onBack={() => survey.setPhase("step1")}
+        />
+        {survey.selectedCategory && survey.wcItems && (
+          <PreloadImages itemIds={survey.wcItems.map((item) => item.item_id)} />
+        )}
+      </>
     );
   if (survey.phase === "step3")
     return (
