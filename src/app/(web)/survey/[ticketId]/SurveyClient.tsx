@@ -19,7 +19,7 @@ export default function SurveyClient({ ticket, categories }: Props) {
   const s = makeStyles(ts);
   const survey = useSurvey(ticket);
 
-  // 이미지 프리로드 (페이지 진입 즉시)
+  // 카테고리 이미지 프리로드 (페이지 진입 즉시)
   useEffect(() => {
     categories.forEach((cat) => {
       const img = new window.Image();

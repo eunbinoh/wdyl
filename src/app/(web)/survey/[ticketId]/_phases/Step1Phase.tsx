@@ -79,6 +79,7 @@ export function Step1Phase({
                   src={`/category/${cat.category_code}.webp`}
                   alt={cat.category_code}
                   fill
+                  sizes="(max-width: 560px) 50vw, 210px"
                   style={{ objectFit: "cover", objectPosition: "center" }}
                 />
                 {/* 오버레이 */}

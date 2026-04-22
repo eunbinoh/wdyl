@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { Ticket, Category, Item, Phase } from "@/types";
 
@@ -16,6 +16,20 @@ export function useSurvey(ticket: Ticket) {
   const [medals, setMedals] = useState<(Item | null)[]>([null, null, null]);
   const [step3Done, setStep3Done] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!selectedCategory) return;
+
+    const prefix = selectedCategory.slice(0, 2).toUpperCase();
+    for (let i = 1; i <= 6; i++) {
+      const num = String(i).padStart(2, "0");
+      const src = `/items_img/${prefix}${num}.jpg`;
+      [640, 400].forEach((w) => {
+        const img = new window.Image();
+        img.src = `/_next/image?url=${encodeURIComponent(src)}&w=${w}&q=75`;
+      });
+    }
+  }, [selectedCategory]);
 
   const handleStart = async () => {
     if (ticket.status === "sent") {
@@ -38,17 +52,10 @@ export function useSurvey(ticket: Ticket) {
       .order("item_id", { ascending: true });
     if (!data || data.length < 6) return alert("아이템 데이터를 불러오지 못했어요.");
 
-    //이미지 프리로드
-    data.slice(0, 6).forEach((item) => {
-      const img = new window.Image();
-      const src = `/items_img/${item.item_id.replace(/_/g, "")}.jpg`;
-      img.src = `/_next/image?url=${encodeURIComponent(src)}&w=640&q=75`;
-    });
-
     setWcItems(data);
     setWcRound(0);
     setWcWinners([]);
-    setTimeout(() => setPhase("step2"), 50);
+    setPhase("step2");
   };
 
   const getCurrentPair = (): [Item, Item] | null => {
