@@ -6,7 +6,7 @@ import Image from "next/image";
 import styles from "./allComponents.module.css";
 import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 
-const PODIUM = [
+const RANK = [
   {
     rank: 2,
     img: "/icons/silver-cup.png",
@@ -14,7 +14,7 @@ const PODIUM = [
     barColor: "#94a3b8",
     textColor: "#475569",
     imgSize: 40,
-    padding: "14px 6px",
+    padding: "20px 6px 20px 6px",
   },
   {
     rank: 1,
@@ -23,7 +23,7 @@ const PODIUM = [
     barColor: "#F9B233",
     textColor: "#854F0B",
     imgSize: 50,
-    padding: "28px 6px 20px",
+    padding: "38px 6px 38px 6px",
   },
   {
     rank: 3,
@@ -31,8 +31,8 @@ const PODIUM = [
     bg: "#f3ede6",
     barColor: "#cd7f32",
     textColor: "#7c4f1e",
-    imgSize: 30,
-    padding: "6px 6px",
+    imgSize: 38,
+    padding: "12px 6px 5px 6px",
   },
 ];
 
@@ -88,7 +88,7 @@ export default function TicketResultModal({ ticketId, receiverName, onClose }: P
   }, [ticketId]);
 
   // 시상대 순서: 2위 - 1위 - 3위
-  const podiumOrder = [items[1], items[0], items[2]];
+  const rankOrder = [items[1], items[0], items[2]];
 
   return (
     <div
@@ -103,7 +103,7 @@ export default function TicketResultModal({ ticketId, receiverName, onClose }: P
           className={styles["modal-title"]}
           style={{ marginBottom: 10 }}
         >
-          {receiverName}의 취향분석 결과
+          {receiverName}이 원하는 선물
         </div>
         {categoryName && (
           <div style={{ textAlign: "start", marginBottom: 20, marginTop: 20 }}>
@@ -119,8 +119,8 @@ export default function TicketResultModal({ ticketId, receiverName, onClose }: P
         ) : (
           <div style={{ maxWidth: 280, margin: "0 auto" }}>
             <div style={{ display: "flex", alignItems: "flex-end", gap: 0 }}>
-              {PODIUM.map((p, i) => {
-                const item = podiumOrder[i];
+              {RANK.map((p, i) => {
+                const item = rankOrder[i];
                 const isFirst = i === 0;
                 const isLast = i === 2;
                 return (
@@ -149,7 +149,15 @@ export default function TicketResultModal({ ticketId, receiverName, onClose }: P
                         height={p.imgSize}
                         style={{ margin: "0 auto 6px" }}
                       />
-                      <div style={{ fontSize: 11, color: p.textColor, wordBreak: "keep-all", fontWeight: 500 }}>
+                      <div
+                        style={{
+                          fontSize: 12,
+                          color: p.textColor,
+                          wordBreak: "keep-all",
+                          fontWeight: 500,
+                          lineHeight: 1.1,
+                        }}
+                      >
                         {item?.item_name ?? "-"}
                       </div>
                     </div>
@@ -170,7 +178,7 @@ export default function TicketResultModal({ ticketId, receiverName, onClose }: P
                               textDecoration: "none",
                             }}
                           >
-                            <span style={{ fontSize: 10, fontWeight: 500, color: "#fff" }}>선물추천링크</span>
+                            <span style={{ fontSize: 12, fontWeight: 500, color: "#fff" }}>선물추천링크</span>
                           </a>
                           {item?.link_url2 ? (
                             <a
@@ -189,7 +197,7 @@ export default function TicketResultModal({ ticketId, receiverName, onClose }: P
                                 opacity: 0.75,
                               }}
                             >
-                              <span style={{ fontSize: 10, fontWeight: 500, color: "#fff" }}>직접구매링크</span>
+                              <span style={{ fontSize: 12, fontWeight: 500, color: "#fff" }}>직접구매링크</span>
                             </a>
                           ) : (
                             <div
@@ -233,6 +241,13 @@ export default function TicketResultModal({ ticketId, receiverName, onClose }: P
           </div>
         )}
 
+        {rankOrder[0]?.link_url2 && (
+          <div style={{ marginTop: 20, textAlign: "center" }}>
+            <p style={{ fontSize: 11, color: "#94a3b8", letterSpacing: "-0.5px" }}>
+              직접구매링크는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.
+            </p>
+          </div>
+        )}
         <div style={{ marginTop: 50 }}>
           <button
             className={styles["modal-btn-cancel"]}

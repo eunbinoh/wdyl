@@ -1,10 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // @ts-ignore: Next.js 15
   reactCompiler: true,
   images: {
-    unoptimized: false, // 최적화 활성화
+    formats: ["image/avif", "image/webp"],
+    deviceSizes: [640, 750, 828, 1080],
+    imageSizes: [200, 300, 400],
   },
 };
 
