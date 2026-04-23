@@ -3,9 +3,10 @@
 import { useState } from "react";
 import { loadTossPayments } from "@tosspayments/tosspayments-sdk";
 import { nanoid } from "nanoid";
-import styles from "./allComponents.module.css";
-import { ChevronDown } from "lucide-react";
 import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
+import styles from "./allComponents.module.css";
+import SwipeableSheet from "./SwipeableSheet";
+import CreditNotice from "./CreditNotice";
 
 const CREDIT_PLANS = [
   { id: "plan_1", label: "1 크레딧", credits: 1, price: 990 },
@@ -15,14 +16,14 @@ const CREDIT_PLANS = [
 
 type Props = {
   userId: string;
-  isRefund: boolean;
   onClose: () => void;
 };
 
-export default function CreditChargeModal({ userId, isRefund, onClose }: Props) {
+export default function CreditChargeModal({ userId, onClose }: Props) {
   useLockBodyScroll();
   const [selected, setSelected] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [showExamples, setShowExamples] = useState(false);
 
   const selectedPlan = CREDIT_PLANS.find((p) => p.id === selected);
 
@@ -59,12 +60,6 @@ export default function CreditChargeModal({ userId, isRefund, onClose }: Props) 
     }
   };
 
-  const handleRefundRequest = () => {
-    const creditText = selectedPlan ? `${selectedPlan.credits}크레딧 (${selectedPlan.price.toLocaleString()}원)` : "";
-    window.location.href = `mailto:jeyunnie@gmail.com?subject=[WDYL] 크레딧 환불 요청&body=사용자 ID: ${userId}%0A환불 요청 크레딧: ${creditText}%0A구매일자 7일이내 확인여부:%0A환불 사유:`;
-  };
-  const [showExamples, setShowExamples] = useState(false);
-
   return (
     <div
       className={styles["modal-overlay"]}
@@ -72,9 +67,8 @@ export default function CreditChargeModal({ userId, isRefund, onClose }: Props) 
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className={styles["modal-sheet"]}>
-        <div className={styles["modal-handle"]} />
-        <div className={styles["modal-title"]}>크레딧 {isRefund ? "환불" : "충전"}</div>
+      <SwipeableSheet onClose={onClose}>
+        <div className={styles["modal-title"]}>크레딧 충전</div>
 
         {/* 상품 목록 */}
         <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 24 }}>
@@ -135,87 +129,29 @@ export default function CreditChargeModal({ userId, isRefund, onClose }: Props) 
         </div>
 
         {/* 환불 안내 */}
-        <div
-          style={{
-            background: "#F8FAFC",
-            borderRadius: 10,
-            padding: "14px 16px",
-            marginBottom: 24,
-            fontSize: 12,
-            lineHeight: 1.8,
-          }}
-        >
-          <div
-            style={{ color: "#475569", marginBottom: 6 }}
-            className="break-keep break-words"
-          >
-            💡 미사용 크레딧은 구매 후 7일 이내 환불 가능해요.
-            <br />
-            ⚠️ 크레딧의 유효기간은 결제일로부터 12개월이며, 만료시 잔여 크레딧은 소멸됩니다.
-            <br />❌ 1회 이상 사용된 크레딧은 부분환불이 불가능해요.
-          </div>
-          <div
-            onClick={() => setShowExamples((prev) => !prev)}
-            style={{ color: "#475569", cursor: "pointer", display: "flex", alignItems: "center", gap: 4, fontSize: 11 }}
-          >
-            <ChevronDown
-              size={14}
-              style={{ transform: showExamples ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s" }}
-            />
-            ( 구매 즉시 서버·서비스 운영 비용이 발생하기 때문이에요 )
-          </div>
-          {showExamples && (
-            <div style={{ color: "#94A3B8", marginTop: 4, marginLeft: 16 }}>
-              · 1크레딧 구매 후 7일이내 미사용 → 전액환불 가능
-              <br />
-              · 5크레딧 구매 후 7일이내 2회 사용 → 부분환불 불가
-              <br />· 10크레딧 구매 후 7일이내 미사용 → 전액환불 가능
-            </div>
-          )}
-        </div>
+        <CreditNotice />
 
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-          {!isRefund && (
-            <button
-              onClick={handlePayment}
-              disabled={!selected || loading}
-              style={{
-                width: "100%",
-                background: selected ? "#0062CC" : "#E2E8F0",
-                color: selected ? "#fff" : "#94A3B8",
-                border: "none",
-                borderRadius: 14,
-                padding: "14px 0",
-                fontSize: 15,
-                fontWeight: 700,
-                cursor: selected ? "pointer" : "not-allowed",
-                transition: "all 0.15s",
-              }}
-            >
-              {loading ? "결제 중..." : selectedPlan ? `${selectedPlan.price.toLocaleString()}원 결제하기` : "결제하기"}
-            </button>
-          )}
-
-          {isRefund && (
-            <button
-              onClick={handleRefundRequest}
-              style={{
-                width: "100%",
-                background: selected ? "#000" : "#fff",
-                color: selected ? "#fff" : "#94A3B8",
-                border: "1.5px solid #EDE9E1",
-                borderRadius: 14,
-                padding: "13px 0",
-                fontSize: 13,
-                fontWeight: 600,
-                cursor: "pointer",
-              }}
-            >
-              환불 요청하기
-            </button>
-          )}
+          <button
+            onClick={handlePayment}
+            disabled={!selected || loading}
+            style={{
+              width: "100%",
+              background: selected ? "#0062CC" : "#E2E8F0",
+              color: selected ? "#fff" : "#94A3B8",
+              border: "none",
+              borderRadius: 14,
+              padding: "14px 0",
+              fontSize: 15,
+              fontWeight: 700,
+              cursor: selected ? "pointer" : "not-allowed",
+              transition: "all 0.15s",
+            }}
+          >
+            {loading ? "결제 중..." : selectedPlan ? `${selectedPlan.price.toLocaleString()}원 결제하기` : "결제하기"}
+          </button>
         </div>
-      </div>
+      </SwipeableSheet>
     </div>
   );
 }

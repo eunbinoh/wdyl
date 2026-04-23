@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
+import SwipeableSheet from "./SwipeableSheet";
 import { supabase } from "@/lib/supabase";
 import { nanoid } from "nanoid";
 import { ChevronLeft, ChevronRight, CircleHelp } from "lucide-react";
@@ -116,11 +117,7 @@ export default function CreateTicketModal({ userId, credits, onClose, onSuccess 
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div
-        ref={tooltipRef}
-        className={styles["modal-sheet"]}
-      >
-        <div className={styles["modal-handle"]} />
+      <SwipeableSheet onClose={onClose} ref={tooltipRef}>
         <div className={styles["modal-title"]}>새 티켓 만들기</div>
 
         {/* TO */}
@@ -288,7 +285,7 @@ export default function CreateTicketModal({ userId, credits, onClose, onSuccess 
             </button>
           )}
         </div>
-      </div>
+      </SwipeableSheet>
     </div>
   );
 }

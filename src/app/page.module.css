@@ -1,0 +1,381 @@
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+/* Layout */
+.main {
+  min-height: 100vh;
+  background-color: #fafafa;
+  font-family: 'Apple SD Gothic Neo', 'Pretendard', sans-serif;
+  overflow-x: hidden;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 28px;
+  max-width: 960px;
+  margin: 0 auto;
+  animation: fadeUp 0.5s ease both;
+}
+
+.logo {
+  object-fit: contain;
+}
+
+.loginBtn {
+  font-size: 13px;
+  font-weight: 700;
+  color: #f9b233;
+  background: rgb(250, 243, 230);
+  border: 1px solid #f9b233;
+  border-radius: 12px;
+  height: 32px;
+  padding: 6px 12px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+.loginBtn:hover,
+.loginBtn:active {
+  background: #f9b233;
+  color: #fff;
+}
+
+/* Hero */
+.hero {
+  text-align: center;
+  padding: 60px 24px 56px;
+  max-width: 600px;
+  margin: 0 auto;
+  animation: fadeUp 0.6s ease 0.1s both;
+}
+
+.heroBadge {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  color: #f9b233;
+  background: #fef8ec;
+  border: 1px solid #f9b23340;
+  border-radius: 20px;
+  padding: 6px 16px;
+  letter-spacing: 1.5px;
+  margin-bottom: 24px;
+}
+
+.heroTitle {
+  font-size: 32px;
+  font-weight: 900;
+  color: #1c1c1c;
+  line-height: 1.35;
+  margin-top: 16px;
+  margin-bottom: 16px;
+  letter-spacing: -1px;
+}
+
+.heroDesc {
+  font-size: 15px;
+  color: #64748b;
+  line-height: 1.9;
+  margin-bottom: 40px;
+}
+
+/* Tips */
+.tipsSection {
+  padding: 0 0 64px;
+  width: 100%;
+}
+
+.tipsInner {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 24px;
+  animation: fadeUp 0.6s ease 0.3s both;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sectionLabel {
+  font-size: 11px;
+  font-weight: 700;
+  color: #94a3b8;
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.tipsList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: left;
+}
+
+.tipCard {
+  background: #fff;
+  border: 1.5px solid #f1f5f9;
+  border-radius: 14px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.tipCard:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 12px 32px rgba(249, 178, 51, 0.15);
+  background: #fef8ec;
+  border-color: #f9b233;
+}
+
+.tipEmoji {
+  font-size: 26px;
+  flex-shrink: 0;
+}
+
+.tipTitle {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1c1c1c;
+  margin-bottom: 3px;
+}
+
+.tipDesc {
+  font-size: 13px;
+  color: #64748b;
+  line-height: 1.6;
+  word-break: keep-all;
+}
+
+/* How to use */
+.howSection {
+  padding: 0 24px 64px;
+  max-width: 720px;
+  margin: 40px auto;
+  animation: fadeUp 0.6s ease 0.2s both;
+}
+
+.howGrid {
+  display: flex;
+  background: #fff;
+  border-radius: 20px;
+  border: 1px solid #f1f5f9;
+  overflow: hidden;
+}
+
+.howStep {
+  flex: 1;
+  padding: 24px 12px;
+  text-align: center;
+  border-right: 1px solid #f1f5f9;
+}
+.howStep:last-child {
+  border-right: none;
+}
+
+.howStepEmoji {
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+.howStepLabel {
+  font-size: 10px;
+  font-weight: 700;
+  color: #64748b;
+  margin-bottom: 4px;
+}
+
+.howStepName {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1c1c1c;
+}
+
+/* Pricing */
+.pricingSection {
+  padding: 0 24px 64px;
+  max-width: 720px;
+  margin: 40px auto;
+  animation: fadeUp 0.6s ease 0.4s both;
+}
+
+.planList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 400px;
+  margin: 0 auto 20px;
+}
+
+.planCard {
+  background: #fff;
+  border: 1.5px solid #f1f5f9;
+  border-radius: 14px;
+  padding: 18px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+.planCard:hover {
+  transform: translateY(-3px);
+  background: #1c1c1c;
+  border-color: #1c1c1c;
+}
+
+.planCardLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.planCredits {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1c1c1c;
+}
+.planCard:hover .planCredits {
+  color: #fff;
+}
+
+.planPrice {
+  font-size: 15px;
+  font-weight: 800;
+  color: #000;
+}
+.planCard:hover .planPrice {
+  color: #fff;
+}
+
+.tagPopular {
+  font-size: 11px;
+  font-weight: 700;
+  color: #0062cc;
+  background: #eff6ff;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+.tagCheap {
+  font-size: 11px;
+  font-weight: 700;
+  color: #f9b233;
+  background: #fef9ec;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+/* Promo */
+.promoBox {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 14px;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.promoRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.promoEmoji {
+  font-size: 28px;
+  animation: float 3s ease-in-out infinite;
+}
+
+.promoContent {
+  flex: 1;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+.promoTitle {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1e40af;
+  margin-bottom: 3px;
+}
+
+.promoDesc {
+  font-size: 13px;
+  color: #3b82f6;
+  line-height: 1.6;
+}
+
+.shareBtn {
+  background: #1d4ed8;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.shareBtnText {
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* CTA */
+.ctaSection {
+  text-align: center;
+  padding: 0 24px 80px;
+  animation: fadeUp 0.6s ease 0.5s both;
+}
+
+.ctaBtn {
+  display: inline-block;
+  background: #f9b233;
+  color: #fff;
+  font-weight: 800;
+  font-size: 16px;
+  border-radius: 16px;
+  padding: 14px 48px;
+  text-decoration: none;
+  letter-spacing: -0.3px;
+  transition: all 0.2s ease;
+}
+.ctaBtn:hover {
+  transform: scale(1.03);
+  box-shadow: 0 8px 24px rgba(254, 229, 0, 0.5);
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 24px;
+  border-top: 1px solid #f1f5f9;
+  font-size: 12px;
+  color: #94a3b8;
+  line-height: 2;
+}
+
+.footerLinks {
+  margin-bottom: 8px;
+}
+
+.footerLink {
+  color: #94a3b8;
+  text-decoration: none;
+}

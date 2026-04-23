@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import Image from "next/image";
+import SwipeableSheet from "./SwipeableSheet";
 import styles from "./allComponents.module.css";
 import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 
@@ -97,13 +98,12 @@ export default function TicketResultModal({ ticketId, receiverName, onClose }: P
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className={styles["modal-sheet"]}>
-        <div className={styles["modal-handle"]} />
+      <SwipeableSheet onClose={onClose}>
         <div
           className={styles["modal-title"]}
           style={{ marginBottom: 10 }}
         >
-          {receiverName}이 원하는 선물
+          {receiverName} 님이 원하는 선물
         </div>
         {categoryName && (
           <div style={{ textAlign: "start", marginBottom: 20, marginTop: 20 }}>
@@ -256,7 +256,7 @@ export default function TicketResultModal({ ticketId, receiverName, onClose }: P
             닫기
           </button>
         </div>
-      </div>
+      </SwipeableSheet>
     </div>
   );
 }
