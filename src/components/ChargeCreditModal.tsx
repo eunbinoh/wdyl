@@ -5,6 +5,7 @@ import { loadTossPayments } from "@tosspayments/tosspayments-sdk";
 import { nanoid } from "nanoid";
 import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 import styles from "./allComponents.module.css";
+import SwipeableSheet from "./SwipeableSheet";
 import CreditNotice from "./CreditNotice";
 
 const CREDIT_PLANS = [
@@ -66,8 +67,7 @@ export default function CreditChargeModal({ userId, onClose }: Props) {
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className={styles["modal-sheet"]}>
-        <div className={styles["modal-handle"]} />
+      <SwipeableSheet onClose={onClose}>
         <div className={styles["modal-title"]}>크레딧 충전</div>
 
         {/* 상품 목록 */}
@@ -151,7 +151,7 @@ export default function CreditChargeModal({ userId, onClose }: Props) {
             {loading ? "결제 중..." : selectedPlan ? `${selectedPlan.price.toLocaleString()}원 결제하기` : "결제하기"}
           </button>
         </div>
-      </div>
+      </SwipeableSheet>
     </div>
   );
 }

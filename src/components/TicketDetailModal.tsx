@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
+import SwipeableSheet from "./SwipeableSheet";
 import { supabase } from "@/lib/supabase";
 import { CircleHelp, ChevronLeft, ChevronRight, Icon } from "lucide-react";
 import styles from "./allComponents.module.css";
@@ -116,10 +117,9 @@ export default function DetailTicketModal({ ticketId, onClose, onFetched }: Prop
   if (fetchLoading) {
     return (
       <div className={styles["modal-overlay"]}>
-        <div className={styles["modal-sheet"]}>
-          <div className={styles["modal-handle"]} />
+        <SwipeableSheet onClose={onClose}>
           <div style={{ textAlign: "center", padding: "40px 0", color: "#AAA" }}>불러오는 중...</div>
-        </div>
+        </SwipeableSheet>
       </div>
     );
   }
@@ -131,11 +131,7 @@ export default function DetailTicketModal({ ticketId, onClose, onFetched }: Prop
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div
-        ref={tooltipRef}
-        className={styles["modal-sheet"]}
-      >
-        <div className={styles["modal-handle"]} />
+      <SwipeableSheet onClose={onClose} ref={tooltipRef}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div
             className={styles["modal-title"]}
@@ -306,7 +302,7 @@ export default function DetailTicketModal({ ticketId, onClose, onFetched }: Prop
             </button>
           )}
         </div>
-      </div>
+      </SwipeableSheet>
     </div>
   );
 }

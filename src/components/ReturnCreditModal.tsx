@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import styles from "./allComponents.module.css";
+import SwipeableSheet from "./SwipeableSheet";
 import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 import CreditNotice from "./CreditNotice";
 
@@ -114,8 +115,7 @@ export default function ReturnCreditModal({ userId, onClose }: Props) {
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className={styles["modal-sheet"]}>
-        <div className={styles["modal-handle"]} />
+      <SwipeableSheet onClose={onClose}>
         <div className={styles["modal-title"]}>크레딧 환불 요청</div>
 
         {loading ? (
@@ -170,7 +170,7 @@ export default function ReturnCreditModal({ userId, onClose }: Props) {
             ? `${totalAmount.toLocaleString()}원 환불 요청하기 (${selectedPayments.length}건)`
             : "환불 요청하기"}
         </button>
-      </div>
+      </SwipeableSheet>
     </div>
   );
 }
