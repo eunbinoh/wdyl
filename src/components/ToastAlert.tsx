@@ -10,6 +10,29 @@ const TOAST_MSG: Record<string, { msg: string; color: string }> = {
   cancel: { msg: "⚠️ 결제가 취소되었어요.", color: "#64748b" },
 };
 
+export function showToast(msg: string, color: string = "#1c1c1c") {
+  const el = document.createElement("div");
+  el.innerText = msg;
+  Object.assign(el.style, {
+    position: "fixed",
+    bottom: "32px",
+    left: "50%",
+    transform: "translateX(-50%)",
+    background: color,
+    color: "#fff",
+    padding: "12px 20px",
+    borderRadius: "12px",
+    fontSize: "14px",
+    fontWeight: "700",
+    zIndex: "9999",
+    whiteSpace: "nowrap",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+    transition: "opacity 0.3s",
+  });
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 3000);
+}
+
 export default function ToastHandler() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -19,26 +42,7 @@ export default function ToastHandler() {
     if (!payment || !TOAST_MSG[payment]) return;
 
     const { msg, color } = TOAST_MSG[payment];
-    const el = document.createElement("div");
-    el.innerText = msg;
-    Object.assign(el.style, {
-      position: "fixed",
-      bottom: "32px",
-      left: "50%",
-      transform: "translateX(-50%)",
-      background: color,
-      color: "#fff",
-      padding: "12px 20px",
-      borderRadius: "12px",
-      fontSize: "14px",
-      fontWeight: "700",
-      zIndex: "9999",
-      whiteSpace: "nowrap",
-      boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-      transition: "opacity 0.3s",
-    });
-    document.body.appendChild(el);
-    setTimeout(() => el.remove(), 3000);
+    showToast(msg, color);
     router.replace("/main");
   }, [payment]);
 

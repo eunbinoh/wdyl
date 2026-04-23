@@ -3,8 +3,9 @@
 import { useRef, useState, useEffect } from "react";
 import SwipeableSheet from "./SwipeableSheet";
 import { supabase } from "@/lib/supabase";
-import { CircleHelp, ChevronLeft, ChevronRight, Icon } from "lucide-react";
+import { CircleHelp, ChevronLeft, ChevronRight } from "lucide-react";
 import styles from "./allComponents.module.css";
+import { showToast } from "./ToastAlert";
 import { TOOLTIPS, THEMES } from "@/lib/constants";
 import { Status } from "@/types";
 import { THEME_ICON, THEME_STYLE } from "@/app/(web)/survey/[ticketId]/_styles";
@@ -44,27 +45,26 @@ export default function DetailTicketModal({ ticketId, onClose, onFetched }: Prop
   const displayName = toName.trim() || "OO";
   const filledTraits = traits.map((t, i) => t.trim() || `특징${i + 1}`);
 
-  const { icon: Icon, color } = THEME_ICON[theme] ?? THEME_ICON.MOOD;
-
   // 티켓 조회
-  useEffect(() => {
-    const fetchTicket = async () => {
-      const { data } = await supabase!
-        .from("Ticket")
-        .select("receiver_name, comment, theme, status")
-        .eq("ticket_id", ticketId)
-        .single();
+  const fetchTicket = async () => {
+    const { data } = await supabase!
+      .from("Ticket")
+      .select("receiver_name, comment, theme, status")
+      .eq("ticket_id", ticketId)
+      .single();
 
-      if (data) {
-        setToName(data.receiver_name ?? "");
-        setTheme((data.theme as ThemeId) ?? "MOOD");
-        setStatus((data.status as Status) ?? "created");
-        // comment "텍스트1 / 텍스트2 / 텍스트3" → 배열로 분리
-        const parts = (data.comment ?? "").split("/").map((s: string) => s.trim());
-        setTraits([parts[0] ?? "", parts[1] ?? "", parts[2] ?? ""]);
-      }
-      setFetchLoading(false);
-    };
+    if (data) {
+      setToName(data.receiver_name ?? "");
+      setTheme((data.theme as ThemeId) ?? "MOOD");
+      setStatus((data.status as Status) ?? "created");
+      // comment "텍스트1 / 텍스트2 / 텍스트3" → 배열로 분리
+      const parts = (data.comment ?? "").split("/").map((s: string) => s.trim());
+      setTraits([parts[0] ?? "", parts[1] ?? "", parts[2] ?? ""]);
+    }
+    setFetchLoading(false);
+  };
+
+  useEffect(() => {
     fetchTicket();
   }, [ticketId]);
 
@@ -79,6 +79,14 @@ export default function DetailTicketModal({ ticketId, onClose, onFetched }: Prop
   const handleModify = async () => {
     if (!toName.trim()) return alert("받는 사람 이름을 입력해주세요.");
     if (traits.some((t) => !t.trim())) return alert("특징 3가지를 모두 입력해주세요.");
+
+    const { data: ticketCheck } = await supabase!.from("Ticket").select("status").eq("ticket_id", ticketId).single();
+
+    if (ticketCheck?.status !== "created" && ticketCheck?.status !== "sent") {
+      showToast("티켓 참여가 시작되어 수정할 수 없어요.", "#ef4444");
+      await fetchTicket();
+      return;
+    }
 
     setLoading(true);
     const { error } = await supabase!
@@ -131,7 +139,10 @@ export default function DetailTicketModal({ ticketId, onClose, onFetched }: Prop
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <SwipeableSheet onClose={onClose} ref={tooltipRef}>
+      <SwipeableSheet
+        onClose={onClose}
+        ref={tooltipRef}
+      >
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div
             className={styles["modal-title"]}

@@ -8,8 +8,6 @@ const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
 
-  console.log("[kakao-callback] hit:", Object.fromEntries(searchParams));
-
   const type = searchParams.get("type");
   const ticket_id = searchParams.get("ticket_id");
   const user_id = searchParams.get("user_id");

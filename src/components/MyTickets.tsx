@@ -6,6 +6,7 @@ import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import { Status, Ticket } from "@/types";
 import styles from "./allComponents.module.css";
+import { showToast } from "./ToastAlert";
 import TicketNewModal from "./TicketNewModal";
 import TicketDetailModal from "./TicketDetailModal";
 import TicketResultModal from "./TicketResultModal";
@@ -65,13 +66,27 @@ export default function MyTickets({ userId, credits }: Props) {
   useEffect(() => {
     getTickets(10);
 
-    const handleFocus = () => {
+    const refresh = () => {
       getTickets(10);
       router.refresh();
     };
 
-    window.addEventListener("focus", handleFocus);
-    return () => window.removeEventListener("focus", handleFocus);
+    // Chrome: 공유창이 별도 창으로 열렸다 닫힐 때 focus 이벤트 발생
+    window.addEventListener("focus", refresh);
+
+    // 카카오 인앱 브라우저: 네이티브 오버레이라 focus 미발생.
+    // visibilitychange / pageshow 로 보완
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") refresh();
+    };
+    document.addEventListener("visibilitychange", handleVisibility);
+    window.addEventListener("pageshow", refresh);
+
+    return () => {
+      window.removeEventListener("focus", refresh);
+      document.removeEventListener("visibilitychange", handleVisibility);
+      window.removeEventListener("pageshow", refresh);
+    };
   }, []);
 
   const handleKakaoSend = (ticketId: string, receiverName: string) => {
@@ -94,6 +109,11 @@ export default function MyTickets({ userId, credits }: Props) {
         ticket_id: ticketId,
       },
     });
+
+    // 카카오 인앱 브라우저: 공유 다이얼로그가 같은 웹뷰 위 네이티브 오버레이로 열려
+    // focus / visibilitychange 이벤트가 발생하지 않을 수 있음.
+    // 서버 콜백(api/kakao/callback) 처리 시간을 고려해 2초 후 목록 갱신.
+    setTimeout(() => getTickets(10), 2000);
   };
 
   const handleShowAll = async () => {
@@ -107,6 +127,18 @@ export default function MyTickets({ userId, credits }: Props) {
   const handleCancel = async (ticketId: string) => {
     const confirmed = confirm("티켓을 회수하면 크레딧 1개가 환급돼요.\n정말 회수하시겠어요?");
     if (!confirmed) return;
+
+    const { data: ticketCheck } = await supabase!
+      .from("Ticket")
+      .select("status")
+      .eq("ticket_id", ticketId)
+      .single();
+
+    if (ticketCheck?.status !== "created" && ticketCheck?.status !== "sent") {
+      showToast("티켓 참여가 시작되어 회수할 수 없어요.", "#ef4444");
+      await getTickets(10);
+      return;
+    }
 
     setCancellingId(ticketId);
     try {
