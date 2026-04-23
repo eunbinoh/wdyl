@@ -1,6 +1,6 @@
 "use client";
 
-import { forwardRef } from "react";
+import { forwardRef, useRef } from "react";
 import { motion, useDragControls } from "framer-motion";
 import styles from "./allComponents.module.css";
 
@@ -11,10 +11,22 @@ type Props = {
 
 const SwipeableSheet = forwardRef<HTMLDivElement, Props>(function SwipeableSheet({ onClose, children }, ref) {
   const controls = useDragControls();
+  const innerRef = useRef<HTMLDivElement | null>(null);
+
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    // 스크롤이 최상단일 때만 드래그 시작 (스크롤 중일 땐 일반 스크롤 유지)
+    if (innerRef.current && innerRef.current.scrollTop === 0) {
+      controls.start(e);
+    }
+  };
 
   return (
     <motion.div
-      ref={ref}
+      ref={(node) => {
+        innerRef.current = node;
+        if (typeof ref === "function") ref(node);
+        else if (ref) (ref as React.MutableRefObject<HTMLDivElement | null>).current = node;
+      }}
       className={styles["modal-sheet"]}
       drag="y"
       dragControls={controls}
@@ -26,12 +38,9 @@ const SwipeableSheet = forwardRef<HTMLDivElement, Props>(function SwipeableSheet
           onClose();
         }
       }}
+      onPointerDown={handlePointerDown}
     >
-      <div
-        className={styles["modal-handle"]}
-        onPointerDown={(e) => controls.start(e)}
-        style={{ cursor: "grab", touchAction: "none" }}
-      />
+      <div className={styles["modal-handle"]} />
       {children}
     </motion.div>
   );
