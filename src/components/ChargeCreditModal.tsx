@@ -67,9 +67,10 @@ export default function CreditChargeModal({ userId, onClose }: Props) {
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <SwipeableSheet onClose={onClose}>
-        <div className={styles["modal-title"]}>크레딧 충전</div>
-
+      <SwipeableSheet
+        onClose={onClose}
+        title="크레딧 충전"
+      >
         {/* 상품 목록 */}
         <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 24 }}>
           {CREDIT_PLANS.map((plan, i) => {

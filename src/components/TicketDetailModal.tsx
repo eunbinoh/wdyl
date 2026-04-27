@@ -125,7 +125,10 @@ export default function DetailTicketModal({ ticketId, onClose, onFetched }: Prop
   if (fetchLoading) {
     return (
       <div className={styles["modal-overlay"]}>
-        <SwipeableSheet onClose={onClose}>
+        <SwipeableSheet
+          onClose={onClose}
+          title="티켓 상세보기"
+        >
           <div style={{ textAlign: "center", padding: "40px 0", color: "#AAA" }}>불러오는 중...</div>
         </SwipeableSheet>
       </div>
@@ -142,35 +145,11 @@ export default function DetailTicketModal({ ticketId, onClose, onFetched }: Prop
       <SwipeableSheet
         onClose={onClose}
         ref={tooltipRef}
+        title="티켓 상세보기"
+        status={status as Status}
+        scrollable
       >
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <div
-            className={styles["modal-title"]}
-            style={{ marginBottom: 0 }}
-          >
-            티켓 상세보기
-          </div>
-
-          <div
-            style={{
-              fontSize: 11,
-              fontWeight: 700,
-              padding: "4px 10px",
-              borderRadius: 20,
-              color: status === "complete" ? "#0062CC" : status === "progress" ? "#16a34a" : "#64748b",
-              background: status === "complete" ? "#eff6ff" : status === "progress" ? "#f0fdf4" : "#f1f5f9",
-            }}
-          >
-            {status === "complete"
-              ? "참여완료"
-              : status === "progress"
-                ? "참여중"
-                : status === "sent"
-                  ? "발송완료"
-                  : "발송대기"}
-          </div>
-        </div>
-        <div style={{ fontSize: 11, color: "#64748b", textAlign: "end", marginTop: 8, marginBottom: 32 }}>
+        <div style={{ fontSize: 11, color: "#64748b", textAlign: "end", marginTop: 0, marginBottom: 8 }}>
           {status === "progress"
             ? "참여가 시작된 티켓은 수정하거나 회수 할 수 없어요."
             : status === "sent"

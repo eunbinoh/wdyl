@@ -12,7 +12,7 @@ type ResultSub = {
 export const TOOLTIPS: Record<string, string> = {
   TO: "받는 분 이름 - 첫 화면 타이틀에 사용돼요.",
   WHO: "받는 분 특징 - 설문 결과 화면에 적용돼요.",
-  CONCEPT: "컨셉/테마 - 설문링크의 말투와 분위기에요.",
+  CONCEPT: "컨셉/테마 - 설문링크 질문/스타일을 결정해요.",
 };
 
 export const TRAIT_SUFFIX: Record<Theme, string[]> = {

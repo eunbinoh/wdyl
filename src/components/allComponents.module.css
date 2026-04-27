@@ -227,15 +227,50 @@
 
 .modal-sheet {
   @apply bg-[#F4F1EB] rounded-t-3xl w-full max-w-[480px]
-    px-[22px] pt-7 pb-12 max-h-[90vh] overflow-y-auto;
+    max-h-[90vh] flex flex-col;
+}
+
+.modal-drag-area {
+  @apply px-[22px] pt-7 pb-4 flex-shrink-0 cursor-grab active:cursor-grabbing;
 }
 
 .modal-handle {
   @apply w-10 h-1 bg-[#DDD8CF] rounded-sm mx-auto mb-6;
 }
 
+.modal-sheet-scroll {
+  @apply flex-1 min-h-0 overflow-y-auto px-[22px] pb-12;
+  touch-action: pan-y;
+  overscroll-behavior: contain;
+}
+
+.modal-sheet-body {
+  @apply px-[22px] pb-12;
+}
+
 .modal-title {
-  @apply text-xl font-extrabold text-[#1C1C1C] mb-8;
+  @apply text-xl font-extrabold text-[#1C1C1C];
+}
+
+.modal-header {
+  @apply flex justify-between items-center;
+}
+
+.modal-status-badge {
+  @apply text-[11px] font-bold py-1 px-2.5 rounded-full;
+
+  &.complete {
+    @apply text-[#0062CC] bg-[#eff6ff];
+  }
+  &.progress {
+    @apply text-[#16a34a] bg-[#f0fdf4];
+  }
+  &.sent {
+    @apply text-[#64748b] bg-[#f1f5f9];
+  }
+  &.wait {
+    @apply text-[#64748b] bg-[#f1f5f9];
+  }
 }
 
 .modal-section {

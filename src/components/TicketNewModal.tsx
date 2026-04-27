@@ -117,11 +117,17 @@ export default function CreateTicketModal({ userId, credits, onClose, onSuccess 
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <SwipeableSheet onClose={onClose} ref={tooltipRef}>
-        <div className={styles["modal-title"]}>새 티켓 만들기</div>
-
+      <SwipeableSheet
+        onClose={onClose}
+        ref={tooltipRef}
+        title="새 티켓 만들기"
+        scrollable
+      >
         {/* TO */}
-        <div className={styles["modal-section"]}>
+        <div
+          className={styles["modal-section"]}
+          style={{ marginTop: 10 }}
+        >
           {sectionLabel("TO")}
           <div className={styles["modal-input-wrap"]}>
             <input

@@ -1,47 +1,74 @@
 "use client";
 
-import { forwardRef, useRef } from "react";
-import { motion, useDragControls } from "framer-motion";
+import { forwardRef } from "react";
+import { motion, useDragControls, useAnimationControls } from "framer-motion";
 import styles from "./allComponents.module.css";
+import { Status } from "@/types";
 
 type Props = {
   onClose: () => void;
+  title: string;
+  status?: Status;
   children: React.ReactNode;
+  scrollable?: boolean;
 };
 
-const SwipeableSheet = forwardRef<HTMLDivElement, Props>(function SwipeableSheet({ onClose, children }, ref) {
-  const controls = useDragControls();
-  const innerRef = useRef<HTMLDivElement | null>(null);
+const STATUS_LABEL: Record<Status, string> = {
+  complete: "참여완료",
+  progress: "참여중",
+  sent: "발송완료",
+  created: "발송대기",
+  cancelled: "발송취소",
+};
 
-  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-    // 스크롤이 최상단일 때만 드래그 시작 (스크롤 중일 땐 일반 스크롤 유지)
-    if (innerRef.current && innerRef.current.scrollTop === 0) {
-      controls.start(e);
-    }
+const SwipeableSheet = forwardRef<HTMLDivElement, Props>(function SwipeableSheet(
+  { onClose, title, status, children, scrollable = false },
+  ref
+) {
+  const controls = useDragControls();
+  const animation = useAnimationControls();
+
+  const closeWithSlide = async () => {
+    await animation.start({
+      y: "100%",
+      transition: { duration: 0.2, ease: "easeOut" },
+    });
+    onClose();
   };
 
   return (
     <motion.div
-      ref={(node) => {
-        innerRef.current = node;
-        if (typeof ref === "function") ref(node);
-        else if (ref) (ref as React.MutableRefObject<HTMLDivElement | null>).current = node;
-      }}
+      ref={ref}
       className={styles["modal-sheet"]}
       drag="y"
       dragControls={controls}
       dragListener={false}
       dragConstraints={{ top: 0 }}
       dragElastic={{ top: 0, bottom: 0.2 }}
+      animate={animation}
       onDragEnd={(_, info) => {
         if (info.offset.y > 100 || info.velocity.y > 500) {
-          onClose();
+          closeWithSlide();
         }
       }}
-      onPointerDown={handlePointerDown}
     >
-      <div className={styles["modal-handle"]} />
-      {children}
+      <div
+        className={styles["modal-drag-area"]}
+        onPointerDown={(e) => controls.start(e)}
+        style={{ touchAction: "none" }}
+      >
+        <div className={styles["modal-handle"]} />
+        <div className={styles["modal-header"]}>
+          <div className={styles["modal-title"]}>{title}</div>
+          {status && <div className={`${styles["modal-status-badge"]} ${styles[status]}`}>{STATUS_LABEL[status]}</div>}
+        </div>
+      </div>
+
+      {scrollable ? (
+        <div className={styles["modal-sheet-scroll"]}>{children}</div>
+      ) : (
+        <div className={styles["modal-sheet-body"]}>{children}</div>
+      )}
     </motion.div>
   );
 });

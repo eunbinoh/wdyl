@@ -98,13 +98,10 @@ export default function TicketResultModal({ ticketId, receiverName, onClose }: P
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <SwipeableSheet onClose={onClose}>
-        <div
-          className={styles["modal-title"]}
-          style={{ marginBottom: 10 }}
-        >
-          {receiverName} 님이 원하는 선물
-        </div>
+      <SwipeableSheet
+        onClose={onClose}
+        title={`${receiverName} 님이 원하는 선물`}
+      >
         {categoryName && (
           <div style={{ textAlign: "start", marginBottom: 20, marginTop: 20 }}>
             <span style={{ fontSize: 14 }}>카테고리 : </span>

@@ -115,9 +115,10 @@ export default function ReturnCreditModal({ userId, onClose }: Props) {
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <SwipeableSheet onClose={onClose}>
-        <div className={styles["modal-title"]}>크레딧 환불 요청</div>
-
+      <SwipeableSheet
+        onClose={onClose}
+        title="크레딧 환불 요청"
+      >
         {loading ? (
           <div className={styles["pay-empty"]}>결제 내역을 불러오는 중...</div>
         ) : payments.length === 0 ? (
