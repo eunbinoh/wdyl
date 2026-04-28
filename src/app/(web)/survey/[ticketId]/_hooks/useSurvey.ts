@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { Ticket, Category, Item, Phase } from "@/types";
+import { Ticket, Item, Phase } from "@/types";
 
 export function useSurvey(ticket: Ticket) {
   const isExpired = ticket.status === "complete" || ticket.status === "cancelled";
@@ -77,7 +77,8 @@ export function useSurvey(ticket: Ticket) {
       .select("item_id, item_name, category_code")
       .eq("category_code", picked.category_code)
       .eq("level", 3)
-      .like("item_id", `${picked.item_id}%`);
+      .like("item_id", `${picked.item_id}%`)
+      .order("item_id", { ascending: true });
     if (!data || data.length < 3) return alert("상세 아이템을 불러오지 못했어요.");
     setStep3Items(data.slice(0, 3));
     setMedals([null, null, null]);

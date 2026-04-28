@@ -323,7 +323,7 @@
 }
 
 .modal-trait-num {
-  @apply text-xs font-extrabold text-[#DDD8CF] w-[18px] flex-shrink-0;
+  @apply text-xs font-extrabold text-[#DDD8CF] w-[4px] flex-shrink-0;
 }
 
 .modal-theme-row {

@@ -183,15 +183,15 @@ export default function DetailTicketModal({ ticketId, onClose, onFetched }: Prop
                 key={i}
                 className={styles["modal-trait-item"]}
               >
-                <span className={styles["modal-trait-num"]}>{String(i + 1).padStart(2, "0")}</span>
+                <span className={styles["modal-trait-num"]}>{String(i + 1)}</span>
                 <input
                   className={styles["modal-input"]}
-                  style={{ fontSize: 15, fontWeight: 400, opacity: isEditable ? 1 : 0.6 }}
+                  style={{ fontSize: 15, fontWeight: 400, opacity: isEditable ? 1 : 0.6}}
                   placeholder={
                     [
-                      "한마디로 표현한 명사 (집순이,패피,..)",
-                      "매력/장점을 나타내는 형용사 (귀여운,똑똑한,..)",
-                      "떠오르는 이미지 (햄찌,짱구,..)",
+                      "특징 한단어 (집순이,여행중독,파워J..)",
+                      "매력/장점 형용사 (귀여운,똑똑한,센스있는..)",
+                      "떠오르는 이미지 (햄찌,짱구,연예인..)",
                     ][i]
                   }
                   value={trait}
