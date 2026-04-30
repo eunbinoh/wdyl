@@ -16,6 +16,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "WDYL | 너멀조몰",
   description: "너가 뭘 좋아할지 몰라서 준비했어",
+  openGraph: {
+    title: "WDYL | 너가 뭘 좋아할지 몰라서 준비했어",
+    description: "AI도 못알려주는 내 친구의 찐 위시리스트",
+    images: ["/wdyl_icon.png"],
+  },
 };
 
 export default function RootLayout({
@@ -24,7 +29,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="ko">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         {children}
 
