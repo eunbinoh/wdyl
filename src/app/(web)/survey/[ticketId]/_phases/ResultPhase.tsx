@@ -122,7 +122,6 @@ export function ResultPhase({ ticket, ts, pageStyle, cardStyle, medals }: Props)
                 alignItems: "center",
                 gap: 4,
                 marginBottom: 8,
-                marginLeft: 40,
                 justifyContent: "center",
               }}
             >

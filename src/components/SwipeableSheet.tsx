@@ -47,6 +47,8 @@ const SwipeableSheet = forwardRef<HTMLDivElement, Props>(function SwipeableSheet
       dragElastic={{ top: 0, bottom: 0.2 }}
       animate={animation}
       onDragEnd={(_, info) => {
+        const isVertical = Math.abs(info.offset.y) > Math.abs(info.offset.x);
+        if (!isVertical) return;
         if (info.offset.y > 100 || info.velocity.y > 500) {
           closeWithSlide();
         }

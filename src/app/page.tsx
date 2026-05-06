@@ -117,7 +117,10 @@ export default function LandingPage() {
           <div className={styles.sectionLabel}>WHEN TO USE</div>
           <div className={styles.tipsList}>
             {TIPS.map((tip, i) => (
-              <div key={i} className={styles.tipCard}>
+              <div
+                key={i}
+                className={styles.tipCard}
+              >
                 <div className={styles.tipEmoji}>{tip.emoji}</div>
                 <div>
                   <div className={styles.tipTitle}>{tip.title}</div>
@@ -138,7 +141,10 @@ export default function LandingPage() {
             { step: "02", emoji: "📨", label: "링크 발송" },
             { step: "03", emoji: "🏆", label: "결과 확인" },
           ].map((item, i) => (
-            <div key={i} className={styles.howStep}>
+            <div
+              key={i}
+              className={styles.howStep}
+            >
               <div className={styles.howStepEmoji}>{item.emoji}</div>
               <div className={styles.howStepLabel}>STEP {item.step}</div>
               <div className={styles.howStepName}>{item.label}</div>
@@ -152,13 +158,14 @@ export default function LandingPage() {
         <div className={styles.sectionLabel}>PRICING</div>
         <div className={styles.planList}>
           {PLANS.map((plan, i) => (
-            <div key={i} className={styles.planCard}>
+            <div
+              key={i}
+              className={styles.planCard}
+            >
               <div className={styles.planCardLeft}>
                 <div className={styles.planCredits}>{plan.credits}크레딧</div>
                 {plan.tag && (
-                  <div className={plan.tag.includes("인기") ? styles.tagPopular : styles.tagCheap}>
-                    {plan.tag}
-                  </div>
+                  <div className={plan.tag.includes("인기") ? styles.tagPopular : styles.tagCheap}>{plan.tag}</div>
                 )}
               </div>
               <div className={styles.planPrice}>{plan.price.toLocaleString()}원</div>
@@ -171,9 +178,7 @@ export default function LandingPage() {
           <div className={styles.promoRow}>
             <div className={styles.promoEmoji}>🎉</div>
             <div className={styles.promoContent}>
-              <div className={styles.promoTitle}>
-                공유하기 / 추천하기 이벤트로 무료 크레딧 획득하세요 !
-              </div>
+              <div className={styles.promoTitle}>공유하기 / 추천하기 이벤트로 무료 크레딧 획득하세요 !</div>
               <div className={styles.promoDesc}>
                 친구에게 WDYL 공유/추천 하면
                 <br />
@@ -183,8 +188,14 @@ export default function LandingPage() {
               </div>
             </div>
           </div>
-          <button onClick={handleKakaoShare} className={styles.shareBtn}>
-            <Share2 size={16} color="#fff" />
+          <button
+            onClick={handleKakaoShare}
+            className={styles.shareBtn}
+          >
+            <Share2
+              size={16}
+              color="#fff"
+            />
             <span className={styles.shareBtnText}>공유하기</span>
           </button>
         </div>
@@ -192,16 +203,29 @@ export default function LandingPage() {
 
       {/* CTA 하단 */}
       <section className={styles.ctaSection}>
-        <Link href="/login" className={styles.ctaBtn}>
+        <Link
+          href={user ? "/main" : "/login"}
+          className={styles.ctaBtn}
+        >
           지금 바로 시작하기
         </Link>
       </section>
 
       <footer className={styles.footer}>
         <div className={styles.footerLinks}>
-          <Link href="/terms" className={styles.footerLink}>이용약관</Link>
+          <Link
+            href="/terms"
+            className={styles.footerLink}
+          >
+            이용약관
+          </Link>
           &nbsp;|&nbsp;
-          <Link href="/privacy" className={styles.footerLink}>개인정보처리방침</Link>
+          <Link
+            href="/privacy"
+            className={styles.footerLink}
+          >
+            개인정보처리방침
+          </Link>
         </div>
         <div className="mb-1 text-slate-500 break-keep">
           레오코퍼레이션 &nbsp;|&nbsp; 대표:노은비 &nbsp;|&nbsp; 사업자번호:717-28-01232
