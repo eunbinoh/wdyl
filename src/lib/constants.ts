@@ -12,7 +12,7 @@ type ResultSub = {
 export const TOOLTIPS: Record<string, string> = {
   TO: "받는 분 이름 - 첫 화면 타이틀에 사용돼요.",
   WHO: "받는 분 특징 - 설문 결과 화면에 적용돼요.",
-  CONCEPT: "컨셉/테마 - 설문링크 질문/스타일을 결정해요.",
+  CONCEPT: "컨셉 - 설문 테마/스타일을 결정해요.",
 };
 
 export const TRAIT_SUFFIX: Record<Theme, string[]> = {
@@ -23,17 +23,17 @@ export const TRAIT_SUFFIX: Record<Theme, string[]> = {
 
 // 1. 테마 정보 정의 (순서 및 단축 네이밍 반영)
 export const THEMES = {
-  1: { id: "MOOD", name: "데일리" },
-  2: { id: "LUCK", name: "럭키템" },
-  3: { id: "PERSONA", name: "캐릭터" },
+  1: { id: "MOOD", name: "일상" },
+  2: { id: "LUCK", name: "럭키" },
+  3: { id: "PERSONA", name: "부캐" },
   4: { id: "FAVORITE", name: "AI분석" },
-  5: { id: "SURVIVAL", name: "생존력" },
+  5: { id: "SURVIVAL", name: "생존게임" },
 } as const;
 
 // 2. [화면 2] 테마별 10가지 카테고리 네이밍 (Update)
 export const CATEGORY_NAMES: Record<string, Record<string, string>> = {
   MOOD: {
-    food: "음식",
+    food: "식사",
     voucher: "상품권",
     work: "워커홀릭",
     cafe: "카페",
@@ -45,50 +45,50 @@ export const CATEGORY_NAMES: Record<string, Record<string, string>> = {
     anniversary: "기념일",
   },
   LUCK: {
-    food: "미식의 행운",
+    food: "미식 찬스",
     voucher: "상품권 횡재",
-    work: "성취의 기운",
+    work: "직장인 꿀템",
     cafe: "카페인 휴식",
-    baby: "새로운 생명력",
+    baby: "새로운 생명",
     fun: "유쾌한 반전",
     beauty: "매력의 축복",
-    health: "강인한 수호",
-    living: "공간의 평화",
+    health: "무병장수",
+    living: "리빙/인테리어",
     anniversary: "특별한 순간",
   },
   PERSONA: {
-    food: "타고난 미식가",
-    voucher: "상품권 전략가",
-    work: "열정적인 워커홀릭",
-    cafe: "낭만 카페러",
+    food: "고독한 미식가",
+    voucher: "자본주의 전략가",
+    work: "갓생 직장인",
+    cafe: "카페인 중독자",
     baby: "다정한 패밀리",
     fun: "엉뚱한 수집가",
-    beauty: "눈부신 주인공",
-    health: "자기관리 끝판왕",
+    beauty: "나르시즘 자기관리",
+    health: "건강/운동 전문가",
     living: "집돌이 집순이",
-    anniversary: "로맨틱 기념일",
+    anniversary: "기념일에 진심",
   },
   FAVORITE: {
-    food: "식도락 지수",
-    voucher: "자산 활용도",
-    work: "커리어 열정",
+    food: "식문화 지표",
+    voucher: "화폐만능주의",
+    work: "업무 생산성",
     cafe: "카페인 의존도",
-    baby: "돌봄 민감도",
+    baby: "아기/돌봄/케어",
     fun: "유머 스펙트럼",
-    beauty: "외모 관리 지표",
-    health: "신체 활성",
-    living: "리빙 감각",
-    anniversary: "기념일",
+    beauty: "외모 관리",
+    health: "건강 지수",
+    living: "공간 활용",
+    anniversary: "완벽한 기념일",
   },
   SURVIVAL: {
     food: "에너지 포션",
     voucher: "골드 파밍",
     work: "지능(INT) 스탯",
-    cafe: "정신력(MP) 회복",
+    cafe: "카페인(MP) 수혈",
     baby: "생명력(HP) 케어",
     fun: "멘탈 강화템",
     beauty: "매력(CHA) 강화",
-    health: "물리 방어력",
+    health: "체력/방어력",
     living: "베이스캠프",
     anniversary: "이벤트 퀘스트",
   },
@@ -97,67 +97,67 @@ export const CATEGORY_NAMES: Record<string, Record<string, string>> = {
 // 3. [화면 1] 인입 화면 정보
 export const THEME_MAIN_INFO: Record<string, { title: string; keywords: string[] }> = {
   MOOD: {
-    title: "지금 당신의 일상은 어떤 무드인가요?",
-    keywords: ["#무드", "#공간", "#감성일상"],
+    title: "요즘 당신의 일상은 어떤가요?",
+    keywords: ["#데일리", "#일상", "#소확행"],
   },
   LUCK: {
-    title: "오늘 당신을 지켜줄 럭키 아이템은?",
-    keywords: ["#운명", "#럭키", "#수호템"],
+    title: "당신에게 행운을 가져다줄 럭키요정으로부터 온 Q&A",
+    keywords: ["#럭키템", "#네잎클로버", "#행운부적"],
   },
   PERSONA: {
-    title: "당신도 몰랐던 당신의 취향 부캐 찾기",
-    keywords: ["#부캐", "#성격", "#취향발견"],
+    title: "당신도 몰랐던 자아/부캐 찾기",
+    keywords: ["#부캐", "#본능", "#욕망"],
   },
   FAVORITE: {
-    title: "데이터 기반: 당신의 취향 정밀 분석",
-    keywords: ["#분석리포트", "#객관적", "#지표"],
+    title: "데이터 기반 취향 분석 리포트",
+    keywords: ["#분석알고리즘", "#객관적데이터", "#AI통계"],
   },
   SURVIVAL: {
-    title: "치열한 현생을 버티게 할 생존템 사전",
+    title: "치열한 현생을 버티게 할 생존템",
     keywords: ["#능력치", "#장비빨", "#생존템"],
   },
 };
 
 // 4. [화면 2] 카테고리 선택 질문
 export const THEME_CATEGORY_MSG: Record<string, { question: string; sub: string }> = {
-  MOOD: { question: "오늘 당신의 감각이 향하는 곳은 어디인가요?", sub: "지금 당신의 마음을 끄는 무드는?" },
-  LUCK: { question: "어느 영역에서 행운이 필요하신가요?", sub: "행운이 깃들 곳을 선택하세요" },
-  PERSONA: { question: "어떤 삶을 사는 당신의 모습이 궁금한가요?", sub: "분석하고 싶은 당신의 자아는?" },
-  FAVORITE: { question: "정밀 분석을 시작할 카테고리를 선택하세요.", sub: "취향 데이터 분석 대상 선정" },
-  SURVIVAL: { question: "어떤 스탯(분야)을 레벨업하고 싶으신가요?", sub: "장비를 보충할 인벤토리 칸 선택" },
+  MOOD: { question: "10가지 중 당신이 가장 좋아하는 일상을 선택하세요.", sub: "일상 카테고리 선택" },
+  LUCK: { question: "10가지 중 행운을 일으킬 영역을 선택하세요.", sub: "행운 카테고리 선택" },
+  PERSONA: { question: "10가지 중 가장 관심 있는 분야를 선택하세요.", sub: "본능적 욕망 선택" },
+  FAVORITE: { question: "10가지 중 당신의 취향 분석 카테고리를 선택하세요.", sub: "1순위 취향 선택" },
+  SURVIVAL: { question: "10가지 중 가장 좋아하는 세계관을 선택하세요.", sub: "관심 세계관 선택" },
 };
 
 // 5. [화면 3, 4, 5] Step별 타이틀
 export const THEME_STEP_TITLE: Record<string, { step1: string; step2: string; step3: string; step4: string }> = {
   MOOD: {
-    step1: "지금 더 끌리는 무드는?",
-    step2: "분위기를 바꿀 결정적 차이",
-    step3: "놓치면 아쉬울 당신의 감각 한가지",
-    step4: "마지막 라운드",
+    step1: "일상 1라운드",
+    step2: "일상 2라운드",
+    step3: "일상 3라운드",
+    step4: "일상 최종 리워드",
   },
   LUCK: {
-    step1: "럭키비키를 가져와줄 쪽은?",
-    step2: "당신을 지켜줄 행운요정의 선택",
-    step3: "지금 이 순간, 네잎클로버 아이템",
+    step1: "럭키비키 1라운드",
+    step2: "럭키비키 2라운드",
+    step3: "럭키비키 3라운드",
     step4: "최종 럭키 리워드",
   },
   PERSONA: {
-    step1: "당신의 본능이 끌리는 것",
-    step2: "마음 속을 들여다보는 두 개의 저울",
-    step3: "진짜 당신에게 더 가까운 것",
-    step4: "결승",
+    step1: "당신의 부캐를 위한 1라운드",
+    step2: "당신의 부캐를 위한 2라운드",
+    step3: "당신의 부캐를 위한 3라운드",
+    step4: "당신의 부캐를 위한 최종 결승",
   },
   FAVORITE: {
-    step1: "취향 데이터 1차 검증",
-    step2: "정밀 분석: 당신의 선호도는?",
-    step3: "데이터가 지목한 최종 지표",
-    step4: "FINAL",
+    step1: "취향 분석 1라운드",
+    step2: "취향 분석 2라운드",
+    step3: "취향 분석 3라운드",
+    step4: "최종 정밀 취향 분석",
   },
   SURVIVAL: {
-    step1: "당장 챙겨야 할 생존 물자",
-    step2: "현 필드에서 더 유용한 장비는?",
-    step3: "최후의 1순위 보급품",
-    step4: "파이널",
+    step1: "생존 1라운드",
+    step2: "생존 2라운드",
+    step3: "생존 3라운드",
+    step4: "단 한가지 생존템 선택",
   },
 };
 
