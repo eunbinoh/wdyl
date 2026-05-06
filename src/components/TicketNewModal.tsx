@@ -4,11 +4,11 @@ import { useRef, useState, useEffect } from "react";
 import SwipeableSheet from "./SwipeableSheet";
 import { supabase } from "@/lib/supabase";
 import { nanoid } from "nanoid";
-import { ChevronLeft, ChevronRight, CircleHelp } from "lucide-react";
+import { CircleHelp } from "lucide-react";
 import styles from "./allComponents.module.css";
 import { TOOLTIPS, THEMES } from "@/lib/constants";
-import { THEME_STYLE, THEME_ICON } from "@/app/(web)/survey/[ticketId]/_styles";
-import { TicketPreview } from "./TicketPreview";
+import { THEME_ICON } from "@/app/(web)/survey/[ticketId]/_styles";
+import { TicketPreviewSwipeable } from "./TicketPreviewSwipeable";
 import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 
 type ThemeId = "MOOD" | "LUCK" | "PERSONA" | "FAVORITE" | "SURVIVAL";
@@ -33,14 +33,12 @@ export default function CreateTicketModal({ userId, credits, onClose, onSuccess 
   const [traits, setTraits] = useState(["", "", ""]);
   const [loading, setLoading] = useState(false);
   const [tooltip, setTooltip] = useState<string | null>(null);
-  const [showPreview, setShowPreview] = useState(false);
   const [previewPage, setPreviewPage] = useState(0);
   const tooltipRef = useRef<HTMLDivElement>(null);
 
-  const ts = THEME_STYLE[theme];
-  const { icon: Icon, color } = THEME_ICON[theme] ?? THEME_ICON.MOOD;
   const displayName = toName.trim() || "OO";
   const filledTraits = traits.map((t, i) => t.trim() || `특징${i + 1}`);
+  const overlayDownRef = useRef(false);
 
   const setTrait = (i: number, v: string) => setTraits((prev) => prev.map((t, idx) => (idx === i ? v : t)));
 
@@ -113,8 +111,12 @@ export default function CreateTicketModal({ userId, credits, onClose, onSuccess 
   return (
     <div
       className={styles["modal-overlay"]}
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
+      onPointerDown={(e) => {
+        overlayDownRef.current = e.target === e.currentTarget;
+      }}
+      onPointerUp={(e) => {
+        if (overlayDownRef.current && e.target === e.currentTarget) onClose();
+        overlayDownRef.current = false;
       }}
     >
       <SwipeableSheet
@@ -196,101 +198,45 @@ export default function CreateTicketModal({ userId, credits, onClose, onSuccess 
         </div>
 
         {/* 미리보기 */}
-        {showPreview && (
-          <div style={{ marginBottom: 20 }}>
-            <div className={styles["modal-preview-label"]}>
-              PREVIEW{" "}
-              <span style={{ fontSize: 14, color: "#1C1C1C", marginLeft: 2 }}>
-                {["# START", "# STEP 2-1", "# RESULT"][previewPage]}
-              </span>
-            </div>
-            <div className={styles["modal-preview-box"]}>
-              <TicketPreview
-                theme={theme}
-                displayName={displayName}
-                filledTraits={filledTraits}
-                page={previewPage}
-              />
-              {previewPage > 0 && (
-                <button
-                  className={styles["modal-preview-arrow"]}
-                  style={{ left: 10 }}
-                  onClick={() => setPreviewPage((p) => p - 1)}
-                >
-                  <ChevronLeft size={20} />
-                </button>
-              )}
-              {previewPage < 2 && (
-                <button
-                  className={styles["modal-preview-arrow"]}
-                  style={{ right: 10 }}
-                  onClick={() => setPreviewPage((p) => p + 1)}
-                >
-                  <ChevronRight size={20} />
-                </button>
-              )}
-              <div className={styles["modal-preview-dots"]}>
-                {[0, 1, 2].map((i) => (
-                  <div
-                    key={i}
-                    onClick={() => setPreviewPage(i)}
-                    style={{
-                      width: i === previewPage ? 16 : 6,
-                      height: 6,
-                      borderRadius: 3,
-                      background: i === previewPage ? ts.accent : "rgba(255,255,255,0.5)",
-                      cursor: "pointer",
-                      transition: "all 0.2s",
-                    }}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
+        <div style={{ marginBottom: 20 }}>
+          <TicketPreviewSwipeable
+            theme={theme}
+            displayName={displayName}
+            filledTraits={filledTraits}
+            page={previewPage}
+            onPageChange={setPreviewPage}
+          />
+        </div>
 
         {/* 버튼 */}
         <div className={styles["modal-btn-group"]}>
-          {!showPreview && (
-            <button
-              className={styles["modal-btn-preview"]}
-              onClick={() => {
-                setShowPreview(true);
-                setPreviewPage(0);
-              }}
-            >
-              티켓 미리보기
-            </button>
-          )}
-          {showPreview && (
-            <button
-              className={styles["modal-btn-submit"]}
-              onClick={handleSubmit}
-              disabled={loading}
-              style={{
-                background: loading ? "#CCC" : "#F9B233",
-                color: "#1C1C1C",
-                cursor: loading ? "not-allowed" : "pointer",
-                opacity: loading ? 0.7 : 1,
-              }}
-            >
-              {loading ? (
-                <span
-                  style={{
-                    display: "inline-block",
-                    width: 16,
-                    height: 16,
-                    border: "2px solid #191919",
-                    borderTopColor: "transparent",
-                    borderRadius: "50%",
-                    animation: "loading-spinner 0.9s linear infinite",
-                  }}
-                />
-              ) : (
-                "티켓 생성하기"
-              )}
-            </button>
-          )}
+          <button
+            className={styles["modal-btn-submit"]}
+            onClick={handleSubmit}
+            disabled={loading}
+            style={{
+              background: loading ? "#CCC" : "#F9B233",
+              color: "#fff",
+              cursor: loading ? "not-allowed" : "pointer",
+              opacity: loading ? 0.7 : 1,
+            }}
+          >
+            {loading ? (
+              <span
+                style={{
+                  display: "inline-block",
+                  width: 16,
+                  height: 16,
+                  border: "2px solid #191919",
+                  borderTopColor: "transparent",
+                  borderRadius: "50%",
+                  animation: "loading-spinner 0.9s linear infinite",
+                }}
+              />
+            ) : (
+              "티켓 생성하기"
+            )}
+          </button>
         </div>
       </SwipeableSheet>
     </div>

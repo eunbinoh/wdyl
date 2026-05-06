@@ -3,13 +3,13 @@
 import { useRef, useState, useEffect } from "react";
 import SwipeableSheet from "./SwipeableSheet";
 import { supabase } from "@/lib/supabase";
-import { CircleHelp, ChevronLeft, ChevronRight } from "lucide-react";
+import { CircleHelp } from "lucide-react";
 import styles from "./allComponents.module.css";
 import { showToast } from "./ToastAlert";
 import { TOOLTIPS, THEMES } from "@/lib/constants";
 import { Status } from "@/types";
-import { THEME_ICON, THEME_STYLE } from "@/app/(web)/survey/[ticketId]/_styles";
-import { TicketPreview } from "./TicketPreview";
+import { THEME_ICON } from "@/app/(web)/survey/[ticketId]/_styles";
+import { TicketPreviewSwipeable } from "./TicketPreviewSwipeable";
 import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 
 type ThemeId = "MOOD" | "LUCK" | "PERSONA" | "FAVORITE" | "SURVIVAL";
@@ -37,13 +37,13 @@ export default function DetailTicketModal({ ticketId, onClose, onFetched }: Prop
   const tooltipRef = useRef<HTMLDivElement>(null);
   const [theme, setTheme] = useState<ThemeId>("MOOD");
 
-  const [showPreview, setShowPreview] = useState(false);
   const [previewPage, setPreviewPage] = useState(0);
   const setTrait = (i: number, v: string) => setTraits((prev) => prev.map((t, idx) => (idx === i ? v : t)));
 
   const isEditable = status === "created" || status === "sent";
   const displayName = toName.trim() || "OO";
   const filledTraits = traits.map((t, i) => t.trim() || `특징${i + 1}`);
+  const overlayDownRef = useRef(false);
 
   // 티켓 조회
   const fetchTicket = async () => {
@@ -138,8 +138,12 @@ export default function DetailTicketModal({ ticketId, onClose, onFetched }: Prop
   return (
     <div
       className={styles["modal-overlay"]}
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
+      onPointerDown={(e) => {
+        overlayDownRef.current = e.target === e.currentTarget;
+      }}
+      onPointerUp={(e) => {
+        if (overlayDownRef.current && e.target === e.currentTarget) onClose();
+        overlayDownRef.current = false;
       }}
     >
       <SwipeableSheet
@@ -186,7 +190,7 @@ export default function DetailTicketModal({ ticketId, onClose, onFetched }: Prop
                 <span className={styles["modal-trait-num"]}>{String(i + 1)}</span>
                 <input
                   className={styles["modal-input"]}
-                  style={{ fontSize: 15, fontWeight: 400, opacity: isEditable ? 1 : 0.6}}
+                  style={{ fontSize: 15, fontWeight: 400, opacity: isEditable ? 1 : 0.6 }}
                   placeholder={
                     [
                       "특징 한단어 (집순이,여행중독,파워J..)",
@@ -232,54 +236,13 @@ export default function DetailTicketModal({ ticketId, onClose, onFetched }: Prop
         </div>
         {isEditable && (
           <div style={{ marginBottom: 20 }}>
-            <div className={styles["modal-preview-label"]}>
-              PREVIEW{" "}
-              <span style={{ fontSize: 14, color: "#1C1C1C", marginLeft: 2 }}>
-                {["# START", "# STEP 2-1", "# RESULT"][previewPage]}
-              </span>
-            </div>
-            <div className={styles["modal-preview-box"]}>
-              <TicketPreview
-                theme={theme}
-                displayName={displayName}
-                filledTraits={filledTraits}
-                page={previewPage}
-              />
-              {previewPage > 0 && (
-                <button
-                  className={styles["modal-preview-arrow"]}
-                  style={{ left: 10 }}
-                  onClick={() => setPreviewPage((p) => p - 1)}
-                >
-                  <ChevronLeft size={20} />
-                </button>
-              )}
-              {previewPage < 2 && (
-                <button
-                  className={styles["modal-preview-arrow"]}
-                  style={{ right: 10 }}
-                  onClick={() => setPreviewPage((p) => p + 1)}
-                >
-                  <ChevronRight size={20} />
-                </button>
-              )}
-              <div className={styles["modal-preview-dots"]}>
-                {[0, 1, 2].map((i) => (
-                  <div
-                    key={i}
-                    onClick={() => setPreviewPage(i)}
-                    style={{
-                      width: i === previewPage ? 16 : 6,
-                      height: 6,
-                      borderRadius: 3,
-                      background: i === previewPage ? THEME_STYLE[theme].accent : "rgba(255,255,255,0.5)",
-                      cursor: "pointer",
-                      transition: "all 0.2s",
-                    }}
-                  />
-                ))}
-              </div>
-            </div>
+            <TicketPreviewSwipeable
+              theme={theme}
+              displayName={displayName}
+              filledTraits={filledTraits}
+              page={previewPage}
+              onPageChange={setPreviewPage}
+            />
           </div>
         )}
         <div className={styles["modal-btn-group"]}>

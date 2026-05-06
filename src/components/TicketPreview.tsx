@@ -1,6 +1,14 @@
 import React from "react";
-import { THEME_MAIN_INFO, THEME_RESULT_MSG, THEME_RESULT_SUB, THEME_STEP_MSG } from "@/lib/constants";
-import { THEME_STYLE, THEME_ICON } from "@/app/(web)/survey/[ticketId]/_styles";
+import {
+  CATEGORY_NAMES,
+  THEME_CATEGORY_MSG,
+  THEME_MAIN_INFO,
+  THEME_RESULT_MSG,
+  THEME_RESULT_SUB,
+  THEME_STEP_MSG,
+  THEME_STEP_TITLE,
+} from "@/lib/constants";
+import { MEDAL, MEDAL_COLOR, MEDAL_LABEL, THEME_STYLE, THEME_ICON } from "@/app/(web)/survey/[ticketId]/_styles";
 import { renderParts } from "@/lib/renderParts";
 
 type ThemeId = "MOOD" | "LUCK" | "PERSONA" | "FAVORITE" | "SURVIVAL";
@@ -88,9 +96,9 @@ export function TicketPreview({ theme, displayName, filledTraits, page }: Props)
       </div>
     </div>,
 
-    // SURVEY
+    // SURVEY 1 - CATEGORY
     <div
-      key="survey"
+      key="survey1-category"
       style={{
         width: "100%",
         height: "100%",
@@ -101,28 +109,157 @@ export function TicketPreview({ theme, displayName, filledTraits, page }: Props)
         fontFamily: ts.font,
       }}
     >
-      <div style={{ fontSize: 11, color: ts.subText, marginBottom: 4 }}>STEP 2</div>
-      <div style={{ fontSize: 13, color: ts.subText, fontWeight: 700, marginBottom: 16 }}>
-        {THEME_STEP_MSG[theme]?.step1}
+      <div
+        style={{
+          width: "100%",
+          height: 4,
+          background: `${ts.accent}20`,
+          borderRadius: 2,
+          marginBottom: 16,
+          flexShrink: 0,
+        }}
+      >
+        <div style={{ width: "25%", height: "100%", background: ts.accent, borderRadius: 2 }} />
       </div>
-      <div style={{ width: "100%", height: 4, background: `${ts.accent}20`, borderRadius: 2, marginBottom: 16 }}>
-        <div style={{ width: "40%", height: "100%", background: ts.accent, borderRadius: 2 }} />
+      <div style={{ fontSize: 11, color: ts.subText, fontWeight: 800, marginBottom: 4 }}>STEP 1</div>
+      <div style={{ fontSize: 12, color: ts.subText, fontWeight: 800, marginBottom: 6 }}>
+        {THEME_CATEGORY_MSG[theme]?.sub}
       </div>
-      <div style={{ display: "flex", gap: 8 }}>
-        {["아이템 A", "아이템 B"].map((item, i) => (
+      <div
+        style={{
+          fontSize: 13,
+          fontWeight: 700,
+          color: ts.text,
+          textAlign: "center",
+          lineHeight: 1.4,
+          marginBottom: 16,
+        }}
+      >
+        {THEME_CATEGORY_MSG[theme]?.question}
+      </div>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+        {Object.values(CATEGORY_NAMES[theme] ?? {}).map((name, i) => (
           <div
             key={i}
             style={{
-              flex: 1,
-              borderRadius: 12,
-              overflow: "hidden",
+              width: "calc(50% - 3px)",
+              height: 56,
+              borderRadius: 10,
               border: `1.5px solid ${ts.accent}30`,
-              background: ts.cardBg,
+              background: `${ts.accent}12`,
+              display: "flex",
+              alignItems: "flex-end",
+              justifyContent: "center",
+              padding: "0 4px 6px",
+              flexShrink: 0,
             }}
           >
-            <div style={{ height: 80, background: `${ts.accent}20` }} />
-            <div style={{ padding: "8px 6px", fontSize: 12, fontWeight: 700, color: ts.text, textAlign: "center" }}>
-              {item}
+            <span style={{ fontSize: 11, fontWeight: 700, color: ts.text, opacity: 0.7 }}>{name}</span>
+          </div>
+        ))}
+      </div>
+    </div>,
+
+    // SURVEY 2 - WORLDCUP
+    <div
+      key="survey2-worldcup"
+      style={{
+        width: "100%",
+        height: "100%",
+        background: ts.bg,
+        display: "flex",
+        flexDirection: "column",
+        padding: 24,
+        fontFamily: ts.font,
+      }}
+    >
+      <div
+        style={{
+          width: "100%",
+          height: 4,
+          background: `${ts.accent}20`,
+          borderRadius: 2,
+          marginBottom: 16,
+          flexShrink: 0,
+        }}
+      >
+        <div style={{ width: "50%", height: "100%", background: ts.accent, borderRadius: 2 }} />
+      </div>
+      <div style={{ fontSize: 11, color: ts.subText, fontWeight: 800, marginBottom: 4 }}>STEP 2</div>
+      <div style={{ fontSize: 12, color: ts.subText, fontWeight: 800, marginBottom: 16 }}>
+        {THEME_STEP_TITLE[theme]?.step1}
+      </div>
+      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+        {["아이템 A", "아이템 B"].map((item, i) => (
+          <React.Fragment key={i}>
+            <div
+              style={{
+                flex: 1,
+                borderRadius: 12,
+                overflow: "hidden",
+                border: `1.5px solid ${ts.accent}30`,
+                background: ts.cardBg,
+              }}
+            >
+              <div style={{ height: 80, background: `${ts.accent}20` }} />
+              <div style={{ padding: "8px 6px", fontSize: 12, fontWeight: 700, color: ts.text, textAlign: "center" }}>
+                {item}
+              </div>
+            </div>
+            {i === 0 && <div style={{ fontSize: 13, fontWeight: 900, color: ts.accent }}>VS</div>}
+          </React.Fragment>
+        ))}
+      </div>
+    </div>,
+
+    // SURVEY 3 - FINAL
+    <div
+      key="survey3-final"
+      style={{
+        width: "100%",
+        height: "100%",
+        background: ts.bg,
+        display: "flex",
+        flexDirection: "column",
+        padding: 24,
+        fontFamily: ts.font,
+      }}
+    >
+      <div
+        style={{
+          width: "100%",
+          height: 4,
+          background: `${ts.accent}20`,
+          borderRadius: 2,
+          marginBottom: 16,
+          flexShrink: 0,
+        }}
+      >
+        <div style={{ width: "100%", height: "100%", background: ts.accent, borderRadius: 2 }} />
+      </div>
+      <div style={{ fontSize: 11, color: ts.subText, fontWeight: 800, marginBottom: 4 }}>STEP 3 · 최종 선택</div>
+      <div style={{ fontSize: 14, fontWeight: 800, color: ts.text, marginBottom: 4 }}>
+        {THEME_STEP_MSG[theme]?.step3 ?? "순위를 매겨봐요!"}
+      </div>
+      <div style={{ fontSize: 11, color: ts.subText, marginBottom: 14 }}>1순위부터 차례로 탭해주세요</div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+        {[0, 1, 2].map((i) => (
+          <div
+            key={i}
+            style={{
+              background: `${ts.accent}18`,
+              border: `1.5px solid ${ts.accent}`,
+              borderRadius: 12,
+              padding: "10px 12px",
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+            }}
+          >
+            <div style={{ fontSize: 18, width: 24, textAlign: "center" }}>{MEDAL[i]}</div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: ts.text }}>아이템 {i + 1}</div>
+              <div style={{ fontSize: 10, color: MEDAL_COLOR[i], marginTop: 2 }}>{MEDAL_LABEL[i]}</div>
             </div>
           </div>
         ))}

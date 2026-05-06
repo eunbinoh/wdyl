@@ -33,16 +33,16 @@ export const THEMES = {
 // 2. [화면 2] 테마별 10가지 카테고리 네이밍 (Update)
 export const CATEGORY_NAMES: Record<string, Record<string, string>> = {
   MOOD: {
-    food: "맛있는 기록",
-    voucher: "럭키 교환권",
-    work: "몰입의 순간",
-    cafe: "커피 향 무드",
-    baby: "베이비 베이비",
-    fun: "위트 있는 하루",
-    beauty: "빛나는 나",
-    health: "건강한 밸런스",
-    living: "나만의 공간",
-    anniversary: "잊지 못할 기념일",
+    food: "음식",
+    voucher: "상품권",
+    work: "워커홀릭",
+    cafe: "카페",
+    baby: "육아/출산",
+    fun: "재미",
+    beauty: "뷰티",
+    health: "건강",
+    living: "집꾸미기",
+    anniversary: "기념일",
   },
   LUCK: {
     food: "미식의 행운",
