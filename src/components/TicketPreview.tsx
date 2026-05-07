@@ -237,9 +237,9 @@ export function TicketPreview({ theme, displayName, filledTraits, page }: Props)
       >
         <div style={{ width: "100%", height: "100%", background: ts.accent, borderRadius: 2 }} />
       </div>
-      <div style={{ fontSize: 11, color: ts.subText, fontWeight: 800, marginBottom: 4 }}>STEP 3 · 최종 선택</div>
+      <div style={{ fontSize: 11, color: ts.subText, fontWeight: 800, marginBottom: 4 }}>STEP 3 · 세부 디테일 선택</div>
       <div style={{ fontSize: 14, fontWeight: 800, color: ts.text, marginBottom: 4 }}>
-        {THEME_STEP_MSG[theme]?.step3 ?? "순위를 매겨봐요!"}
+        {THEME_STEP_MSG[theme]?.step3 ?? "순위를 매겨보세요."}
       </div>
       <div style={{ fontSize: 11, color: ts.subText, marginBottom: 14 }}>1순위부터 차례로 탭해주세요</div>
       <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>

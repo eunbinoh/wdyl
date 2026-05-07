@@ -61,7 +61,9 @@ export function Step2Phase({
           />
         </div>
 
-        <div style={{ fontSize: 13, color: ts.subText, marginBottom: 4, fontWeight: 800 }}>STEP 2</div>
+        <div style={{ fontSize: 13, color: ts.subText, marginBottom: 4, fontWeight: 800 }}>
+          STEP 2 - {isFinal ? "FINAL" : `${wcRound + 1}라운드`}
+        </div>
         <div style={{ fontSize: 14, color: ts.subText, fontWeight: 800, marginBottom: 20 }}>{title}</div>
 
         <div className={`${styles["wc-grid"]} ${isFinal ? styles.final : ""}`}>

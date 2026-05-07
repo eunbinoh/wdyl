@@ -39,7 +39,9 @@ export function Step3Phase({
   return (
     <div style={{ ...pageStyle, justifyContent: "flex-start", paddingTop: 48 }}>
       <div style={{ width: "100%", maxWidth: 420 }}>
-        <div style={{ fontSize: 14, color: ts.subText, marginBottom: 6, fontWeight: 800 }}>STEP 3 · 최종 선택</div>
+        <div style={{ fontSize: 14, color: ts.subText, marginBottom: 6, fontWeight: 800 }}>
+          STEP 3 · 세부 디테일 선택
+        </div>
         <div style={{ fontSize: 18, fontWeight: 800, color: ts.text, marginBottom: 8 }}>
           {stepMsg?.step3 ?? "순위를 매겨봐요!"}
         </div>
