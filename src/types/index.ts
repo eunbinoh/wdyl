@@ -9,6 +9,7 @@ export type Ticket = {
   created_at?: string;
   user_id?: string;
   result?: string;
+  pick_history?: string;
 };
 export type Category = {
   category_code: string;

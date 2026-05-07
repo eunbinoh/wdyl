@@ -9,4 +9,3 @@ for (const file of files) {
   await sharp(input).resize(400).jpeg({ quality: 75 }).toFile(tmp);
   renameSync(tmp, input);
 }
-console.log("done");

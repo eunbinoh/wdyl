@@ -20,7 +20,7 @@ export default async function SurveyPage({ params }: { params: Promise<{ ticketI
 
   const { data: ticket } = await supabase
     .from("Ticket")
-    .select("ticket_id, receiver_name, comment, theme, status")
+    .select("ticket_id, receiver_name, comment, theme, status, pick_history")
     .eq("ticket_id", ticketId)
     .single();
 

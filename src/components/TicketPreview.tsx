@@ -8,6 +8,7 @@ import {
 } from "@/lib/constants";
 import { MEDAL, MEDAL_COLOR, MEDAL_LABEL, THEME_STYLE, THEME_ICON } from "@/app/(web)/survey/[ticketId]/_styles";
 import { renderParts } from "@/lib/renderParts";
+import { makeStyles } from "@/app/(web)/survey/[ticketId]/_styles";
 
 type ThemeId = "MOOD" | "LUCK" | "PERSONA" | "FAVORITE" | "SURVIVAL";
 
@@ -21,6 +22,8 @@ type Props = {
 export function TicketPreview({ theme, displayName, filledTraits, page }: Props) {
   const ts = THEME_STYLE[theme];
   const { icon: Icon, color } = THEME_ICON[theme] ?? THEME_ICON.MOOD;
+  const styles = makeStyles(ts);
+  const cardStyle = styles.card;
   const screens = [
     <div
       key="intro"
@@ -182,7 +185,7 @@ export function TicketPreview({ theme, displayName, filledTraits, page }: Props)
       >
         <div style={{ width: "50%", height: "100%", background: ts.accent, borderRadius: 2 }} />
       </div>
-      <div style={{ fontSize: 11, color: ts.subText, fontWeight: 800, marginBottom: 80 }}>
+      <div style={{ fontSize: 11, color: ts.subText, fontWeight: 800, marginBottom: 36 }}>
         STEP 2 ·{" "}
         {`${theme === "MOOD" ? "일상" : theme === "LUCK" ? "럭키" : theme === "PERSONA" ? "부캐" : theme === "FAVORITE" ? "AI분석" : "생존"} 1라운드`}
       </div>
@@ -236,7 +239,7 @@ export function TicketPreview({ theme, displayName, filledTraits, page }: Props)
         <div style={{ width: "100%", height: "100%", background: ts.accent, borderRadius: 2 }} />
       </div>
       <div style={{ fontSize: 11, color: ts.subText, fontWeight: 800, marginBottom: 4 }}>STEP 3 · 세부순위 결정</div>
-      {/* TODO: 최종선택한 이미지 추가 */}
+
       <div style={{ fontSize: 11, color: ts.subText, marginBottom: 14 }}>1순위부터 차례로 탭해주세요</div>
       <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
         {[0, 1, 2].map((i) => (
@@ -273,28 +276,26 @@ export function TicketPreview({ theme, displayName, filledTraits, page }: Props)
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        padding: 24,
+        padding: "16px 24px",
         fontFamily: ts.font,
       }}
     >
-      <div style={{ fontSize: 28, marginBottom: 12 }}>
-        <span
-          style={{ display: "inline-flex", alignItems: "center", gap: 4, color: theme === "SURVIVAL" ? "#fff" : color }}
-        >
+      <div style={{ fontSize: 28, marginBottom: 10, height: "24px" }}>
+        <span style={{ alignItems: "center", color: theme === "SURVIVAL" ? "#fff" : color }}>
           <Icon size={20} />
         </span>
       </div>
       <div
-        style={{ background: ts.cardBg, borderRadius: 16, padding: "20px 16px", width: "100%", textAlign: "center" }}
+        style={{ background: ts.cardBg, borderRadius: 16, padding: "10px 16px", width: "100%", textAlign: "center" }}
       >
         <div
           style={{
-            fontSize: 13,
+            fontSize: 14,
             color: ts.subText,
-            lineHeight: 2.0,
             whiteSpace: "pre-line",
             wordBreak: "keep-all",
             overflowWrap: "break-word",
+            marginBottom: 4,
           }}
         >
           {renderParts(
@@ -315,13 +316,12 @@ export function TicketPreview({ theme, displayName, filledTraits, page }: Props)
 
         <div
           style={{
-            fontSize: 12,
+            fontSize: 14,
             color: ts.subText,
-            lineHeight: 1.8,
             whiteSpace: "pre-line",
             wordBreak: "keep-all",
             overflowWrap: "break-word",
-            fontWeight: 600,
+            fontWeight: 500,
           }}
         >
           {renderParts(
@@ -337,6 +337,67 @@ export function TicketPreview({ theme, displayName, filledTraits, page }: Props)
               default: { color: ts.accent, fontWeight: 700 },
             }
           )}
+        </div>
+      </div>
+      <div style={{ ...cardStyle, padding: "12px 20px", marginTop: 10 }}>
+        <div
+          style={{
+            fontSize: 14,
+            fontWeight: 700,
+            color: ts.subText,
+            marginBottom: 4,
+          }}
+        >
+          카테고리 TOP 3
+        </div>
+        {[0, 1, 2].map((i) => (
+          <div
+            key={i}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 4,
+              lineHeight: 1.3,
+              marginLeft: 8,
+              justifyContent: "center",
+            }}
+          >
+            <span style={{ fontSize: 14, width: 24, textAlign: "center" }}>{MEDAL[i]}</span>
+            <span style={{ fontSize: 12, width: "100%", fontWeight: 500, color: ts.text, textAlign: "left" }}>
+              세부 아이템 순위 {i + 1}
+            </span>
+          </div>
+        ))}
+      </div>
+      <div style={{ ...cardStyle, padding: "12px 20px", marginTop: 10 }}>
+        <div
+          style={{
+            fontSize: 14,
+            fontWeight: 700,
+            color: ts.subText,
+            marginBottom: 4,
+          }}
+        >
+          Last BEST 3<br />
+        </div>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginLeft: 8 }}>
+          {[0, 1, 2].map((idx) => (
+            <span
+              key={idx}
+              style={{
+                display: "inline-block",
+                padding: "2px 4px",
+                backgroundColor: ts.accent + "10",
+                color: ts.accent,
+                borderRadius: "10px",
+                fontSize: "12px",
+                fontWeight: 500,
+                border: `1px solid ${ts.accent}30`,
+              }}
+            >
+              # 후보아이템{idx + 1}
+            </span>
+          ))}
         </div>
       </div>
     </div>,

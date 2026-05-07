@@ -94,7 +94,7 @@ export const CATEGORY_NAMES: Record<string, Record<string, string>> = {
   },
 };
 
-// 3. [화면 1] 인입 화면 정보
+// [화면 1] 인입 화면 정보
 export const THEME_MAIN_INFO: Record<string, { title: string; keywords: string[] }> = {
   MOOD: {
     title: "요즘 당신의 일상은 어떤가요?",
@@ -118,7 +118,7 @@ export const THEME_MAIN_INFO: Record<string, { title: string; keywords: string[]
   },
 };
 
-// 4. [화면 2] 카테고리 선택 질문
+// [화면 2] 카테고리 선택 질문
 export const THEME_CATEGORY_MSG: Record<string, { question: string; sub: string }> = {
   MOOD: { question: "당신이 가장 좋아하는 일상을 선택하세요.", sub: "일상 카테고리 선택" },
   LUCK: { question: "행운을 가져다 줄 영역을 선택하세요.", sub: "행운 카테고리 선택" },
@@ -127,32 +127,7 @@ export const THEME_CATEGORY_MSG: Record<string, { question: string; sub: string 
   SURVIVAL: { question: "가장 좋아하는 세계관을 선택하세요.", sub: "관심 세계관 선택" },
 };
 
-// 5. [화면 3, 4, 5] Step별 진행 멘트
-export const THEME_STEP_MSG: Record<string, { step1: string; step2: string; step3: string }> = {
-  MOOD: {},
-  LUCK: {
-    step1: "당신을 행운으로 이끌어줄 키워드는?",
-    step2: "3가지중 행운이 꼭 필요한 영역을 선택하세요.",
-    step3: "세부 순위를 정해주세요.",
-  },
-  PERSONA: {
-    step1: "평소 당신의 취향을 나타내는 위시 카테고리는?",
-    step2: "3가지중 속마음이 첫눈에 끌리는것을 선택하세요.",
-    step3: "당신의 부캐를 완성할 순서를 정하세요.",
-  },
-  FAVORITE: {
-    step1: "귀하의 선호도가 더 높은 지표를 고르세요.",
-    step2: "3가지 중 소장욕구 지수가 가장 높은것을 선택하세요.",
-    step3: "취향 분석 결과를 최적화할 우선순위를 세팅하세요.",
-  },
-  SURVIVAL: {
-    step1: "오늘도 힘든 하루를 버티게 해주는 당신의 원동력은?",
-    step2: "3가지 중 당신의 생존에 가장 필요한 것을 선택하세요.",
-    step3: "생존 장비를 최적화할 튜닝 순위를 세팅하세요.",
-  },
-};
-
-// 6. [화면 6] 결과 화면 베이스
+// 결과 화면 베이스
 export const THEME_RESULT_MSG: Record<string, ResultMsg> = {
   MOOD: {
     parts: [

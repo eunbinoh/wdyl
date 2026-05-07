@@ -81,6 +81,7 @@ export default function SurveyClient({ ticket, categories }: Props) {
     return (
       <Step3Phase
         {...commonProps}
+        pickWinnerId={survey.pickWinnerId}
         step3Items={survey.step3Items}
         medals={survey.medals}
         step3Done={survey.step3Done}

@@ -1,9 +1,11 @@
 import React from "react";
 import { Item } from "@/types";
 import { MEDAL, MEDAL_COLOR, MEDAL_LABEL, ThemeStyle } from "../_styles";
+import Image from "next/image";
 
 type Props = {
   ts: ThemeStyle;
+  pickWinnerId: string;
   pageStyle: React.CSSProperties;
   cardStyle: React.CSSProperties;
   accentBtnStyle: React.CSSProperties;
@@ -19,6 +21,7 @@ type Props = {
 
 export function Step3Phase({
   ts,
+  pickWinnerId,
   pageStyle,
   cardStyle,
   accentBtnStyle,
@@ -36,9 +39,22 @@ export function Step3Phase({
       <div style={{ width: "100%", maxWidth: 420 }}>
         <div style={{ fontSize: 14, color: ts.subText, marginBottom: 6, fontWeight: 800 }}>STEP 3 · 세부순위 결정</div>
         {/* TODO: 최종선택한 이미지 추가 */}
-        <div style={{ fontSize: 13, color: ts.subText, marginBottom: 28 }}>1순위부터 차례로 탭해주세요</div>
+        {pickWinnerId && (
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: 20 }}>
+            <Image
+              src={`/items_img/${pickWinnerId.replace(/_/g, "")}.jpg`}
+              alt={pickWinnerId}
+              width={80}
+              height={40}
+              style={{ objectFit: "cover", objectPosition: "center" }}
+            />
+          </div>
+        )}
+        <div style={{ fontSize: 13, color: ts.subText, textAlign: "center", marginBottom: 10 }}>
+          1순위부터 차례대로 탭해주세요
+        </div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 28 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 20 }}>
           {step3Items.map((item) => {
             const medalIdx = medals.findIndex((m) => m?.item_id === item.item_id);
             const hasMedal = medalIdx !== -1;
@@ -50,7 +66,7 @@ export function Step3Phase({
                   background: hasMedal ? `${ts.accent}18` : ts.cardBg,
                   border: hasMedal ? `2px solid ${ts.accent}` : `1.5px solid ${ts.accent}20`,
                   borderRadius: 16,
-                  padding: "18px 20px",
+                  padding: "14px 20px",
                   display: "flex",
                   alignItems: "center",
                   gap: 16,
@@ -79,7 +95,7 @@ export function Step3Phase({
             {medals.map((m, i) => (
               <div
                 key={i}
-                style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}
+                style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 2 }}
               >
                 <span style={{ fontSize: 16 }}>{MEDAL[i]}</span>
                 <span style={{ fontSize: 14, color: m ? ts.text : ts.subText }}>{m ? m.item_name : "미선택"}</span>

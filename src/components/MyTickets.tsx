@@ -53,7 +53,7 @@ export default function MyTickets({ userId, credits }: Props) {
   const getTickets = async (limit?: number) => {
     const { data, count } = await supabase!
       .from("Ticket")
-      .select("ticket_id, receiver_name, comment, theme, status, created_at, result", { count: "exact" })
+      .select("ticket_id, receiver_name, comment, theme, status, created_at, result, pick_history", { count: "exact" })
       .eq("user_id", userId)
       .eq("deleted_yn", false)
       .order("created_at", { ascending: false })
@@ -128,11 +128,7 @@ export default function MyTickets({ userId, credits }: Props) {
     const confirmed = confirm("티켓을 회수하면 크레딧 1개가 환급돼요.\n정말 회수하시겠어요?");
     if (!confirmed) return;
 
-    const { data: ticketCheck } = await supabase!
-      .from("Ticket")
-      .select("status")
-      .eq("ticket_id", ticketId)
-      .single();
+    const { data: ticketCheck } = await supabase!.from("Ticket").select("status").eq("ticket_id", ticketId).single();
 
     if (ticketCheck?.status !== "created" && ticketCheck?.status !== "sent") {
       showToast("티켓 참여가 시작되어 회수할 수 없어요.", "#ef4444");

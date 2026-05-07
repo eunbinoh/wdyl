@@ -5,9 +5,9 @@ import { supabase } from "@/lib/supabase";
 import { Ticket, Item, Phase } from "@/types";
 
 export function useSurvey(ticket: Ticket) {
-  const isExpired = ticket.status === "complete" || ticket.status === "cancelled";
-
-  const [phase, setPhase] = useState<Phase>(isExpired ? "expired" : "intro");
+  const [phase, setPhase] = useState<Phase>(
+    ticket.status === "cancelled" ? "expired" : ticket.status === "complete" ? "result" : "intro"
+  );
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [wcItems, setWcItems] = useState<Item[]>([]);
   const [wcRound, setWcRound] = useState(0);
@@ -16,6 +16,7 @@ export function useSurvey(ticket: Ticket) {
   const [medals, setMedals] = useState<(Item | null)[]>([null, null, null]);
   const [step3Done, setStep3Done] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [pickWinnerId, setPickWinnerId] = useState<string>("");
 
   useEffect(() => {
     if (!selectedCategory) return;
@@ -72,6 +73,7 @@ export function useSurvey(ticket: Ticket) {
       setWcRound(wcRound + 1);
       return;
     }
+    setPickWinnerId(picked.item_id);
     const { data } = await supabase!
       .from("Item")
       .select("item_id, item_name, category_code")
@@ -99,9 +101,12 @@ export function useSurvey(ticket: Ticket) {
     if (!step3Done) return;
     setLoading(true);
     const result = medals.map((m) => m?.item_id).join(" / ");
+    const pickIds = [pickWinnerId, ...wcWinners.map((w) => w.item_id)].filter(Boolean);
+    const pick_history = [...new Set(pickIds)].join(" / ");
+
     const { error } = await supabase!
       .from("Ticket")
-      .update({ status: "complete", result })
+      .update({ status: "complete", result, pick_history })
       .eq("ticket_id", ticket.ticket_id);
     if (error) {
       alert("저장 중 오류가 발생했어요.");
@@ -120,6 +125,8 @@ export function useSurvey(ticket: Ticket) {
     wcItems,
     wcRound,
     wcWinners,
+    setWcWinners,
+    pickWinnerId,
     step3Items,
     medals,
     setMedals,

@@ -59,7 +59,11 @@ export default function TicketResultModal({ ticketId, receiverName, onClose }: P
 
   useEffect(() => {
     const fetchResult = async () => {
-      const { data: ticket } = await supabase!.from("Ticket").select("result").eq("ticket_id", ticketId).single();
+      const { data: ticket } = await supabase!
+        .from("Ticket")
+        .select("result, pick_history")
+        .eq("ticket_id", ticketId)
+        .single();
 
       if (!ticket?.result) {
         setLoading(false);
