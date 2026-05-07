@@ -4,6 +4,7 @@ import { MEDAL, THEME_ICON, ThemeStyle } from "../_styles";
 import { CATEGORY_NAMES, THEME_RESULT_MSG, THEME_RESULT_SUB } from "@/lib/constants";
 import { supabase } from "@/lib/supabase";
 import { ITEM_NAME_MAP } from "@/lib/helper";
+import { useRouter } from "next/navigation";
 
 type Props = {
   ticket: Ticket;
@@ -23,16 +24,25 @@ export function ResultPhase({ ticket, ts, pageStyle, cardStyle, medals }: Props)
   const categoryCode = displayMedals?.[0]?.category_code;
   const categoryName = categoryCode ? CATEGORY_NAMES.MOOD[categoryCode] : "카테고리";
 
+  const router = useRouter();
+  const [isOwner, setIsOwner] = useState(false);
+
   useEffect(() => {
     async function fetchPickHistory() {
       const { data: ticketData } = await supabase!
         .from("Ticket")
-        .select("pick_history, result")
+        .select("pick_history, result, user_id")
         .eq("ticket_id", ticket.ticket_id)
         .single();
 
       if (!ticketData) return;
       setPickHistory(ticketData.pick_history?.split("/").map((s: string) => s.trim()) ?? []);
+
+      // 소유자 체크
+      const {
+        data: { user },
+      } = await supabase!.auth.getUser();
+      setIsOwner(!!user && user.id === ticketData.user_id);
 
       const hasMedals = medals?.some((m) => m);
       if (!hasMedals && ticketData.result) {
@@ -208,10 +218,32 @@ export function ResultPhase({ ticket, ts, pageStyle, cardStyle, medals }: Props)
           </div>
         </div>
       )}
-      <div style={{ fontSize: 12, fontWeight: 500, color: ts.subText, marginTop: 24, textAlign: "center" }}>
-        어쩌면, 이미 누군가가 당신을 위해
-        <br />이 선물을 준비하고 있을지도 몰라요! ✨
-      </div>
+      {isOwner ? (
+        <div style={{ display: "flex", justifyContent: "center", margin: "auto auto" }}>
+          <button
+            onClick={() => router.push("/main")}
+            style={{
+              marginTop: 24,
+              width: "100%",
+              padding: "14px 20px",
+              backgroundColor: ts.accent,
+              color: "#000",
+              border: "none",
+              borderRadius: 12,
+              fontSize: 15,
+              fontWeight: 700,
+              cursor: "pointer",
+            }}
+          >
+            추천 링크 확인하러 가기
+          </button>
+        </div>
+      ) : (
+        <div style={{ fontSize: 12, fontWeight: 500, color: ts.subText, marginTop: 24, textAlign: "center" }}>
+          어쩌면, 이미 누군가가 당신을 위해
+          <br />이 선물을 준비하고 있을지도 몰라요! ✨
+        </div>
+      )}
     </div>
   );
 }
