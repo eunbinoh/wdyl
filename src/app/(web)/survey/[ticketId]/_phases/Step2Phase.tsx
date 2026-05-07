@@ -1,6 +1,5 @@
 import React, { Fragment } from "react";
 import Image from "next/image";
-import { THEME_STEP_MSG, THEME_STEP_TITLE } from "@/lib/constants";
 import { Item, Ticket } from "@/types";
 import { ThemeStyle } from "../_styles";
 import styles from "../survey.module.css";
@@ -30,10 +29,6 @@ export function Step2Phase({
 }: Props) {
   const isFinal = wcRound === 3;
   const progress = (wcRound / 4) * 100;
-  const stepTitle = THEME_STEP_TITLE[ticket.theme];
-  const stepMsg = THEME_STEP_MSG[ticket.theme];
-  const titleKey = (["step1", "step2", "step3"] as const)[Math.min(wcRound, 2)];
-  const title = isFinal ? stepMsg?.step2 : stepTitle?.[titleKey];
 
   const displayItems = isFinal ? wcWinners : (getCurrentPair() ?? []);
 
@@ -61,10 +56,9 @@ export function Step2Phase({
           />
         </div>
 
-        <div style={{ fontSize: 13, color: ts.subText, marginBottom: 4, fontWeight: 800 }}>
-          STEP 2 - {isFinal ? "FINAL" : `${wcRound + 1}라운드`}
+        <div style={{ fontSize: 13, color: ts.subText, marginBottom: 16, fontWeight: 800 }}>
+          STEP 2 · {isFinal ? "최종 선택" : `일상 ${wcRound + 1}라운드`}
         </div>
-        <div style={{ fontSize: 14, color: ts.subText, fontWeight: 800, marginBottom: 20 }}>{title}</div>
 
         <div className={`${styles["wc-grid"]} ${isFinal ? styles.final : ""}`}>
           {displayItems.map((item, idx) => {

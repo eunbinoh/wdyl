@@ -5,8 +5,6 @@ import {
   THEME_MAIN_INFO,
   THEME_RESULT_MSG,
   THEME_RESULT_SUB,
-  THEME_STEP_MSG,
-  THEME_STEP_TITLE,
 } from "@/lib/constants";
 import { MEDAL, MEDAL_COLOR, MEDAL_LABEL, THEME_STYLE, THEME_ICON } from "@/app/(web)/survey/[ticketId]/_styles";
 import { renderParts } from "@/lib/renderParts";
@@ -121,9 +119,8 @@ export function TicketPreview({ theme, displayName, filledTraits, page }: Props)
       >
         <div style={{ width: "25%", height: "100%", background: ts.accent, borderRadius: 2 }} />
       </div>
-      <div style={{ fontSize: 11, color: ts.subText, fontWeight: 800, marginBottom: 4 }}>STEP 1</div>
-      <div style={{ fontSize: 12, color: ts.subText, fontWeight: 800, marginBottom: 6 }}>
-        {THEME_CATEGORY_MSG[theme]?.sub}
+      <div style={{ fontSize: 11, color: ts.subText, fontWeight: 800, marginBottom: 4 }}>
+        STEP 1 · {THEME_CATEGORY_MSG[theme]?.sub}
       </div>
       <div
         style={{
@@ -185,10 +182,11 @@ export function TicketPreview({ theme, displayName, filledTraits, page }: Props)
       >
         <div style={{ width: "50%", height: "100%", background: ts.accent, borderRadius: 2 }} />
       </div>
-      <div style={{ fontSize: 11, color: ts.subText, fontWeight: 800, marginBottom: 4 }}>STEP 2</div>
-      <div style={{ fontSize: 12, color: ts.subText, fontWeight: 800, marginBottom: 16 }}>
-        {THEME_STEP_TITLE[theme]?.step1}
+      <div style={{ fontSize: 11, color: ts.subText, fontWeight: 800, marginBottom: 80 }}>
+        STEP 2 ·{" "}
+        {`${theme === "MOOD" ? "일상" : theme === "LUCK" ? "럭키" : theme === "PERSONA" ? "부캐" : theme === "FAVORITE" ? "AI분석" : "생존"} 1라운드`}
       </div>
+
       <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
         {["아이템 A", "아이템 B"].map((item, i) => (
           <React.Fragment key={i}>
@@ -237,10 +235,8 @@ export function TicketPreview({ theme, displayName, filledTraits, page }: Props)
       >
         <div style={{ width: "100%", height: "100%", background: ts.accent, borderRadius: 2 }} />
       </div>
-      <div style={{ fontSize: 11, color: ts.subText, fontWeight: 800, marginBottom: 4 }}>STEP 3 · 세부 디테일 선택</div>
-      <div style={{ fontSize: 14, fontWeight: 800, color: ts.text, marginBottom: 4 }}>
-        {THEME_STEP_MSG[theme]?.step3 ?? "순위를 매겨보세요."}
-      </div>
+      <div style={{ fontSize: 11, color: ts.subText, fontWeight: 800, marginBottom: 4 }}>STEP 3 · 세부순위 결정</div>
+      {/* TODO: 최종선택한 이미지 추가 */}
       <div style={{ fontSize: 11, color: ts.subText, marginBottom: 14 }}>1순위부터 차례로 탭해주세요</div>
       <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
         {[0, 1, 2].map((i) => (

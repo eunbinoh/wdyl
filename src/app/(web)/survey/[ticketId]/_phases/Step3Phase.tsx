@@ -1,10 +1,8 @@
 import React from "react";
-import { THEME_STEP_MSG } from "@/lib/constants";
-import { Item, Ticket } from "@/types";
+import { Item } from "@/types";
 import { MEDAL, MEDAL_COLOR, MEDAL_LABEL, ThemeStyle } from "../_styles";
 
 type Props = {
-  ticket: Ticket;
   ts: ThemeStyle;
   pageStyle: React.CSSProperties;
   cardStyle: React.CSSProperties;
@@ -20,7 +18,6 @@ type Props = {
 };
 
 export function Step3Phase({
-  ticket,
   ts,
   pageStyle,
   cardStyle,
@@ -34,17 +31,11 @@ export function Step3Phase({
   onSubmit,
   onBack,
 }: Props) {
-  const stepMsg = THEME_STEP_MSG[ticket.theme];
-
   return (
     <div style={{ ...pageStyle, justifyContent: "flex-start", paddingTop: 48 }}>
       <div style={{ width: "100%", maxWidth: 420 }}>
-        <div style={{ fontSize: 14, color: ts.subText, marginBottom: 6, fontWeight: 800 }}>
-          STEP 3 · 세부 디테일 선택
-        </div>
-        <div style={{ fontSize: 18, fontWeight: 800, color: ts.text, marginBottom: 8 }}>
-          {stepMsg?.step3 ?? "순위를 매겨봐요!"}
-        </div>
+        <div style={{ fontSize: 14, color: ts.subText, marginBottom: 6, fontWeight: 800 }}>STEP 3 · 세부순위 결정</div>
+        {/* TODO: 최종선택한 이미지 추가 */}
         <div style={{ fontSize: 13, color: ts.subText, marginBottom: 28 }}>1순위부터 차례로 탭해주세요</div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 28 }}>

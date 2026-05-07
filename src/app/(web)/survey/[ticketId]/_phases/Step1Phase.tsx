@@ -32,12 +32,11 @@ export function Step1Phase({
   return (
     <div style={{ ...pageStyle, justifyContent: "flex-start", paddingTop: 48 }}>
       <div style={{ width: "100%", maxWidth: 420 }}>
-        <div style={{ fontSize: 13, color: ts.subText, marginBottom: 6, fontWeight: 800 }}>STEP 1</div>
-        <div style={{ fontSize: 14, color: ts.subText, marginTop: 4, marginBottom: 6, fontWeight: 800 }}>
-          {categoryMsg?.sub}
+        <div style={{ fontSize: 13, color: ts.subText, marginBottom: 6, fontWeight: 800 }}>
+          STEP 1 · {categoryMsg?.sub}
         </div>
         <div
-          style={{ fontSize: 16, fontWeight: 700, color: ts.text, marginTop: 8, marginBottom: 30, textAlign: "center" }}
+          style={{ fontSize: 16, fontWeight: 700, color: ts.text, marginTop: 8, marginBottom: 20, textAlign: "center" }}
         >
           {categoryMsg?.question}
         </div>

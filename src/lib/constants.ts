@@ -27,7 +27,7 @@ export const THEMES = {
   2: { id: "LUCK", name: "럭키" },
   3: { id: "PERSONA", name: "부캐" },
   4: { id: "FAVORITE", name: "AI분석" },
-  5: { id: "SURVIVAL", name: "생존게임" },
+  5: { id: "SURVIVAL", name: "생존" },
 } as const;
 
 // 2. [화면 2] 테마별 10가지 카테고리 네이밍 (Update)
@@ -120,54 +120,16 @@ export const THEME_MAIN_INFO: Record<string, { title: string; keywords: string[]
 
 // 4. [화면 2] 카테고리 선택 질문
 export const THEME_CATEGORY_MSG: Record<string, { question: string; sub: string }> = {
-  MOOD: { question: "10가지 중 당신이 가장 좋아하는 일상을 선택하세요.", sub: "일상 카테고리 선택" },
-  LUCK: { question: "10가지 중 행운을 일으킬 영역을 선택하세요.", sub: "행운 카테고리 선택" },
-  PERSONA: { question: "10가지 중 가장 관심 있는 분야를 선택하세요.", sub: "본능적 욕망 선택" },
-  FAVORITE: { question: "10가지 중 당신의 취향 분석 카테고리를 선택하세요.", sub: "1순위 취향 선택" },
-  SURVIVAL: { question: "10가지 중 가장 좋아하는 세계관을 선택하세요.", sub: "관심 세계관 선택" },
-};
-
-// 5. [화면 3, 4, 5] Step별 타이틀
-export const THEME_STEP_TITLE: Record<string, { step1: string; step2: string; step3: string; step4: string }> = {
-  MOOD: {
-    step1: "일상 1라운드",
-    step2: "일상 2라운드",
-    step3: "일상 3라운드",
-    step4: "일상 최종 리워드",
-  },
-  LUCK: {
-    step1: "럭키비키 1라운드",
-    step2: "럭키비키 2라운드",
-    step3: "럭키비키 3라운드",
-    step4: "최종 럭키 리워드",
-  },
-  PERSONA: {
-    step1: "당신의 부캐를 위한 1라운드",
-    step2: "당신의 부캐를 위한 2라운드",
-    step3: "당신의 부캐를 위한 3라운드",
-    step4: "당신의 부캐를 위한 최종 결승",
-  },
-  FAVORITE: {
-    step1: "취향 분석 1라운드",
-    step2: "취향 분석 2라운드",
-    step3: "취향 분석 3라운드",
-    step4: "최종 정밀 취향 분석",
-  },
-  SURVIVAL: {
-    step1: "생존 1라운드",
-    step2: "생존 2라운드",
-    step3: "생존 3라운드",
-    step4: "단 한가지 생존템 선택",
-  },
+  MOOD: { question: "당신이 가장 좋아하는 일상을 선택하세요.", sub: "일상 카테고리 선택" },
+  LUCK: { question: "행운을 가져다 줄 영역을 선택하세요.", sub: "행운 카테고리 선택" },
+  PERSONA: { question: "가장 관심 있는 분야를 선택하세요.", sub: "본능적 욕망 선택" },
+  FAVORITE: { question: "당신의 취향을 분석할 대분류를 선택하세요.", sub: "10가지 카테고리 중 선택" },
+  SURVIVAL: { question: "가장 좋아하는 세계관을 선택하세요.", sub: "관심 세계관 선택" },
 };
 
 // 5. [화면 3, 4, 5] Step별 진행 멘트
 export const THEME_STEP_MSG: Record<string, { step1: string; step2: string; step3: string }> = {
-  MOOD: {
-    step1: "지금 당신의 일상에 더 필요한 것은?",
-    step2: "3가지중 요즘 일상에 가장 필요한것을 선택하세요.",
-    step3: "일상을 완성할 세부 순서를 결정하세요.",
-  },
+  MOOD: {},
   LUCK: {
     step1: "당신을 행운으로 이끌어줄 키워드는?",
     step2: "3가지중 행운이 꼭 필요한 영역을 선택하세요.",
