@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { loadTossPayments } from "@tosspayments/tosspayments-sdk";
 import { nanoid } from "nanoid";
 import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 import styles from "./allComponents.module.css";
@@ -23,38 +22,39 @@ export default function CreditChargeModal({ userId, onClose }: Props) {
   useLockBodyScroll();
   const [selected, setSelected] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [showExamples, setShowExamples] = useState(false);
 
   const selectedPlan = CREDIT_PLANS.find((p) => p.id === selected);
 
   const handlePayment = async () => {
     if (!selectedPlan) return;
-    setLoading(true);
 
     try {
-      const tossPayments = await loadTossPayments(process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY!);
-      const orderId = nanoid(20);
-      const payment = tossPayments.payment({ customerKey: "ANONYMOUS" });
+      const orderNo = nanoid(20);
 
-      await payment.requestPayment({
-        method: "CARD",
-        amount: {
-          currency: "KRW",
-          value: selectedPlan.price,
+      const response = await fetch("/api/payments/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-        orderId,
-        orderName: `WDYL ${selectedPlan.label} 충전`,
-        successUrl: `${window.location.origin}/api/payments/success?credits=${selectedPlan.credits}&userId=${userId}`,
-        failUrl: `${window.location.origin}/main`,
+        body: JSON.stringify({
+          orderNo,
+          amount: selectedPlan.price,
+          productDesc: `WDYL ${selectedPlan.label} 충전`,
+          credits: selectedPlan.credits,
+          userId,
+        }),
       });
+
+      const data = await response.json();
+      if (data.code !== 0) {
+        throw new Error(data.message || "결제 생성 실패");
+      }
+
+      // 토스 결제창 이동
+      window.location.href = data.checkoutPage;
     } catch (e) {
       console.error(e);
-      if ((e as any)?.code === "USER_CANCEL") {
-        setLoading(false);
-        return;
-      }
       alert("결제 중 오류가 발생했어요.");
-      console.error(e);
     } finally {
       setLoading(false);
     }
