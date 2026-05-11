@@ -28,15 +28,18 @@ export async function POST(req: NextRequest) {
       order_id: orderNo,
       amount,
       credit: credits,
-      pay_id: null,
-      paid_at: null,
     });
     if (insertError) {
       console.error("Payment intent 저장 실패:", insertError);
-      return NextResponse.json({ code: -1, message: "DB_ERROR" }, { status: 500 });
+      return NextResponse.json({ code: -1, message: "DB_ERROR", detail: insertError.message }, { status: 500 });
     }
 
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+    if (!baseUrl || !process.env.TOSS_PAY_API_KEY) {
+      console.error("환경변수 누락:", { baseUrl, hasApiKey: !!process.env.TOSS_PAY_API_KEY });
+      return NextResponse.json({ code: -1, message: "ENV_MISSING" }, { status: 500 });
+    }
+
     const response = await fetch("https://pay.toss.im/api/v2/payments", {
       method: "POST",
       headers: { "Content-Type": "application/json" },

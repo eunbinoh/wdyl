@@ -47,7 +47,8 @@ export default function CreditChargeModal({ userId, onClose }: Props) {
 
       const data = await response.json();
       if (data.code !== 0) {
-        throw new Error(data.message || "결제 생성 실패");
+        console.error("결제 생성 실패 응답:", data);
+        throw new Error(data.detail || data.msg || data.message || "결제 생성 실패");
       }
 
       // 토스 결제창 이동
