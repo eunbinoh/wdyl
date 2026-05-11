@@ -51,8 +51,19 @@ export default function CreditChargeModal({ userId, onClose }: Props) {
         throw new Error(data.detail || data.msg || data.message || "결제 생성 실패");
       }
 
-      // 토스 결제창 이동
-      window.location.href = data.checkoutPage;
+      // 모바일/PC 분기: 토스페이는 retAppScheme 없으면 checkoutPage가 PC용 URL
+      const ua = navigator.userAgent;
+      const isAndroid = /Android/i.test(ua);
+      const isIOS = /iPhone|iPad|iPod/i.test(ua);
+      const payToken = data.payToken as string;
+
+      if (isAndroid && payToken) {
+        window.location.href = `intent://pay?payToken=${payToken}#Intent;scheme=supertoss;package=viva.republica.toss;end`;
+      } else if (isIOS && payToken) {
+        window.location.href = `https://ul.toss.im?scheme=${encodeURIComponent(`supertoss://pay?payToken=${payToken}`)}`;
+      } else {
+        window.location.href = data.checkoutPage;
+      }
     } catch (e) {
       console.error(e);
       alert("결제 중 오류가 발생했어요.");
