@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 const TOAST_MSG: Record<string, { msg: string; color: string }> = {
   success: { msg: "💳 크레딧 충전이 완료됐어요!", color: "#0062CC" },
@@ -35,7 +35,6 @@ export function showToast(msg: string, color: string = "#1c1c1c") {
 
 export default function ToastHandler() {
   const searchParams = useSearchParams();
-  const router = useRouter();
   const payment = searchParams.get("payment");
 
   useEffect(() => {
@@ -43,7 +42,8 @@ export default function ToastHandler() {
 
     const { msg, color } = TOAST_MSG[payment];
     showToast(msg, color);
-    router.replace("/main");
+    // router.replace 대신 history API로 URL만 정리 → Suspense 재평가/리렌더 방지
+    window.history.replaceState(null, "", "/main");
   }, [payment]);
 
   return null;

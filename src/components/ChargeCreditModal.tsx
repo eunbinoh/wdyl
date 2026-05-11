@@ -26,7 +26,8 @@ export default function CreditChargeModal({ userId, onClose }: Props) {
   const selectedPlan = CREDIT_PLANS.find((p) => p.id === selected);
 
   const handlePayment = async () => {
-    if (!selectedPlan) return;
+    if (!selectedPlan || loading) return;
+    setLoading(true);
 
     try {
       const orderNo = nanoid(20);
@@ -67,30 +68,40 @@ export default function CreditChargeModal({ userId, onClose }: Props) {
     } catch (e) {
       console.error(e);
       alert("결제 중 오류가 발생했어요.");
-    } finally {
       setLoading(false);
     }
+    // 성공 시에는 navigation으로 페이지가 떠나므로 loading 유지
   };
 
   return (
     <div
       className={styles["modal-overlay"]}
       onClick={(e) => {
+        if (loading) return;
         if (e.target === e.currentTarget) onClose();
       }}
     >
       <SwipeableSheet
-        onClose={onClose}
+        onClose={loading ? () => {} : onClose}
         title="크레딧 충전"
       >
         {/* 상품 목록 */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 24 }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 12,
+            marginBottom: 24,
+            pointerEvents: loading ? "none" : "auto",
+            opacity: loading ? 0.6 : 1,
+          }}
+        >
           {CREDIT_PLANS.map((plan, i) => {
             const isSelected = selected === plan.id;
             return (
               <div
                 key={plan.id}
-                onClick={() => setSelected(plan.id)}
+                onClick={() => !loading && setSelected(plan.id)}
                 style={{
                   background: isSelected ? "#EFF6FF" : "#fff",
                   border: `1.5px solid ${isSelected ? "#0062CC" : "#EDE9E1"}`,
@@ -99,7 +110,7 @@ export default function CreditChargeModal({ userId, onClose }: Props) {
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
-                  cursor: "pointer",
+                  cursor: loading ? "not-allowed" : "pointer",
                   transition: "all 0.15s",
                 }}
               >
@@ -157,12 +168,43 @@ export default function CreditChargeModal({ userId, onClose }: Props) {
               padding: "14px 0",
               fontSize: 15,
               fontWeight: 700,
-              cursor: selected ? "pointer" : "not-allowed",
+              cursor: loading ? "wait" : selected ? "pointer" : "not-allowed",
               transition: "all 0.15s",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 8,
             }}
           >
-            {loading ? "결제 중..." : selectedPlan ? `${selectedPlan.price.toLocaleString()}원 결제하기` : "결제하기"}
+            {loading ? (
+              <>
+                <span
+                  aria-hidden
+                  style={{
+                    width: 16,
+                    height: 16,
+                    border: "2px solid rgba(255,255,255,0.4)",
+                    borderTopColor: "#fff",
+                    borderRadius: "50%",
+                    display: "inline-block",
+                    animation: "wdyl-spin 0.7s linear infinite",
+                  }}
+                />
+                결제창 여는 중…
+              </>
+            ) : selectedPlan ? (
+              `${selectedPlan.price.toLocaleString()}원 결제하기`
+            ) : (
+              "결제하기"
+            )}
           </button>
+          <style jsx global>{`
+            @keyframes wdyl-spin {
+              to {
+                transform: rotate(360deg);
+              }
+            }
+          `}</style>
         </div>
       </SwipeableSheet>
     </div>
