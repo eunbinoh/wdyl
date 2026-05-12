@@ -21,6 +21,9 @@ export const metadata: Metadata = {
     description: "AI도 못알려주는 내 친구의 찐 위시리스트",
     images: ["/wdyl_icon.png"],
   },
+  verification: {
+    google: "-ogaEt4HXCHeNofwpJRXtf2Y7FeCshIl2ADmpduDll4",
+  },
 };
 
 export default function RootLayout({
