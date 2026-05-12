@@ -14,7 +14,7 @@
 
 .login-btn-kakao {
   @apply flex items-center justify-center
-    w-full max-w-xs py-3 px-4
+    w-full max-w-xs py-3 px-4 h-[44px]
     bg-[#FEE500] text-[#191919] font-bold
     rounded-lg hover:bg-[#FADA0A] transition-colors
     gap-2 mx-auto cursor-pointer;

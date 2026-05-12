@@ -198,7 +198,11 @@ export default function MyTickets({ userId, credits }: Props) {
             onClick={() => getTickets(10)}
             style={{ marginRight: 8, cursor: "pointer" }}
           >
-            <RefreshCcw size={12} />
+            <RefreshCcw
+              size={12}
+              color="#f9b233"
+              strokeWidth={3}
+            />
           </button>
           TOTAL {totalTickets}
         </span>

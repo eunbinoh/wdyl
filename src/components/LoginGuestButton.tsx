@@ -26,7 +26,7 @@ export default function LoginButton({ loading, setLoading }: Props) {
       disabled={loading}
       className={styles["login-btn-guest"]}
       style={{
-        opacity: loading ? 0.7 : 1,
+        opacity: loading ? 0.6 : 1,
         cursor: loading ? "not-allowed" : "pointer",
       }}
     >
