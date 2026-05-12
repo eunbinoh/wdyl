@@ -8,7 +8,7 @@ export default function PrivacyPage() {
         maxWidth: 720,
         margin: "0 auto",
         padding: "40px 24px 80px",
-        fontFamily: "'Apple SD Gothic Neo', sans-serif",
+        fontFamily: "'Pretendard', 'Apple SD Gothic Neo', sans-serif",
         color: "#1C1C1C",
         lineHeight: 1.8,
         backgroundColor: "#ffffff",

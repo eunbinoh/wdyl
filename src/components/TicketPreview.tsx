@@ -295,6 +295,7 @@ export function TicketPreview({ theme, displayName, filledTraits, page }: Props)
             whiteSpace: "pre-line",
             wordBreak: "keep-all",
             overflowWrap: "break-word",
+            lineHeight: 1.5,
             marginBottom: 4,
           }}
         >
@@ -321,7 +322,8 @@ export function TicketPreview({ theme, displayName, filledTraits, page }: Props)
             whiteSpace: "pre-line",
             wordBreak: "keep-all",
             overflowWrap: "break-word",
-            fontWeight: 500,
+            fontWeight: 400,
+            lineHeight: 1.5,
           }}
         >
           {renderParts(
@@ -348,7 +350,7 @@ export function TicketPreview({ theme, displayName, filledTraits, page }: Props)
             marginBottom: 4,
           }}
         >
-          카테고리 TOP 3
+          [선택아이템] TOP 3
         </div>
         {[0, 1, 2].map((i) => (
           <div
@@ -378,7 +380,7 @@ export function TicketPreview({ theme, displayName, filledTraits, page }: Props)
             marginBottom: 4,
           }}
         >
-          Last BEST 3<br />
+          [카테고리] LAST PICK 3<br />
         </div>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginLeft: 8 }}>
           {[0, 1, 2].map((idx) => (

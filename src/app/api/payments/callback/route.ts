@@ -10,7 +10,6 @@ function parseTossKSTPaidTs(paidTs: string | undefined): string {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    console.log("토스페이 webhook 수신:", body);
 
     const { status, payToken, orderNo, transactionId, amount, paidTs } = body;
 

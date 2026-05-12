@@ -6,6 +6,7 @@ import Image from "next/image";
 import SwipeableSheet from "./SwipeableSheet";
 import styles from "./allComponents.module.css";
 import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
+import { findCategoryName, ITEM_NAME_MAP } from "@/lib/helper";
 
 const RANK = [
   {
@@ -55,6 +56,8 @@ export default function TicketResultModal({ ticketId, receiverName, onClose }: P
   useLockBodyScroll();
   const [items, setItems] = useState<(ResultItem | null)[]>([null, null, null]);
   const [categoryName, setCategoryName] = useState("");
+  const [pickItem, setPickItem] = useState<string>("");
+  const [pickHistory, setPickHistory] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -76,16 +79,13 @@ export default function TicketResultModal({ ticketId, receiverName, onClose }: P
         .from("Item")
         .select("item_id, item_name, link_url, link_url2, category_code")
         .in("item_id", itemIds);
-
       const sorted = itemIds.map((id: string) => itemData?.find((item) => item.item_id === id) ?? null);
       setItems(sorted);
 
-      const itemLevel = itemData?.[0]?.item_id.slice(0, 5);
-      if (itemLevel) {
-        const { data: item } = await supabase!.from("Item").select("item_name").eq("item_id", itemLevel).single();
-        if (item) setCategoryName(item.item_name);
-      }
-
+      const category = findCategoryName(itemData?.[0]?.item_id ?? "");
+      setPickItem(ITEM_NAME_MAP[itemData?.[0]?.item_id.slice(0, 5)] ?? "");
+      setCategoryName(category);
+      setPickHistory(ticket.pick_history?.split("/").map((s: string) => s.trim()) ?? []);
       setLoading(false);
     };
 
@@ -107,9 +107,8 @@ export default function TicketResultModal({ ticketId, receiverName, onClose }: P
         title={`${receiverName} 님이 원하는 선물`}
       >
         {categoryName && (
-          <div style={{ textAlign: "start", marginBottom: 20, marginTop: 20 }}>
-            <span style={{ fontSize: 14 }}>카테고리 : </span>
-            <span style={{ fontSize: 16 }}>{categoryName}</span>
+          <div style={{ textAlign: "center", marginBottom: 16, marginTop: 20 }}>
+            <span style={{ fontSize: 16, fontWeight: 600 }}>[{pickItem}] TOP 3</span>
           </div>
         )}
 
@@ -247,6 +246,39 @@ export default function TicketResultModal({ ticketId, receiverName, onClose }: P
             <p style={{ fontSize: 11, color: "#94a3b8", letterSpacing: "-0.5px" }}>
               직접구매링크는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.
             </p>
+          </div>
+        )}
+        {pickHistory.length > 0 && (
+          <div style={{ padding: "12px 20px", marginTop: 20 }}>
+            <div
+              style={{
+                fontSize: 14,
+                fontWeight: 700,
+                color: "#64748B",
+                marginBottom: 8,
+              }}
+            >
+              {`[ ${categoryName} ]`} LAST PICK 3
+              <br />
+            </div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginLeft: 8 }}>
+              {pickHistory.map((item, idx) => (
+                <span
+                  key={idx}
+                  style={{
+                    display: "inline-block",
+                    padding: "2px 8px",
+                    color: "#64748B",
+                    borderRadius: "10px",
+                    fontSize: "13px",
+                    fontWeight: 600,
+                    border: `1px solid #64748B`,
+                  }}
+                >
+                  # {ITEM_NAME_MAP[item]}
+                </span>
+              ))}
+            </div>
           </div>
         )}
         <div style={{ marginTop: 50 }}>

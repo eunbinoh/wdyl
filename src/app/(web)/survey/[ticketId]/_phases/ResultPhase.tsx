@@ -21,6 +21,8 @@ export function ResultPhase({ ticket, ts, pageStyle, cardStyle, medals }: Props)
   const [pickHistory, setPickHistory] = useState<string[]>([]);
   const [fallbackMedals, setFallbackMedals] = useState<Item[]>([]);
   const displayMedals = medals?.filter(Boolean).length > 0 ? medals : fallbackMedals;
+  const firstItemId = displayMedals?.[0]?.item_id;
+  const pickedItemName = (firstItemId && ITEM_NAME_MAP[firstItemId.slice(0, 5)]) || "";
   const categoryCode = displayMedals?.[0]?.category_code;
   const categoryName = categoryCode ? CATEGORY_NAMES.MOOD[categoryCode] : "카테고리";
 
@@ -86,7 +88,7 @@ export function ResultPhase({ ticket, ts, pageStyle, cardStyle, medals }: Props)
   }
 
   return (
-    <div style={pageStyle}>
+    <div style={{ ...pageStyle, fontFamily: "Pretendard, sans-serif" }}>
       <div style={{ marginBottom: 8 }}>
         <span
           style={{
@@ -106,13 +108,13 @@ export function ResultPhase({ ticket, ts, pageStyle, cardStyle, medals }: Props)
         <div
           style={{
             fontSize: 16,
-            fontWeight: 600,
+            fontWeight: 500,
             color: ts.subText,
-            lineHeight: 1.7,
+            lineHeight: 1.6,
             whiteSpace: "pre-line",
-            marginBottom: 8,
             wordBreak: "keep-all",
             overflowWrap: "break-word",
+            marginBottom: 8,
           }}
         >
           {renderParts(
@@ -129,9 +131,9 @@ export function ResultPhase({ ticket, ts, pageStyle, cardStyle, medals }: Props)
         <div
           style={{
             fontSize: 16,
-            fontWeight: 600,
+            fontWeight: 500,
             color: ts.subText,
-            lineHeight: 1.7,
+            lineHeight: 1.6,
             whiteSpace: "pre-line",
             wordBreak: "keep-all",
             overflowWrap: "break-word",
@@ -162,7 +164,7 @@ export function ResultPhase({ ticket, ts, pageStyle, cardStyle, medals }: Props)
             marginBottom: 4,
           }}
         >
-          {categoryName} TOP 3
+          {`[ ${pickedItemName} ]`} TOP 3
         </div>
         {displayMedals.map((m, i) =>
           m ? (
@@ -195,7 +197,8 @@ export function ResultPhase({ ticket, ts, pageStyle, cardStyle, medals }: Props)
               marginBottom: 8,
             }}
           >
-            Last BEST 3<br />
+            {`[ ${categoryName} ]`} LAST PICK 3
+            <br />
           </div>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginLeft: 8 }}>
             {pickHistory.map((item, idx) => (
@@ -219,15 +222,15 @@ export function ResultPhase({ ticket, ts, pageStyle, cardStyle, medals }: Props)
         </div>
       )}
       {isOwner ? (
-        <div style={{ display: "flex", justifyContent: "center", margin: "auto auto" }}>
+        <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", margin: "0 auto" }}>
           <button
-            onClick={() => router.push("/main")}
+            onClick={() => router.push(`/main?openTicket=${ticket.ticket_id}`)}
             style={{
-              marginTop: 24,
+              marginTop: 20,
               width: "100%",
               padding: "14px 20px",
               backgroundColor: ts.accent,
-              color: "#000",
+              color: ts.accent === "#FFFFFF" ? "#000000" : "#FFFFFF",
               border: "none",
               borderRadius: 12,
               fontSize: 15,
@@ -235,8 +238,19 @@ export function ResultPhase({ ticket, ts, pageStyle, cardStyle, medals }: Props)
               cursor: "pointer",
             }}
           >
-            추천 링크 확인하러 가기
+            추천 링크 바로가기
           </button>
+          <div
+            style={{
+              fontSize: 12,
+              fontWeight: 500,
+              color: ts.subText,
+              marginTop: 8,
+              textAlign: "center",
+            }}
+          >
+            Secret✨ 추천링크는 티켓 발송인에게만 보여요!
+          </div>
         </div>
       ) : (
         <div style={{ fontSize: 12, fontWeight: 500, color: ts.subText, marginTop: 24, textAlign: "center" }}>

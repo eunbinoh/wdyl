@@ -64,7 +64,7 @@ export function TicketPreviewSwipeable({ theme, displayName, filledTraits, page,
     <>
       <div className={styles["modal-preview-label"]}>
         <div className={styles["modal-section-label"]}>PREVIEW</div>
-        <div>컨셉별로 옆으로 넘겨서 확인해보세요.</div>
+        <div style={{ alignSelf: "flex-start", marginTop: 1 }}>컨셉별로 옆으로 넘겨서 확인해보세요.</div>
       </div>
 
       <div className={styles["modal-preview-label-nav"]}>

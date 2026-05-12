@@ -23,7 +23,7 @@
 .main {
   min-height: 100vh;
   background-color: #fafafa;
-  font-family: "Apple SD Gothic Neo", "Pretendard", sans-serif;
+  font-family: "Pretendard", "Apple SD Gothic Neo", sans-serif;
   overflow-x: hidden;
 }
 

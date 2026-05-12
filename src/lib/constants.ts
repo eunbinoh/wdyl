@@ -155,11 +155,11 @@ export const THEME_RESULT_MSG: Record<string, ResultMsg> = {
     parts: [
       "당신은 ",
       { key: "KEYWORD1" },
-      "의 대명사!\n 당신의 부캐는 ",
+      "의 대명사!\n 부캐는 ",
       { key: "KEYWORD2" },
       " ",
       { key: "KEYWORD3" },
-      "\n 알고 있었나요?",
+      ". \n ",
     ],
   },
   FAVORITE: {
@@ -210,11 +210,11 @@ export const THEME_RESULT_SUB: Record<string, ResultSub> = {
   PERSONA: {
     parts: [
       { key: "ITEM", style: { color: "#ef4444", fontWeight: 800 } },
-      " + 당신의 조화는 \n",
+      "은 당신에게 \n",
       { key: "KEYWORD3" },
       " 캐릭터를 완성해줄거에요.\n당신의 ",
       { key: "KEYWORD2" },
-      " 매력에 \n부스터가 되어줄 거예요.",
+      " 매력에 \n부스터가 되어줄 아이템이에요.",
     ],
   },
   FAVORITE: {
@@ -224,18 +224,17 @@ export const THEME_RESULT_SUB: Record<string, ResultSub> = {
       { key: "ITEM", style: { color: "#ef4444", fontWeight: 800 } },
       "은(는)\n 당신의 아이덴티티 그 자체입니다.\n",
       { key: "KEYWORD2" },
-      " 면을 완성해줄 아이템으로 \n",
-      { key: "KEYWORD3" },
-      " 라이프를 즐겨보세요.",
+      " 당신의 손에 들어올 확률 \n",
+      " 58000% 입니다.",
     ],
   },
   SURVIVAL: {
     parts: [
       { key: "KEYWORD2" },
-      " 전략의 당신에게 \n",
+      " 당신에게 필요한\n",
       " 생존템 ",
       { key: "ITEM", style: { color: "#ef4444", fontWeight: 800 } },
-      "만 있다면 \n 이제",
+      "만 있다면 \n ",
       { key: "KEYWORD3" },
       "력 100% 든든합니다. \n 하루 더 생존 연장 완료!",
     ],

@@ -38,7 +38,6 @@ export function Step3Phase({
     <div style={{ ...pageStyle, justifyContent: "flex-start", paddingTop: 48 }}>
       <div style={{ width: "100%", maxWidth: 420 }}>
         <div style={{ fontSize: 14, color: ts.subText, marginBottom: 6, fontWeight: 800 }}>STEP 3 · 세부순위 결정</div>
-        {/* TODO: 최종선택한 이미지 추가 */}
         {pickWinnerId && (
           <div style={{ display: "flex", justifyContent: "center", marginBottom: 20 }}>
             <Image

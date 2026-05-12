@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Mails, MessageSquareMore, CalendarClock, ChevronDown } from "lucide-react";
+import { Mails, MessageSquareMore, CalendarClock, ChevronDown, RefreshCcw } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import { Status, Ticket } from "@/types";
@@ -11,6 +11,7 @@ import TicketNewModal from "./TicketNewModal";
 import TicketDetailModal from "./TicketDetailModal";
 import TicketResultModal from "./TicketResultModal";
 import TicketSendModal from "./TicketSendModal";
+import { useSearchParams } from "next/navigation";
 
 type Props = {
   userId: string;
@@ -37,6 +38,9 @@ function formatDate(dateStr: string) {
 }
 
 export default function MyTickets({ userId, credits }: Props) {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [showNewModal, setShowNewModal] = useState(false);
   const [showModalTicketId, setShowModalTicketId] = useState<string>("");
@@ -45,10 +49,22 @@ export default function MyTickets({ userId, credits }: Props) {
   const [showAll, setShowAll] = useState(false);
   const [totalTickets, setTotalTickets] = useState(0);
   const [loadingAll, setLoadingAll] = useState(false);
-  const visibleTickets = showAll ? tickets : tickets.slice(0, 10);
   const [resendTicket, setResendTicket] = useState<Ticket | null>(null);
+  const visibleTickets = showAll ? tickets : tickets.slice(0, 10);
 
-  const router = useRouter();
+  useEffect(() => {
+    const target = searchParams.get("openTicket");
+    if (!target) return;
+
+    const found = tickets.find((t) => t.ticket_id === target);
+    if (found) {
+      const targetTicket = tickets.find((t) => t.ticket_id === target);
+      if (targetTicket) {
+        setResultTicket(targetTicket);
+      }
+      window.history.replaceState(null, "", "/main");
+    }
+  }, [searchParams, tickets, resultTicket]);
 
   const getTickets = async (limit?: number) => {
     const { data, count } = await supabase!
@@ -176,7 +192,16 @@ export default function MyTickets({ userId, credits }: Props) {
 
       <div className={styles["tickets-header"]}>
         <span className={styles["tickets-header-title"]}>생성된 티켓</span>
-        <span className={"text-xs text-slate-500 mr-2 mt-1"}>TOTAL {totalTickets}</span>
+
+        <span className={"text-xs text-slate-500 mr-2 mt-1"}>
+          <button
+            onClick={() => getTickets(10)}
+            style={{ marginRight: 8, cursor: "pointer" }}
+          >
+            <RefreshCcw size={12} />
+          </button>
+          TOTAL {totalTickets}
+        </span>
       </div>
 
       {tickets.length === 0 ? (

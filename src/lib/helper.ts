@@ -69,3 +69,31 @@ export const ITEM_NAME_MAP: Record<string, string> = {
   WO_05: "시계",
   WO_06: "텀블러",
 };
+
+export const findCategoryName = (itemId: string) => {
+  const categoryCode = itemId.slice(0, 2).toLowerCase();
+  switch (categoryCode) {
+    case "fo":
+      return "식사";
+    case "vo":
+      return "상품권";
+    case "wo":
+      return "워커홀릭";
+    case "ca":
+      return "카페";
+    case "ba":
+      return "육아/출산";
+    case "fu":
+      return "재미";
+    case "be":
+      return "뷰티";
+    case "he":
+      return "건강";
+    case "li":
+      return "집꾸미기";
+    case "an":
+      return "기념일";
+    default:
+      return "카테고리";
+  }
+};

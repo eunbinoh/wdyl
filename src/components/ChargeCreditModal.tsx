@@ -206,7 +206,11 @@ export default function CreditChargeModal({ userId, onClose }: Props) {
               transition: "all 0.15s",
             }}
           >
-            {loading ? "결제 중..." : selectedPlan ? `${selectedPlan.price.toLocaleString()}원 결제하기` : "결제하기"}
+            {loading
+              ? "토스페이 연결 중..."
+              : selectedPlan
+                ? `${selectedPlan.price.toLocaleString()}원 결제하기`
+                : "결제하기"}
           </button>
         </div>
       </SwipeableSheet>
