@@ -18,11 +18,18 @@ export const metadata: Metadata = {
   description: "너가 뭘 좋아할지 몰라서 준비했어",
   openGraph: {
     title: "WDYL | 너가 뭘 좋아할지 몰라서 준비했어",
-    description: "AI도 못알려주는 내 친구의 찐 위시리스트",
+    description: "결정장애 친구를 위한 AI 선물 추천 서비스",
     images: ["/wdyl_icon.png"],
+    url: "https://wdyl.vercel.app",
+    siteName: "WDYL",
+    locale: "ko_KR",
+    type: "website",
   },
   verification: {
     google: "-ogaEt4HXCHeNofwpJRXtf2Y7FeCshIl2ADmpduDll4",
+  },
+  other: {
+    "naver-site-verification": "3329baed68740d71491cc9feb5221e4dc6dafe73",
   },
 };
 
