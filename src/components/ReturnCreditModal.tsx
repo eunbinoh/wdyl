@@ -17,6 +17,7 @@ type Payment = {
 
 type Props = {
   userId: string;
+  credits: number;
   onClose: () => void;
 };
 
@@ -42,7 +43,7 @@ function isExpired(paidAt: string): boolean {
   return getDaysLeft(paidAt) === 0;
 }
 
-export default function ReturnCreditModal({ userId, onClose }: Props) {
+export default function ReturnCreditModal({ userId, credits, onClose }: Props) {
   useLockBodyScroll();
 
   const [payments, setPayments] = useState<Payment[]>([]);
@@ -51,6 +52,7 @@ export default function ReturnCreditModal({ userId, onClose }: Props) {
 
   const selectedPayments = payments.filter((p) => selectedIds.has(p.pay_id));
   const totalAmount = selectedPayments.reduce((sum, p) => sum + p.amount, 0);
+  const totalCredits = selectedPayments.reduce((sum, p) => sum + p.credit, 0);
 
   useEffect(() => {
     const fetchPayments = async () => {
@@ -58,6 +60,7 @@ export default function ReturnCreditModal({ userId, onClose }: Props) {
         .from("Payment")
         .select("pay_id, user_id, amount, credit, paid_at")
         .eq("user_id", userId)
+        .not("pay_id", "is", null)
         .order("paid_at", { ascending: false });
 
       if (error) {
@@ -87,6 +90,13 @@ export default function ReturnCreditModal({ userId, onClose }: Props) {
   const handleRefundRequest = () => {
     if (selectedPayments.length === 0) return;
 
+    if (totalCredits > credits) {
+      alert(
+        `보유 크레딧(${credits})보다 환불 요청 크레딧(${totalCredits})이 많아요. 사용한 크레딧은 환불할 수 없어요.`
+      );
+      return;
+    }
+
     const itemLines = selectedPayments
       .map(
         (p, i) =>
@@ -97,6 +107,7 @@ export default function ReturnCreditModal({ userId, onClose }: Props) {
     const body = [
       `사용자 ID: ${userId}`,
       `환불 요청 건수: ${selectedPayments.length}건`,
+      `환불 요청 크레딧: ${totalCredits}크레딧`,
       `환불 요청 총액: ${totalAmount.toLocaleString()}원`,
       ``,
       `[환불 요청 내역]`,

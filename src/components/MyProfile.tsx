@@ -129,6 +129,7 @@ export default function ProfileCard({ userId, nickname, email, avatarUrl, credit
       {showRefund && (
         <ReturnCreditModal
           userId={userId}
+          credits={credits}
           onClose={() => setShowRefund(false)}
         />
       )}
