@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { nanoid } from "nanoid";
 import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 import styles from "./allComponents.module.css";
@@ -22,14 +22,58 @@ export default function CreditChargeModal({ userId, onClose }: Props) {
   useLockBodyScroll();
   const [selected, setSelected] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const paymentInitiatedRef = useRef(false);
+  const orderNoRef = useRef<string | null>(null);
 
   const selectedPlan = CREDIT_PLANS.find((p) => p.id === selected);
 
+  // 토스 결제창에서 돌아왔을 때 처리:
+  // - 결제 성공 상태면 /main?payment=success 로 이동 (모바일에서 retUrl이 새 탭으로 열리는 케이스 대응)
+  // - 미결제(취소/뒤로가기)면 로딩만 해제
+  useEffect(() => {
+    const handleReturn = async () => {
+      if (!paymentInitiatedRef.current) return;
+      const orderNo = orderNoRef.current;
+      if (!orderNo) {
+        setLoading(false);
+        paymentInitiatedRef.current = false;
+        return;
+      }
+      try {
+        const res = await fetch(`/api/payments/check?orderNo=${encodeURIComponent(orderNo)}`);
+        const { paid } = await res.json();
+        if (paid) {
+          window.location.href = "/main?payment=success";
+          return;
+        }
+      } catch (e) {
+        console.error("payment check 실패:", e);
+      }
+      setLoading(false);
+      paymentInitiatedRef.current = false;
+    };
+    const onPageShow = (e: PageTransitionEvent) => {
+      if (e.persisted) handleReturn();
+    };
+    const onVisible = () => {
+      if (document.visibilityState === "visible") handleReturn();
+    };
+    window.addEventListener("pageshow", onPageShow);
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      window.removeEventListener("pageshow", onPageShow);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
+  }, []);
+
   const handlePayment = async () => {
-    if (!selectedPlan) return;
+    if (!selectedPlan || loading) return;
+    setLoading(true);
+    paymentInitiatedRef.current = true;
 
     try {
       const orderNo = nanoid(20);
+      orderNoRef.current = orderNo;
 
       const response = await fetch("/api/payments/create", {
         method: "POST",
@@ -67,9 +111,10 @@ export default function CreditChargeModal({ userId, onClose }: Props) {
     } catch (e) {
       console.error(e);
       alert("결제 중 오류가 발생했어요.");
-    } finally {
+      paymentInitiatedRef.current = false;
       setLoading(false);
     }
+    // 성공 시 finally로 즉시 reset하지 않음 → 위 pageshow/visibilitychange가 처리
   };
 
   return (
