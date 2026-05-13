@@ -31,6 +31,10 @@ export const metadata: Metadata = {
   other: {
     "naver-site-verification": "3329baed68740d71491cc9feb5221e4dc6dafe73",
   },
+  icons: {
+    icon: "/wdyl_icon.png",
+    apple: "/apple-touch-icon.png",
+  },
 };
 
 export default function RootLayout({
