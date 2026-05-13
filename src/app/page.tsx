@@ -46,6 +46,13 @@ export default function LandingPage() {
   const [user, setUser] = useState<{ id: string; nickname: string } | null>(null);
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const ref = params.get("ref");
+    if (ref) {
+      localStorage.setItem("wdyl_ref_id", ref);
+      window.history.replaceState(null, "", "/");
+    }
+
     const fetchUser = async () => {
       const {
         data: { user: authUser },
@@ -62,16 +69,18 @@ export default function LandingPage() {
     if (!window.Kakao.isInitialized()) {
       window.Kakao.init(process.env.NEXT_PUBLIC_KAKAO_JS_KEY);
     }
-    window.Kakao.Share.sendDefault({
-      objectType: "text",
-      text: "친구가 원하는 선물을 물어보세요!\n🎁 WDYL - 너가 뭘 좋아할지 몰라서",
-      link: {
-        mobileWebUrl: "https://wdyl.vercel.app/",
-        webUrl: "https://wdyl.vercel.app/",
+    window.Kakao.Share.sendCustom({
+      templateId: 133105,
+      templateArgs: {
+        ref: user?.id,
       },
       serverCallbackArgs: {
         type: "share",
         user_id: user?.id,
+      },
+      pickerSettings: {
+        type: "friend",
+        limit: 1,
       },
     });
   };
@@ -180,11 +189,11 @@ export default function LandingPage() {
             <div className={styles.promoContent}>
               <div className={styles.promoTitle}>공유하기 / 추천하기 이벤트로 무료 크레딧 획득하세요 !</div>
               <div className={styles.promoDesc}>
-                친구에게 WDYL 공유/추천 하면
+                친구에게 WDYL 공유한 링크로 회원가입시
                 <br />
                 1회당 크레딧 1개를 드려요
                 <br />
-                (최대 3회, 회원 로그인)
+                (최대 3회, 로그인 필요)
               </div>
             </div>
           </div>

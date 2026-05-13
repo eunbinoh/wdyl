@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { cookies } from "next/headers";
 import MyProfile from "@/components/MyProfile";
 import MyTickets from "@/components/MyTickets";
+import ReferralApplier from "@/components/ReferralApplier";
 import ToastAlert from "@/components/ToastAlert";
 import WithdrawButton from "@/components/WithDrawButton";
 
@@ -70,6 +71,7 @@ export default async function MainPage() {
       <Suspense fallback={null}>
         <ToastAlert />
       </Suspense>
+      {nickname !== "GUEST" && userId && <ReferralApplier userId={userId} />}
     </main>
   );
 }

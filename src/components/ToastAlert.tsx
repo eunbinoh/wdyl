@@ -25,7 +25,11 @@ export function showToast(msg: string, color: string = "#1c1c1c") {
     fontSize: "14px",
     fontWeight: "700",
     zIndex: "9999",
-    whiteSpace: "nowrap",
+    maxWidth: "calc(100vw - 32px)",
+    whiteSpace: "normal",
+    wordBreak: "keep-all",
+    textAlign: "center",
+    lineHeight: "1.4",
     boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
     transition: "opacity 0.3s",
   });

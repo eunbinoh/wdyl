@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import styles from "./allComponents.module.css";
 import SwipeableSheet from "./SwipeableSheet";
 import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 import CreditNotice from "./CreditNotice";
+import { showToast } from "./ToastAlert";
 
 type Payment = {
   pay_id: string;
@@ -13,6 +14,7 @@ type Payment = {
   amount: number;
   credit: number;
   paid_at: string;
+  status?: string;
 };
 
 type Props = {
@@ -21,9 +23,7 @@ type Props = {
   onClose: () => void;
 };
 
-const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
-
-function formatPaidAt(dateStr: string) {
+const formatPaidAt = (dateStr: string): string => {
   const d = new Date(dateStr);
   const yy = String(d.getFullYear()).slice(2);
   const mm = String(d.getMonth() + 1).padStart(2, "0");
@@ -31,17 +31,22 @@ function formatPaidAt(dateStr: string) {
   const hh = String(d.getHours()).padStart(2, "0");
   const min = String(d.getMinutes()).padStart(2, "0");
   return `${yy}-${mm}-${dd} ${hh}:${min}`;
-}
+};
 
-function getDaysLeft(paidAt: string): number {
+const getDaysLeft = (paidAt: string): number => {
   const elapsed = Date.now() - new Date(paidAt).getTime();
   const left = 7 - Math.floor(elapsed / (24 * 60 * 60 * 1000));
   return Math.max(0, left);
-}
+};
 
-function isExpired(paidAt: string): boolean {
+const isExpired = (paidAt: string): boolean => {
   return getDaysLeft(paidAt) === 0;
-}
+};
+
+const isRefundStatus = (status?: string): boolean => {
+  console.log(status);
+  return status ? status === "refund_req" || status === "refund_done" : false;
+};
 
 export default function ReturnCreditModal({ userId, credits, onClose }: Props) {
   useLockBodyScroll();
@@ -54,24 +59,24 @@ export default function ReturnCreditModal({ userId, credits, onClose }: Props) {
   const totalAmount = selectedPayments.reduce((sum, p) => sum + p.amount, 0);
   const totalCredits = selectedPayments.reduce((sum, p) => sum + p.credit, 0);
 
-  useEffect(() => {
-    const fetchPayments = async () => {
-      const { data, error } = await supabase!
-        .from("Payment")
-        .select("pay_id, user_id, amount, credit, paid_at")
-        .eq("user_id", userId)
-        .not("pay_id", "is", null)
-        .order("paid_at", { ascending: false });
+  const fetchPayments = useCallback(async () => {
+    const { data, error } = await supabase!
+      .from("Payment")
+      .select("pay_id, user_id, amount, credit, paid_at, status")
+      .eq("user_id", userId)
+      .not("pay_id", "is", null)
+      .order("paid_at", { ascending: false });
 
-      if (error) {
-        console.error("[ReturnCreditModal] fetch error:", error);
-      }
-      setPayments(data ?? []);
-      setLoading(false);
-    };
-
-    fetchPayments();
+    if (error) {
+      console.error("[ReturnCreditModal] fetch error:", error);
+    }
+    setPayments(data ?? []);
+    setLoading(false);
   }, [userId]);
+
+  useEffect(() => {
+    fetchPayments();
+  }, [fetchPayments]);
 
   const handleToggle = (payId: string, expired: boolean) => {
     if (expired) return; // 7일 경과건은 선택 불가
@@ -87,13 +92,29 @@ export default function ReturnCreditModal({ userId, credits, onClose }: Props) {
     });
   };
 
-  const handleRefundRequest = () => {
+  const handleRefundRequest = async () => {
     if (selectedPayments.length === 0) return;
 
     if (totalCredits > credits) {
       alert(
         `보유 크레딧(${credits})보다 환불 요청 크레딧(${totalCredits})이 많아요. 사용한 크레딧은 환불할 수 없어요.`
       );
+      return;
+    }
+
+    const payIds = selectedPayments.map((p) => p.pay_id);
+    const res = await fetch("/api/payments/refund-request", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId, payIds }),
+    });
+
+    const result = await res.json().catch(() => null);
+    console.log("[ReturnCreditModal] refund-request response:", res.status, result);
+
+    if (!res.ok) {
+      console.error("[ReturnCreditModal] refund-request error:", result);
+      alert("환불 요청 처리 중 오류가 발생했어요. 잠시 후 다시 시도해주세요.");
       return;
     }
 
@@ -116,7 +137,13 @@ export default function ReturnCreditModal({ userId, credits, onClose }: Props) {
       `환불 사유: `,
     ].join("%0A");
 
-    window.location.href = `mailto:jeyunnie@gmail.com?subject=[WDYL] 크레딧 환불 요청&body=${body}`;
+    setSelectedIds(new Set());
+    await fetchPayments();
+    showToast("환불요청이 접수되었어요. 확인 후 환불 완료까지 5-7일 소요됩니다.");
+
+    setTimeout(() => {
+      window.location.href = `mailto:jeyunnie@gmail.com?subject=[WDYL] 크레딧 환불 요청&body=${body}`;
+    }, 300);
   };
 
   return (
@@ -138,13 +165,15 @@ export default function ReturnCreditModal({ userId, credits, onClose }: Props) {
           <div className={styles["pay-list"]}>
             {payments.map((p) => {
               const expired = isExpired(p.paid_at);
+              const isRefunded = isRefundStatus(p.status);
+              console.log(isRefunded);
               const daysLeft = getDaysLeft(p.paid_at);
               const isSelected = selectedIds.has(p.pay_id);
               return (
                 <div
                   key={p.pay_id}
-                  onClick={() => handleToggle(p.pay_id, expired)}
-                  className={`${styles["pay-item"]} ${isSelected ? styles["selected"] : ""} ${expired ? styles["expired"] : ""}`}
+                  onClick={() => handleToggle(p.pay_id, expired || isRefunded)}
+                  className={`${styles["pay-item"]} ${isSelected ? styles["selected"] : ""} ${expired ? styles["expired"] : ""} ${isRefunded ? styles["expired"] : ""}`}
                 >
                   <div className={styles["pay-item-left"]}>
                     <div className={styles["pay-checkbox"]}>
@@ -154,8 +183,14 @@ export default function ReturnCreditModal({ userId, credits, onClose }: Props) {
                       <div className={styles["pay-item-label"]}>{p.amount.toLocaleString()}원</div>
                       <div className={styles["pay-item-date"]}>
                         {formatPaidAt(p.paid_at)}
-                        {expired ? (
-                          <span className={`${styles["pay-item-badge"]} ${styles["expired"]}`}>환불 기간 만료</span>
+                        {isRefunded || expired ? (
+                          <span className={`${styles["pay-item-badge"]} ${styles["expired"]}`}>
+                            {p.status === "refund_req"
+                              ? "환불 접수"
+                              : p.status === "refund_done"
+                                ? "환불 완료"
+                                : "환불 기간 만료"}
+                          </span>
                         ) : (
                           <span className={`${styles["pay-item-badge"]} ${styles["active"]}`}>D-{daysLeft}</span>
                         )}
