@@ -44,7 +44,6 @@ const isExpired = (paidAt: string): boolean => {
 };
 
 const isRefundStatus = (status?: string): boolean => {
-  console.log(status);
   return status ? status === "refund_req" || status === "refund_done" : false;
 };
 
@@ -110,7 +109,6 @@ export default function ReturnCreditModal({ userId, credits, onClose }: Props) {
     });
 
     const result = await res.json().catch(() => null);
-    console.log("[ReturnCreditModal] refund-request response:", res.status, result);
 
     if (!res.ok) {
       console.error("[ReturnCreditModal] refund-request error:", result);
@@ -118,32 +116,9 @@ export default function ReturnCreditModal({ userId, credits, onClose }: Props) {
       return;
     }
 
-    const itemLines = selectedPayments
-      .map(
-        (p, i) =>
-          `${i + 1}. 결제 ID: ${p.pay_id} / ${p.amount.toLocaleString()}원 / ${p.credit}크레딧 / ${formatPaidAt(p.paid_at)}`
-      )
-      .join("%0A");
-
-    const body = [
-      `사용자 ID: ${userId}`,
-      `환불 요청 건수: ${selectedPayments.length}건`,
-      `환불 요청 크레딧: ${totalCredits}크레딧`,
-      `환불 요청 총액: ${totalAmount.toLocaleString()}원`,
-      ``,
-      `[환불 요청 내역]`,
-      itemLines,
-      ``,
-      `환불 사유: `,
-    ].join("%0A");
-
     setSelectedIds(new Set());
     await fetchPayments();
-    showToast("환불요청이 접수되었어요. 확인 후 환불 완료까지 5-7일 소요됩니다.");
-
-    setTimeout(() => {
-      window.location.href = `mailto:jeyunnie@gmail.com?subject=[WDYL] 크레딧 환불 요청&body=${body}`;
-    }, 300);
+    showToast("환불요청이 접수되었어요.");
   };
 
   return (
@@ -166,7 +141,6 @@ export default function ReturnCreditModal({ userId, credits, onClose }: Props) {
             {payments.map((p) => {
               const expired = isExpired(p.paid_at);
               const isRefunded = isRefundStatus(p.status);
-              console.log(isRefunded);
               const daysLeft = getDaysLeft(p.paid_at);
               const isSelected = selectedIds.has(p.pay_id);
               return (

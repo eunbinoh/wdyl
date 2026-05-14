@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { OctagonAlertIcon, ChevronDown } from "lucide-react";
 import styles from "./allComponents.module.css";
 
 export default function CreditNotice() {
@@ -10,10 +10,28 @@ export default function CreditNotice() {
   return (
     <div className={styles["pay-notice"]}>
       <div className={`${styles["pay-notice-main"]} break-keep break-words`}>
-        💡 미사용 크레딧은 구매 후 7일 이내 환불 가능해요.
-        <br />
-        ⚠️ 크레딧의 유효기간은 결제일로부터 12개월이며, 만료시 잔여 크레딧은 소멸됩니다.
-        <br />❌ 1회 이상 사용된 크레딧은 부분환불이 불가능해요.
+        <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+          <OctagonAlertIcon
+            size={12}
+            color="#16a34a"
+          />{" "}
+          미사용 크레딧은 구매 후 7일 이내만 환불이 가능해요.
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+          <OctagonAlertIcon
+            size={12}
+            color="#0062cc"
+          />{" "}
+          결제 단위 크레딧으로 사용된 티켓은 환불이 불가능해요.
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+          <OctagonAlertIcon
+            size={12}
+            color="#ef4444"
+          />{" "}
+          크레딧의 유효기간은 결제일로부터 12개월이며,
+        </div>
+        <div style={{ marginLeft: 16, marginTop: -5 }}>만료시 잔여 크레딧은 소멸돼요.</div>
       </div>
       <div
         onClick={() => setShowExamples((prev) => !prev)}
@@ -26,7 +44,7 @@ export default function CreditNotice() {
             transition: "transform 0.2s",
           }}
         />
-        ( 구매 즉시 서버·서비스 운영 비용이 발생하기 때문이에요 )
+        티켓 생성시 먼저 충전된 크레딧부터 순차 차감돼요.
       </div>
       {showExamples && (
         <div className={styles["pay-notice-examples"]}>

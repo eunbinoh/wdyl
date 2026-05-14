@@ -24,11 +24,7 @@ export async function GET(request: NextRequest) {
   });
 
   // 1) DB에서 이미 처리된 결제인지 즉시 확인
-  const { data: existing } = await supabase
-    .from("Payment")
-    .select("pay_id")
-    .eq("order_id", orderNo)
-    .maybeSingle();
+  const { data: existing } = await supabase.from("Payment").select("pay_id").eq("order_id", orderNo).maybeSingle();
 
   if (existing?.pay_id) {
     return NextResponse.json({ paid: true });
@@ -50,7 +46,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ paid: false });
     }
 
-    // 3) 토스가 완료 상태로 응답하면 webhook과 동일한 멱등 처리 수행
+    // 3) 토스가 완료 상태로 응답하면 webhook 처리
     const transactionId = statusData.transactions?.[0]?.transactionId ?? statusData.payToken ?? orderNo;
     const { data: updatedRows } = await supabase
       .from("Payment")
