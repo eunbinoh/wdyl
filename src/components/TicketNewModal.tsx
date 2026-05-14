@@ -80,6 +80,16 @@ export default function CreateTicketModal({ userId, credits, onClose, onSuccess 
         .eq("id", userId);
       if (creditError) throw creditError;
 
+      const consumeRes = await fetch("/api/payments/consume", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId }),
+      });
+      const consumeData = await consumeRes.json();
+      if (consumeData.code !== 0) {
+        console.error("Payment available_cnt 차감 실패:", consumeData);
+      }
+
       onSuccess();
     } catch (e) {
       console.error(e);

@@ -68,6 +68,12 @@ export async function GET(request: NextRequest) {
   // updatedRows가 비어있으면 webhook이 이미 처리한 것 → 그래도 success 페이지로
   if (updatedRows && updatedRows.length > 0) {
     const payment = updatedRows[0];
+
+    await supabase
+      .from("Payment")
+      .update({ available_cnt: payment.credit })
+      .eq("pay_id", payment.pay_id);
+
     const { data: user } = await supabase.from("User").select("credits").eq("id", payment.user_id).single();
     const currentCredits = user?.credits ?? 0;
     await supabase

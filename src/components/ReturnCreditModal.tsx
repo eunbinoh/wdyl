@@ -15,6 +15,7 @@ type Payment = {
   credit: number;
   paid_at: string;
   status?: string;
+  available_cnt?: number;
 };
 
 type Props = {
@@ -61,7 +62,7 @@ export default function ReturnCreditModal({ userId, credits, onClose }: Props) {
   const fetchPayments = useCallback(async () => {
     const { data, error } = await supabase!
       .from("Payment")
-      .select("pay_id, user_id, amount, credit, paid_at, status")
+      .select("pay_id, user_id, amount, credit, paid_at, status, available_cnt")
       .eq("user_id", userId)
       .not("pay_id", "is", null)
       .order("paid_at", { ascending: false });
@@ -141,13 +142,14 @@ export default function ReturnCreditModal({ userId, credits, onClose }: Props) {
             {payments.map((p) => {
               const expired = isExpired(p.paid_at);
               const isRefunded = isRefundStatus(p.status);
+              const isUsed = p.status === "use_done" || p.available_cnt !== p.credit;
               const daysLeft = getDaysLeft(p.paid_at);
               const isSelected = selectedIds.has(p.pay_id);
               return (
                 <div
                   key={p.pay_id}
-                  onClick={() => handleToggle(p.pay_id, expired || isRefunded)}
-                  className={`${styles["pay-item"]} ${isSelected ? styles["selected"] : ""} ${expired ? styles["expired"] : ""} ${isRefunded ? styles["expired"] : ""}`}
+                  onClick={() => handleToggle(p.pay_id, expired || isRefunded || isUsed)}
+                  className={`${styles["pay-item"]} ${isSelected ? styles["selected"] : ""} ${expired || isRefunded || isUsed ? styles["expired"] : ""} `}
                 >
                   <div className={styles["pay-item-left"]}>
                     <div className={styles["pay-checkbox"]}>
@@ -166,13 +168,22 @@ export default function ReturnCreditModal({ userId, credits, onClose }: Props) {
                                 : "환불 기간 만료"}
                           </span>
                         ) : (
-                          <span className={`${styles["pay-item-badge"]} ${styles["active"]}`}>D-{daysLeft}</span>
+                          <span
+                            className={`${styles["pay-item-badge"]} ${isUsed ? styles["expired"] : styles["active"]}`}
+                          >
+                            D-{daysLeft}
+                          </span>
                         )}
                       </div>
                     </div>
                   </div>
                   <div className={styles["pay-item-right"]}>
-                    <div className={styles["pay-item-credit"]}>{p.credit}크레딧</div>
+                    <div className={styles["pay-item-credit"]}>{p.credit} 크레딧</div>
+                    {!["refund_req", "refund_done"].includes(p.status ?? "") && isUsed && (
+                      <div style={{ color: isUsed ? "#94a3b8" : "#16a34a", fontSize: 13, fontWeight: 700 }}>
+                        ( {p.available_cnt} / {p.credit} 사용 )
+                      </div>
+                    )}
                   </div>
                 </div>
               );

@@ -22,7 +22,7 @@ export default function CreditNotice() {
             size={12}
             color="#0062cc"
           />{" "}
-          결제 단위 크레딧으로 사용된 티켓은 환불이 불가능해요.
+          티켓에 사용된 결제크레딧은 부분환불이 불가능해요.
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
           <OctagonAlertIcon

@@ -67,6 +67,11 @@ export async function POST(req: NextRequest) {
 
     const payment = updatedRows[0];
 
+    await supabase
+      .from("Payment")
+      .update({ available_cnt: payment.credit })
+      .eq("pay_id", payment.pay_id);
+
     const { data: user } = await supabase.from("User").select("credits").eq("id", payment.user_id).single();
     const currentCredits = user?.credits ?? 0;
     await supabase

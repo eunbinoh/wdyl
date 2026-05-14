@@ -168,6 +168,16 @@ export default function MyTickets({ userId, credits }: Props) {
 
       if (creditError) return alert("크레딧 환급 중 오류가 발생했어요.");
 
+      const restoreRes = await fetch("/api/payments/restore", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId }),
+      });
+      const restoreData = await restoreRes.json();
+      if (restoreData.code !== 0) {
+        console.error("Payment available_cnt 환원 실패:", restoreData);
+      }
+
       await getTickets(10);
       router.refresh();
     } finally {
