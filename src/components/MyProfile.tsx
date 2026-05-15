@@ -3,7 +3,7 @@
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { LogOut, Wallet, IterationCcw } from "lucide-react";
+import { LogOut, Wallet, IterationCcw, Share2 } from "lucide-react";
 import Image from "next/image";
 import styles from "./allComponents.module.css";
 import CreditChargeModal from "./ChargeCreditModal";
@@ -29,6 +29,27 @@ export default function ProfileCard({ userId, nickname, email, avatarUrl, credit
     router.refresh();
   };
 
+  const handleKakaoShare = () => {
+    if (!window.Kakao) return;
+    if (!window.Kakao.isInitialized()) {
+      window.Kakao.init(process.env.NEXT_PUBLIC_KAKAO_JS_KEY);
+    }
+    window.Kakao.Share.sendCustom({
+      templateId: 133105,
+      templateArgs: {
+        ref: userId,
+      },
+      serverCallbackArgs: {
+        type: "share",
+        user_id: userId,
+      },
+      pickerSettings: {
+        type: "friend",
+        limit: 1,
+      },
+    });
+  };
+
   const [showCharge, setShowCharge] = useState(false);
   const [showRefund, setShowRefund] = useState(false);
 
@@ -45,13 +66,26 @@ export default function ProfileCard({ userId, nickname, email, avatarUrl, credit
             height={38}
             style={{ objectFit: "contain", cursor: "pointer" }}
           />
-          <button
-            className={styles["profile-logout-btn"]}
-            onClick={nickname !== "GUEST" ? handleLogout : handleGuest}
-          >
-            <LogOut size={14} />
-            <span>{nickname !== "GUEST" ? "로그아웃" : "회원 로그인"}</span>
-          </button>
+          <div style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+            <button
+              style={{ cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 10 }}
+              className="text-gray-400"
+              onClick={handleKakaoShare}
+            >
+              <Share2
+                size={15}
+                color="#0062cc"
+              />
+              {" /"}
+            </button>
+            <button
+              className={styles["profile-logout-btn"]}
+              onClick={nickname !== "GUEST" ? handleLogout : handleGuest}
+            >
+              <LogOut size={14} />
+              <span>{nickname !== "GUEST" ? "로그아웃" : "회원 로그인"}</span>
+            </button>
+          </div>
         </div>
 
         {/* 프로필 섹션 */}

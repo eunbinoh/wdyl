@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { Share2 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import styles from "./page.module.css";
+import KakaoShareModal from "@/components/KakaoShareModal";
 
 const TIPS = [
   {
@@ -44,6 +45,7 @@ const PLANS = [
 
 export default function LandingPage() {
   const [user, setUser] = useState<{ id: string; nickname: string } | null>(null);
+  const [showKakaoShareModal, setShowKakaoShareModal] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -65,6 +67,10 @@ export default function LandingPage() {
   }, []);
 
   const handleKakaoShare = () => {
+    if (!user?.id) {
+      setShowKakaoShareModal(true);
+      return;
+    }
     if (!window.Kakao) return;
     if (!window.Kakao.isInitialized()) {
       window.Kakao.init(process.env.NEXT_PUBLIC_KAKAO_JS_KEY);
@@ -243,6 +249,7 @@ export default function LandingPage() {
         <div className="mb-2 text-slate-500">사업장 주소: 서울시 강서구 양천로 65길 40</div>
         <div className="text-slate-500">© 2026 WDYL. All rights reserved.</div>
       </footer>
+      {showKakaoShareModal && <KakaoShareModal onClose={() => setShowKakaoShareModal(false)} />}
     </main>
   );
 }

@@ -51,6 +51,7 @@ export default function MyTickets({ userId, credits }: Props) {
   const [loadingAll, setLoadingAll] = useState(false);
   const [resendTicket, setResendTicket] = useState<Ticket | null>(null);
   const visibleTickets = showAll ? tickets : tickets.slice(0, 10);
+  const [isRotated, setIsRotated] = useState(false);
 
   useEffect(() => {
     const target = searchParams.get("openTicket");
@@ -67,6 +68,7 @@ export default function MyTickets({ userId, credits }: Props) {
   }, [searchParams, tickets, resultTicket]);
 
   const getTickets = async (limit?: number) => {
+    setIsRotated(true);
     const { data, count } = await supabase!
       .from("Ticket")
       .select("ticket_id, receiver_name, comment, theme, status, created_at, result, pick_history", { count: "exact" })
@@ -77,6 +79,9 @@ export default function MyTickets({ userId, credits }: Props) {
 
     setTickets(data ?? []);
     setTotalTickets(count ?? 0);
+    setTimeout(() => {
+      setIsRotated(false);
+    }, 800);
   };
 
   useEffect(() => {
@@ -206,12 +211,22 @@ export default function MyTickets({ userId, credits }: Props) {
         <span className={"text-xs text-slate-500 mr-2 mt-1"}>
           <button
             onClick={() => getTickets(10)}
-            style={{ marginRight: 8, cursor: "pointer" }}
+            style={{
+              marginRight: 8,
+              cursor: "pointer",
+              border: "none",
+              background: "none",
+              alignItems: "center",
+            }}
           >
             <RefreshCcw
               size={12}
               color="#f9b233"
               strokeWidth={3}
+              style={{
+                transition: "transform 0.6s cubic-bezier(0, 0, 1, 1)",
+                transform: isRotated ? "rotate(-360deg)" : "rotate(0deg)",
+              }}
             />
           </button>
           TOTAL {totalTickets}

@@ -471,6 +471,7 @@
   font-size: 16px;
   font-weight: 600;
   margin-bottom: 8px;
+  color: #1a1a1a;
 }
 
 .resend-desc {
@@ -509,6 +510,7 @@
   background: white;
   cursor: pointer;
   white-space: nowrap;
+  color: #1a1a1a;
 }
 
 .resend-copy-btn:hover {
