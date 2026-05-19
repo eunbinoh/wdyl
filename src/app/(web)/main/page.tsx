@@ -65,7 +65,7 @@ export default async function MainPage() {
       />
       {nickname !== "GUEST" && (
         <div style={{ display: "flex", justifyContent: "center", padding: "16px 0 32px", marginBottom: 10 }}>
-          <WithdrawButton userId={userId} />
+          <WithdrawButton />
         </div>
       )}
       <Suspense fallback={null}>

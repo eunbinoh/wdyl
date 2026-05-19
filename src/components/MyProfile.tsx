@@ -119,33 +119,35 @@ export default function ProfileCard({ userId, nickname, email, avatarUrl, credit
               {credits.toLocaleString()}
               <span className={styles["credit-card-unit"]}>크레딧</span>
             </div>
-            <button
-              onClick={() => {
-                setShowRefund(true);
-              }}
-              style={{
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "flex-end",
-                marginTop: 16,
-                gap: 4,
-                fontSize: 11,
-                color: "#0062CC",
-                opacity: 0.7,
-              }}
-            >
-              <IterationCcw size={14} />
-              RETURN
-            </button>
+            {nickname !== "GUEST" && (
+              <button
+                onClick={() => {
+                  setShowRefund(true);
+                }}
+                style={{
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "flex-end",
+                  marginTop: 16,
+                  gap: 4,
+                  fontSize: 11,
+                  color: "#0062CC",
+                  opacity: 0.7,
+                }}
+              >
+                <IterationCcw size={14} />
+                RETURN
+              </button>
+            )}
           </div>
 
           <button
             className={styles["credit-charge-btn"]}
             onClick={() => {
-              setShowCharge(true);
+              nickname === "GUEST" ? alert("크레딧을 충전하시려면 먼저 회원 로그인 해주세요.") : setShowCharge(true);
             }}
           >
             크레딧 충전하기
