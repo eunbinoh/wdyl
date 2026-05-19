@@ -243,10 +243,10 @@ export default function LandingPage() {
           </Link>
         </div>
         <div className="mb-1 text-slate-500 break-keep">
-          레오코퍼레이션 &nbsp;|&nbsp; 대표:노은비 &nbsp;|&nbsp; 사업자번호:717-28-01232
+          레오코퍼레이션 &nbsp;|&nbsp; 대표 노은비 &nbsp;|&nbsp; 사업자번호 717-28-01232
         </div>
-        <div className="mb-1 text-slate-500">전화번호: 050-26680-0145 &nbsp;|&nbsp; 문의: jeyUnnie@gmail.com</div>
-        <div className="mb-2 text-slate-500">사업장 주소: 서울시 강서구 양천로 65길 40</div>
+        <div className="mb-1 text-slate-500">문의 ) 050-26680-0145 &nbsp;|&nbsp; jeyUnnie@gmail.com</div>
+        <div className="mb-2 text-slate-500">서울시 강서구 양천로 65길 40</div>
         <div className="text-slate-500">© 2026 WDYL. All rights reserved.</div>
       </footer>
       {showKakaoShareModal && <KakaoShareModal onClose={() => setShowKakaoShareModal(false)} />}
