@@ -48,6 +48,21 @@ const isRefundStatus = (status?: string): boolean => {
   return status ? status === "refund_req" || status === "refund_done" : false;
 };
 
+const fetchPaymentRows = async (userId: string) => {
+  const { data, error } = await supabase!
+    .from("Payment")
+    .select("pay_id, user_id, amount, credit, paid_at, status, available_cnt")
+    .eq("user_id", userId)
+    .not("pay_id", "is", null)
+    .order("paid_at", { ascending: false });
+
+  if (error) {
+    console.error("[ReturnCreditModal] fetch error:", error);
+  }
+
+  return data ?? [];
+};
+
 export default function ReturnCreditModal({ userId, credits, onClose }: Props) {
   useLockBodyScroll();
 
@@ -60,23 +75,27 @@ export default function ReturnCreditModal({ userId, credits, onClose }: Props) {
   const totalCredits = selectedPayments.reduce((sum, p) => sum + p.credit, 0);
 
   const fetchPayments = useCallback(async () => {
-    const { data, error } = await supabase!
-      .from("Payment")
-      .select("pay_id, user_id, amount, credit, paid_at, status, available_cnt")
-      .eq("user_id", userId)
-      .not("pay_id", "is", null)
-      .order("paid_at", { ascending: false });
-
-    if (error) {
-      console.error("[ReturnCreditModal] fetch error:", error);
-    }
-    setPayments(data ?? []);
+    const nextPayments = await fetchPaymentRows(userId);
+    setPayments(nextPayments);
     setLoading(false);
   }, [userId]);
 
   useEffect(() => {
-    fetchPayments();
-  }, [fetchPayments]);
+    let ignore = false;
+
+    const load = async () => {
+      const nextPayments = await fetchPaymentRows(userId);
+      if (ignore) return;
+      setPayments(nextPayments);
+      setLoading(false);
+    };
+
+    void load();
+
+    return () => {
+      ignore = true;
+    };
+  }, [userId]);
 
   const handleToggle = (payId: string, expired: boolean) => {
     if (expired) return; // 7일 경과건은 선택 불가

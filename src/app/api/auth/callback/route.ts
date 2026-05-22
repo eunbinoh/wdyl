@@ -35,15 +35,19 @@ export async function GET(request: NextRequest) {
     );
 
     const {
-      data: { user },
+      data: { session, user },
       error,
     } = await supabase.auth.exchangeCodeForSession(code);
 
     if (!error) {
       if (user) {
-        const adminClient = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
-          auth: { persistSession: false, autoRefreshToken: false },
-        });
+        const adminClient = createClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL!,
+          process.env.SUPABASE_SERVICE_ROLE_KEY!,
+          {
+            auth: { persistSession: false, autoRefreshToken: false },
+          }
+        );
 
         const { data: profile, error: profileError } = await adminClient
           .from("User")
@@ -70,6 +74,19 @@ export async function GET(request: NextRequest) {
             console.error("[auth/callback] User profile insert error:", insertError);
             await supabase.auth.signOut();
             return NextResponse.redirect(`${origin}/login?error=auth`);
+          }
+        }
+
+        if (session?.provider_refresh_token) {
+          const { error: tokenError } = await adminClient
+            .from("User")
+            .update({
+              kakao_refresh_token: session.provider_refresh_token,
+            })
+            .eq("id", user.id);
+
+          if (tokenError) {
+            console.error("[auth/callback] Kakao refresh token update error:", tokenError);
           }
         }
       }

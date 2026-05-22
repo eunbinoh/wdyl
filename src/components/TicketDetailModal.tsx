@@ -26,6 +26,16 @@ type Props = {
   onFetched: () => void;
 };
 
+const fetchTicketRow = async (ticketId: string) => {
+  const { data } = await supabase!
+    .from("Ticket")
+    .select("receiver_name, comment, theme, status")
+    .eq("ticket_id", ticketId)
+    .single();
+
+  return data;
+};
+
 export default function DetailTicketModal({ ticketId, onClose, onFetched }: Props) {
   useLockBodyScroll();
   const [toName, setToName] = useState("");
@@ -47,11 +57,7 @@ export default function DetailTicketModal({ ticketId, onClose, onFetched }: Prop
 
   // 티켓 조회
   const fetchTicket = async () => {
-    const { data } = await supabase!
-      .from("Ticket")
-      .select("receiver_name, comment, theme, status")
-      .eq("ticket_id", ticketId)
-      .single();
+    const data = await fetchTicketRow(ticketId);
 
     if (data) {
       setToName(data.receiver_name ?? "");
@@ -65,7 +71,27 @@ export default function DetailTicketModal({ ticketId, onClose, onFetched }: Prop
   };
 
   useEffect(() => {
-    fetchTicket();
+    let ignore = false;
+
+    const load = async () => {
+      const data = await fetchTicketRow(ticketId);
+      if (ignore) return;
+
+      if (data) {
+        setToName(data.receiver_name ?? "");
+        setTheme((data.theme as ThemeId) ?? "MOOD");
+        setStatus((data.status as Status) ?? "created");
+        const parts = (data.comment ?? "").split("/").map((s: string) => s.trim());
+        setTraits([parts[0] ?? "", parts[1] ?? "", parts[2] ?? ""]);
+      }
+      setFetchLoading(false);
+    };
+
+    void load();
+
+    return () => {
+      ignore = true;
+    };
   }, [ticketId]);
 
   useEffect(() => {
@@ -250,8 +276,9 @@ export default function DetailTicketModal({ ticketId, onClose, onFetched }: Prop
             <button
               className={styles["modal-btn-preview"]}
               onClick={handleModify}
+              disabled={loading}
             >
-              티켓 수정하기
+              {loading ? "수정 중..." : "티켓 수정하기"}
             </button>
           )}
         </div>

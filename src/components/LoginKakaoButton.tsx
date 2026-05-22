@@ -16,6 +16,7 @@ export default function LoginKakaoButton({ loading, setLoading }: Props) {
       provider: "kakao",
       options: {
         redirectTo: `${window.location.origin}/api/auth/callback`,
+        scopes: "account_email profile_nickname profile_image talk_message",
       },
     });
     if (error) {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Mails, MessageSquareMore, CalendarClock, ChevronDown, RefreshCcw } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
@@ -53,36 +53,38 @@ export default function MyTickets({ userId, credits }: Props) {
   const visibleTickets = showAll ? tickets : tickets.slice(0, 10);
   const [isRotated, setIsRotated] = useState(false);
 
+  const getTickets = useCallback(
+    async (limit?: number) => {
+      setIsRotated(true);
+      const { data, count } = await supabase!
+        .from("Ticket")
+        .select("ticket_id, receiver_name, comment, theme, status, created_at, result, pick_history", {
+          count: "exact",
+        })
+        .eq("user_id", userId)
+        .eq("deleted_yn", false)
+        .order("created_at", { ascending: false })
+        .limit(limit ?? 99);
+
+      setTickets(data ?? []);
+      setTotalTickets(count ?? 0);
+      setTimeout(() => {
+        setIsRotated(false);
+      }, 800);
+    },
+    [userId]
+  );
+
   useEffect(() => {
     const target = searchParams.get("openTicket");
     if (!target) return;
 
-    const found = tickets.find((t) => t.ticket_id === target);
-    if (found) {
-      const targetTicket = tickets.find((t) => t.ticket_id === target);
-      if (targetTicket) {
-        setResultTicket(targetTicket);
-      }
+    const targetTicket = tickets.find((t) => t.ticket_id === target);
+    if (targetTicket) {
+      setResultTicket(targetTicket);
       window.history.replaceState(null, "", "/main");
     }
-  }, [searchParams, tickets, resultTicket]);
-
-  const getTickets = async (limit?: number) => {
-    setIsRotated(true);
-    const { data, count } = await supabase!
-      .from("Ticket")
-      .select("ticket_id, receiver_name, comment, theme, status, created_at, result, pick_history", { count: "exact" })
-      .eq("user_id", userId)
-      .eq("deleted_yn", false)
-      .order("created_at", { ascending: false })
-      .limit(limit ?? 99);
-
-    setTickets(data ?? []);
-    setTotalTickets(count ?? 0);
-    setTimeout(() => {
-      setIsRotated(false);
-    }, 800);
-  };
+  }, [searchParams, tickets]);
 
   useEffect(() => {
     getTickets(10);
@@ -108,9 +110,74 @@ export default function MyTickets({ userId, credits }: Props) {
       document.removeEventListener("visibilitychange", handleVisibility);
       window.removeEventListener("pageshow", refresh);
     };
+  }, [getTickets, router]);
+
+  useEffect(() => {
+    const raw = localStorage.getItem("kakao_retry_action");
+    if (!raw) return;
+
+    try {
+      const action = JSON.parse(raw);
+
+      if (action.type === "SEND_KAKAO") {
+        handleKakaoSend(action.ticketId, action.receiverName);
+      }
+
+      localStorage.removeItem("kakao_retry_action");
+    } catch (e) {
+      console.error("retry parse error", e);
+      localStorage.removeItem("kakao_retry_action");
+    }
   }, []);
 
-  const handleKakaoSend = (ticketId: string, receiverName: string) => {
+  const requestKakaoMessageConsent = async () => {
+    await supabase!.auth.signInWithOAuth({
+      provider: "kakao",
+      options: {
+        redirectTo: `${window.location.origin}/api/auth/callback?next=/main`,
+        scopes: "account_email profile_nickname profile_image talk_message",
+        queryParams: {
+          prompt: "consent",
+        },
+      },
+    });
+  };
+
+  const ensureKakaoMessageConsent = async () => {
+    const response = await fetch("/api/kakao/message-consent/status", {
+      method: "GET",
+      cache: "no-store",
+    });
+    console.log("response:", response);
+    if (response.status === 200 && response.ok) return true;
+
+    if (response.status === 401) {
+      alert("카카오 알림 동의를 위해 다시 로그인해주세요.");
+      await requestKakaoMessageConsent();
+      return false;
+    }
+
+    alert("설문 완료 알림을 받으려면 카카오톡 메시지 전송 동의가 필요해요. 동의 후 티켓을 발송해주세요.");
+    await requestKakaoMessageConsent();
+    return false;
+  };
+
+  const saveRetryAction = (payload: any) => {
+    localStorage.setItem("kakao_retry_action", JSON.stringify(payload));
+  };
+
+  const handleKakaoSend = async (ticketId: string, receiverName: string) => {
+    const hasKakaoMessageConsent = await ensureKakaoMessageConsent();
+
+    if (!hasKakaoMessageConsent) {
+      saveRetryAction({
+        type: "SEND_KAKAO",
+        ticketId,
+        receiverName,
+      });
+      return;
+    }
+
     const surveyUrl = `https://wdyl.vercel.app/survey/${ticketId}`;
     if (!window.Kakao) {
       return;
@@ -134,7 +201,7 @@ export default function MyTickets({ userId, credits }: Props) {
     // 카카오 인앱 브라우저: 공유 다이얼로그가 같은 웹뷰 위 네이티브 오버레이로 열려
     // focus / visibilitychange 이벤트가 발생하지 않을 수 있음.
     // 서버 콜백(api/kakao/callback) 처리 시간을 고려해 2초 후 목록 갱신.
-    setTimeout(() => getTickets(10), 2000);
+    setTimeout(async () => await getTickets(10), 1000);
   };
 
   const handleShowAll = async () => {
@@ -278,9 +345,11 @@ export default function MyTickets({ userId, credits }: Props) {
                           className={`${styles["ticket-action-btn"]} ${ticket.status === "created" ? styles["yellow"] : styles["green"]}`}
                           onClick={(e) => {
                             e.stopPropagation();
-                            ticket.status === "created"
-                              ? handleKakaoSend(ticket.ticket_id, ticket.receiver_name)
-                              : setResendTicket(ticket);
+                            if (ticket.status === "created") {
+                              handleKakaoSend(ticket.ticket_id, ticket.receiver_name);
+                              return;
+                            }
+                            setResendTicket(ticket);
                           }}
                         >
                           {ticket.status === "created" ? "발송하기" : "재발송"}
@@ -316,6 +385,7 @@ export default function MyTickets({ userId, credits }: Props) {
                   <span
                     className={styles["tickets-header-more"]}
                     onClick={handleShowAll}
+                    aria-busy={loadingAll}
                     style={{
                       display: "flex",
                       justifyContent: "center",

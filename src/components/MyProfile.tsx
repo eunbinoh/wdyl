@@ -92,9 +92,12 @@ export default function ProfileCard({ userId, nickname, email, avatarUrl, credit
         <div className={styles["profile-section"]}>
           <div className={styles["profile-avatar-wrap"]}>
             {avatarUrl ? (
-              <img
+              <Image
                 src={avatarUrl}
                 alt={nickname}
+                width={96}
+                height={96}
+                unoptimized
                 style={{ width: "100%", height: "100%", objectFit: "cover" }}
               />
             ) : (
@@ -147,7 +150,11 @@ export default function ProfileCard({ userId, nickname, email, avatarUrl, credit
           <button
             className={styles["credit-charge-btn"]}
             onClick={() => {
-              nickname === "GUEST" ? alert("크레딧을 충전하시려면 먼저 회원 로그인 해주세요.") : setShowCharge(true);
+              if (nickname === "GUEST") {
+                alert("크레딧을 충전하시려면 먼저 회원 로그인 해주세요.");
+                return;
+              }
+              setShowCharge(true);
             }}
           >
             크레딧 충전하기

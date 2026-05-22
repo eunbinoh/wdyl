@@ -25,8 +25,17 @@ export type Item = {
 };
 export type Phase = "intro" | "step1" | "step2" | "step3" | "result" | "expired";
 
+type KakaoShareOptions = Record<string, unknown>;
+
 declare global {
   interface Window {
-    Kakao: any;
+    Kakao?: {
+      isInitialized: () => boolean;
+      init: (key?: string) => void;
+      Share: {
+        sendCustom: (options: KakaoShareOptions) => void;
+        sendDefault: (options: KakaoShareOptions) => void;
+      };
+    };
   }
 }

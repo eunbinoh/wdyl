@@ -34,11 +34,7 @@ export function useSurvey(ticket: Ticket) {
 
   const handleStart = async () => {
     if (ticket.status === "sent") {
-      const { error, data } = await supabase!
-        .from("Ticket")
-        .update({ status: "progress" })
-        .eq("ticket_id", ticket.ticket_id)
-        .select();
+      await supabase!.from("Ticket").update({ status: "progress" }).eq("ticket_id", ticket.ticket_id);
     }
     setPhase("step1");
   };
@@ -113,6 +109,24 @@ export function useSurvey(ticket: Ticket) {
       setLoading(false);
       return;
     }
+
+    // 결과 완료 시 티켓 발신자에게 카카오 메시지 전송
+    try {
+      const response = await fetch("http://localhost:3000/api/kakao/memo-message", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ticketId: ticket.ticket_id,
+        }),
+      });
+
+      if (!response.ok) {
+        console.error("[kakao-result-notification] failed:", await response.json().catch(() => null));
+      }
+    } catch (e) {
+      console.error("[kakao-result-notification] failed:", e);
+    }
+
     setPhase("result");
     setLoading(false);
   };

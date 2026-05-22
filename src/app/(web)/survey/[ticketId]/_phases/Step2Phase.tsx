@@ -17,7 +17,6 @@ type Props = {
 };
 
 export function Step2Phase({
-  ticket,
   ts,
   pageStyle,
   backBtnStyle,
