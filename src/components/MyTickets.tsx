@@ -128,9 +128,19 @@ export default function MyTickets({ userId, credits }: Props) {
       console.error("retry parse error", e);
       localStorage.removeItem("kakao_retry_action");
     }
+    sessionStorage.removeItem("kakao_oauth_retry");
   }, []);
 
   const requestKakaoMessageConsent = async () => {
+    const alreadyTried = sessionStorage.getItem("kakao_oauth_retry");
+
+    if (alreadyTried) {
+      console.warn("이미 카카오 재동의 시도함");
+      return;
+    }
+
+    sessionStorage.setItem("kakao_oauth_retry", "1");
+
     await supabase!.auth.signInWithOAuth({
       provider: "kakao",
       options: {
@@ -148,7 +158,6 @@ export default function MyTickets({ userId, credits }: Props) {
       method: "GET",
       cache: "no-store",
     });
-    console.log("response:", response);
     if (response.status === 200 && response.ok) return true;
 
     if (response.status === 401) {
@@ -157,8 +166,8 @@ export default function MyTickets({ userId, credits }: Props) {
       return false;
     }
 
-    alert("설문 완료 알림을 받으려면 카카오톡 메시지 전송 동의가 필요해요. 동의 후 티켓을 발송해주세요.");
-    await requestKakaoMessageConsent();
+    // alert("설문 완료 알림을 받으려면 카카오톡 메시지 전송 동의가 필요해요. 동의 후 티켓을 발송해주세요.");
+    // await requestKakaoMessageConsent();
     return false;
   };
 

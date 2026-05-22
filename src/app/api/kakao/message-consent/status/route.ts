@@ -34,13 +34,9 @@ export async function GET() {
       return NextResponse.json({ hasConsent: false, reason: "unauthorized" }, { status: 401 });
     }
 
-    const adminClient = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!,
-      {
-        auth: { persistSession: false, autoRefreshToken: false },
-      }
-    );
+    const adminClient = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
 
     const { data: profile, error: profileError } = await adminClient
       .from("User")
