@@ -112,35 +112,7 @@ export default function MyTickets({ userId, credits }: Props) {
     };
   }, [getTickets, router]);
 
-  useEffect(() => {
-    const raw = localStorage.getItem("kakao_retry_action");
-    if (!raw) return;
-
-    try {
-      const action = JSON.parse(raw);
-
-      if (action.type === "SEND_KAKAO") {
-        handleKakaoSend(action.ticketId, action.receiverName);
-      }
-
-      localStorage.removeItem("kakao_retry_action");
-    } catch (e) {
-      console.error("retry parse error", e);
-      localStorage.removeItem("kakao_retry_action");
-    }
-    sessionStorage.removeItem("kakao_oauth_retry");
-  }, []);
-
   const requestKakaoMessageConsent = async () => {
-    const alreadyTried = sessionStorage.getItem("kakao_oauth_retry");
-
-    if (alreadyTried) {
-      console.warn("이미 카카오 재동의 시도함");
-      return;
-    }
-
-    sessionStorage.setItem("kakao_oauth_retry", "1");
-
     await supabase!.auth.signInWithOAuth({
       provider: "kakao",
       options: {
@@ -158,6 +130,7 @@ export default function MyTickets({ userId, credits }: Props) {
       method: "GET",
       cache: "no-store",
     });
+    return true;
     if (response.status === 200 && response.ok) return true;
 
     if (response.status === 401) {
@@ -166,26 +139,15 @@ export default function MyTickets({ userId, credits }: Props) {
       return false;
     }
 
+    //TODO
     // alert("설문 완료 알림을 받으려면 카카오톡 메시지 전송 동의가 필요해요. 동의 후 티켓을 발송해주세요.");
     // await requestKakaoMessageConsent();
-    return false;
-  };
-
-  const saveRetryAction = (payload: any) => {
-    localStorage.setItem("kakao_retry_action", JSON.stringify(payload));
+    // return false;
   };
 
   const handleKakaoSend = async (ticketId: string, receiverName: string) => {
     const hasKakaoMessageConsent = await ensureKakaoMessageConsent();
-
-    if (!hasKakaoMessageConsent) {
-      saveRetryAction({
-        type: "SEND_KAKAO",
-        ticketId,
-        receiverName,
-      });
-      return;
-    }
+    if (!hasKakaoMessageConsent) return;
 
     const surveyUrl = `https://wdyl.vercel.app/survey/${ticketId}`;
     if (!window.Kakao) {
