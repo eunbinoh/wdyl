@@ -48,17 +48,16 @@ export async function GET() {
       return NextResponse.json({ hasConsent: false, reason: "token_not_found" });
     }
 
-    const { accessToken, refreshToken } = await refreshKakaoAccessToken(profile.kakao_refresh_token);
-
-    if (refreshToken) {
-      const { error: refreshTokenError } = await adminClient
-        .from("User")
-        .update({ kakao_refresh_token: refreshToken })
-        .eq("id", user.id);
-
-      if (refreshTokenError) {
-        console.error("[kakao/message-consent/status] refresh token update error:", refreshTokenError);
-      }
+    let accessToken: string;
+    let refreshToken: string | undefined;
+    try {
+      const tokens = await refreshKakaoAccessToken(profile.kakao_refresh_token);
+      accessToken = tokens.accessToken;
+      refreshToken = tokens.refreshToken;
+      console.log("token::", accessToken, refreshToken);
+    } catch (e) {
+      console.error("[kakao/message-consent/status] refresh token expired:", e);
+      return NextResponse.json({ hasConsent: false, reason: "token_expired" }, { status: 401 });
     }
 
     const params = new URLSearchParams({

@@ -125,24 +125,35 @@ export default function MyTickets({ userId, credits }: Props) {
     });
   };
 
-  const ensureKakaoMessageConsent = async () => {
-    const response = await fetch("/api/kakao/message-consent/status", {
-      method: "GET",
-      cache: "no-store",
-    });
-    return true;
-    if (response.status === 200 && response.ok) return true;
+  const ensureKakaoMessageConsent = async (): Promise<boolean> => {
+    try {
+      const response = await fetch("/api/kakao/message-consent/status", {
+        method: "GET",
+        cache: "no-store",
+      });
+      console.log("//res:", response);
+      if (response.ok) return true;
+      if (response.status === 401) {
+        const agreed = confirm(
+          "카카오 연동이 만료됐어요. 다시 로그인하면 설문 완료 알림을 받을 수 있어요.\n지금 재로그인하시겠어요?"
+        );
+        if (agreed) await requestKakaoMessageConsent();
+        return false;
+      }
 
-    if (response.status === 401) {
-      alert("카카오 알림 동의를 위해 다시 로그인해주세요.");
-      await requestKakaoMessageConsent();
-      return false;
+      const agreed = confirm(
+        "카카오톡 메시지 전송에 동의하지 않으면 설문 완료 알림을 받을 수 없어요.\n지금 동의하시겠어요?"
+      );
+      if (agreed) {
+        await requestKakaoMessageConsent();
+        return false; // 동의 페이지 이동 & 현재 발송 중단
+      }
+
+      // 알림 없이 발송 그냥 진행
+      return true;
+    } catch {
+      return true;
     }
-
-    //TODO
-    // alert("설문 완료 알림을 받으려면 카카오톡 메시지 전송 동의가 필요해요. 동의 후 티켓을 발송해주세요.");
-    // await requestKakaoMessageConsent();
-    // return false;
   };
 
   const handleKakaoSend = async (ticketId: string, receiverName: string) => {

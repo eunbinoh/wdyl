@@ -84,10 +84,15 @@ export async function GET(request: NextRequest) {
               kakao_refresh_token: session.provider_refresh_token,
             })
             .eq("id", user.id);
-
+          console.log("[auth/callback] provider_refresh_token 수신 ✅");
           if (tokenError) {
             console.error("[auth/callback] Kakao refresh token update error:", tokenError);
           }
+        } else {
+          console.warn("[auth/callback] provider_refresh_token 없음 ❌", {
+            provider_token: session?.provider_token,
+            provider: user?.app_metadata?.provider,
+          });
         }
       }
 
