@@ -54,7 +54,6 @@ export async function GET() {
       const tokens = await refreshKakaoAccessToken(profile.kakao_refresh_token);
       accessToken = tokens.accessToken;
       refreshToken = tokens.refreshToken;
-      console.log("token::", accessToken, refreshToken);
     } catch (e) {
       console.error("[kakao/message-consent/status] refresh token expired:", e);
       return NextResponse.json({ hasConsent: false, reason: "token_expired" }, { status: 401 });

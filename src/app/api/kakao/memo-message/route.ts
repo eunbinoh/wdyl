@@ -64,7 +64,6 @@ export async function POST(request: NextRequest) {
       },
       body,
     });
-
     const result = await response.json().catch(() => null);
 
     if (!response.ok) {

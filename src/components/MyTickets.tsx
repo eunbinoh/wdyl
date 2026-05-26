@@ -131,7 +131,6 @@ export default function MyTickets({ userId, credits }: Props) {
         method: "GET",
         cache: "no-store",
       });
-      console.log("//res:", response);
       if (response.ok) return true;
       if (response.status === 401) {
         const agreed = confirm(

@@ -10,7 +10,6 @@ type KakaoRefreshResponse = {
 
 export async function refreshKakaoAccessToken(refreshToken: string) {
   const clientId = process.env.KAKAO_REST_API_KEY;
-  console.log("clientId:", process.env.KAKAO_REST_API_KEY);
 
   if (!clientId) {
     throw new Error("KAKAO_REST_API_KEY 환경 변수가 설정되지 않았습니다.");
