@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Mails, MessageSquareMore, CalendarClock, ChevronDown, RefreshCcw } from "lucide-react";
+import { Mails, MessageSquareMore, CalendarClock, ChevronDown, RefreshCcw, Loader2 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import { Status, Ticket } from "@/types";
@@ -50,8 +50,9 @@ export default function MyTickets({ userId, credits }: Props) {
   const [totalTickets, setTotalTickets] = useState(0);
   const [loadingAll, setLoadingAll] = useState(false);
   const [resendTicket, setResendTicket] = useState<Ticket | null>(null);
-  const visibleTickets = showAll ? tickets : tickets.slice(0, 10);
   const [isRotated, setIsRotated] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const visibleTickets = showAll ? tickets : tickets.slice(0, 10);
 
   const getTickets = useCallback(
     async (limit?: number) => {
@@ -156,6 +157,7 @@ export default function MyTickets({ userId, credits }: Props) {
   };
 
   const handleKakaoSend = async (ticketId: string, receiverName: string) => {
+    setIsLoading(true);
     const hasKakaoMessageConsent = await ensureKakaoMessageConsent();
     if (!hasKakaoMessageConsent) return;
 
@@ -178,11 +180,11 @@ export default function MyTickets({ userId, credits }: Props) {
         ticket_id: ticketId,
       },
     });
-
+    setIsLoading(false);
     // 카카오 인앱 브라우저: 공유 다이얼로그가 같은 웹뷰 위 네이티브 오버레이로 열려
     // focus / visibilitychange 이벤트가 발생하지 않을 수 있음.
-    // 서버 콜백(api/kakao/callback) 처리 시간을 고려해 2초 후 목록 갱신.
-    setTimeout(async () => await getTickets(10), 1000);
+    // 서버 콜백(api/kakao/callback) 처리 시간을 고려해 10초 후 목록 갱신.
+    setTimeout(async () => await getTickets(10), 10000);
   };
 
   const handleShowAll = async () => {
@@ -325,6 +327,7 @@ export default function MyTickets({ userId, credits }: Props) {
                         <button
                           className={`${styles["ticket-action-btn"]} ${ticket.status === "created" ? styles["yellow"] : styles["green"]}`}
                           onClick={(e) => {
+                            if (isLoading) return;
                             e.stopPropagation();
                             if (ticket.status === "created") {
                               handleKakaoSend(ticket.ticket_id, ticket.receiver_name);
@@ -333,12 +336,23 @@ export default function MyTickets({ userId, credits }: Props) {
                             setResendTicket(ticket);
                           }}
                         >
-                          {ticket.status === "created" ? "발송하기" : "재발송"}
+                          {" "}
+                          {isLoading && ticket.status === "created" ? (
+                            <Loader2
+                              size={20}
+                              className="animate-spin"
+                            />
+                          ) : ticket.status === "created" ? (
+                            "발송하기"
+                          ) : (
+                            "재발송"
+                          )}
                         </button>
                         <button
                           className={`${styles["ticket-action-btn"]} ${styles["gray"]}`}
                           disabled={cancellingId === ticket.ticket_id}
                           onClick={(e) => {
+                            if (isLoading) return;
                             e.stopPropagation();
                             handleCancel(ticket.ticket_id);
                           }}

@@ -172,7 +172,7 @@
 }
 
 .ticket-action-btn {
-  @apply text-[14px] font-bold py-1 px-3 rounded-[10px]
+  @apply text-[14px] font-bold py-1 px-3 rounded-[10px] flex justify-center
     border-none cursor-pointer whitespace-nowrap transition-all duration-150 active:scale-95;
 
   &.yellow {
