@@ -112,7 +112,7 @@ export function useSurvey(ticket: Ticket) {
 
     // 결과 완료 시 티켓 발신자에게 카카오 메시지 전송
     try {
-      const response = await fetch("http://localhost:3000/api/kakao/memo-message", {
+      const response = await fetch("/api/kakao/memo-message", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
