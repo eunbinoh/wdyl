@@ -8,6 +8,7 @@ import { Share2 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import styles from "./page.module.css";
 import KakaoShareModal from "@/components/KakaoShareModal";
+import MarketingSection from "@/components/MarketingSection";
 
 const TIPS = [
   {
@@ -110,7 +111,7 @@ export default function LandingPage() {
         </Link>
       </header>
 
-      {/* 히어로 */}
+      {/* 메인 카피라이터 */}
       <section className={styles.hero}>
         <div className={styles.heroBadge}>WHAT DO YOU LIKE</div>
         <SubTitleAnimation />
@@ -125,6 +126,8 @@ export default function LandingPage() {
           당신의 취향저격 선물에 감동할수있도록
         </p>
       </section>
+
+      <MarketingSection />
 
       {/* 이용팁 */}
       <section className={styles.tipsSection}>
@@ -147,30 +150,10 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 이용 흐름 */}
-      <section className={styles.howSection}>
-        <div className={styles.sectionLabel}>HOW TO USE</div>
-        <div className={styles.howGrid}>
-          {[
-            { step: "01", emoji: "🎁", label: "티켓 만들기" },
-            { step: "02", emoji: "📨", label: "링크 발송" },
-            { step: "03", emoji: "🏆", label: "결과 확인" },
-          ].map((item, i) => (
-            <div
-              key={i}
-              className={styles.howStep}
-            >
-              <div className={styles.howStepEmoji}>{item.emoji}</div>
-              <div className={styles.howStepLabel}>STEP {item.step}</div>
-              <div className={styles.howStepName}>{item.label}</div>
-            </div>
-          ))}
-        </div>
-      </section>
 
       {/* 프로모션 */}
       <section className={styles.pricingSection}>
-        <div className={styles.sectionLabel}>PRICING</div>
+        <div className={styles.sectionLabel}>PRICE</div>
         <div className={styles.planList}>
           {PLANS.map((plan, i) => (
             <div
