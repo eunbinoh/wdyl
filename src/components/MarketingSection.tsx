@@ -63,7 +63,6 @@ export default function WdylPromoSection() {
     []
   );
   const widthFitImageSources = useMemo(() => new Set(['/promo_img/pro_create.png']), []);
-
   const [current, setCurrent] = useState(0);
   const [landscapeImageSources, setLandscapeImageSources] = useState<Record<string, boolean>>({});
   const dragStartX = useRef<number | null>(null);
@@ -77,7 +76,7 @@ export default function WdylPromoSection() {
   useEffect(() => {
     const timer = setTimeout(() => {
       moveSlide(1);
-    }, current === slides.length - 1 ? 800000 : 400000);
+    }, current === slides.length - 1 ? 8000 : 3000);
 
     return () => clearTimeout(timer);
   }, [current, moveSlide, slides.length]);

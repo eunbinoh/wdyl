@@ -9,6 +9,35 @@ type ResultSub = {
   parts: Array<ResultPart>;
 };
 
+export const USE_TIPS = [
+  {
+    emoji: "🤷",
+    title: "뭘 좋아할지 모르겠을 때",
+    desc: "친구한테 요즘 제일 필요한게 뭔지, 최근 관심사 원픽은 뭔지 콕 짚어드려요.",
+  },
+  {
+    emoji: "😳",
+    title: "물어봐도 대답 듣기 어려울 때",
+    desc: "결정장애 친구라도 취향 월드컵 통해서 쉽고 빠르게 초이스 할 수 있어요.",
+  },
+  {
+    emoji: "🎯",
+    title: "장르만 알려주면 직접 고르고싶을 때",
+    desc: "위시리스트는 알겠는데 가격이 부담될때, 차순위 카테고리도 알려드려요.",
+  },
+  {
+    emoji: "💌",
+    title: "센스 있는 선물을 하고 싶을 때",
+    desc: "까다로운 친구한테도 알잘딱깔센!",
+  },
+  {
+    emoji: "😅",
+    title: "선물하긴 해야되는데 살짝 귀찮을 때",
+    desc: "매번 똑같은 선물도 좋지만 관심 한스푼+",
+  },
+];
+
+
 export const TOOLTIPS: Record<string, string> = {
   TO: "받는 분 이름 - 첫 화면 타이틀에 사용돼요.",
   WHO: "받는 분 특징 - 설문 결과 화면에 적용돼요.",
@@ -20,6 +49,12 @@ export const TRAIT_SUFFIX: Record<Theme, string[]> = {
   friend: ["하고", "하며", "한"],
   sweet: ["하고", "하며", "한"],
 };
+
+export const PRICE = [
+  { credits: 1, price: 990, tag: null },
+  { credits: 5, price: 3500, tag: "인기 PICK" },
+  { credits: 10, price: 5000, tag: "개당 500원" },
+];
 
 // 1. 테마 정보 정의 (순서 및 단축 네이밍 반영)
 export const THEMES = {
