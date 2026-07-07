@@ -256,6 +256,25 @@ export function ResultPhase({ ticket, ts, pageStyle, cardStyle, medals }: Props)
         <div style={{ fontSize: 12, fontWeight: 500, color: ts.subText, marginTop: 24, textAlign: "center" }}>
           어쩌면, 이미 누군가가 당신을 위해
           <br />이 선물을 준비하고 있을지도 몰라요! ✨
+          <button
+              onClick={() => {
+              window.location.href = "https://wdyl.vercel.app/";
+            }}
+            style={{
+              marginTop: 10,
+              width: "100%",
+              padding: "14px 20px",
+              backgroundColor: ts.accent,
+              color: ts.accent === "#FFFFFF" ? "#000000" : "#FFFFFF",
+              border: "none",
+              borderRadius: 12,
+              fontSize: 14,
+              fontWeight: 600,
+              cursor: "pointer",
+            }}
+          >
+            친구 선물하러 가기
+          </button>
         </div>
       )}
     </div>
