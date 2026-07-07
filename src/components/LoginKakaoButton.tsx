@@ -12,10 +12,16 @@ export default function LoginKakaoButton({ loading, setLoading }: Props) {
   const handleKakaoLogin = async () => {
     if (loading) return;
     setLoading(true);
+    const params = new URLSearchParams(window.location.search);
+    const next = params.get("next");
+    const safeNext = next?.startsWith("/") && !next.startsWith("//") ? next : "/main";
+    const callbackUrl = new URL("/api/auth/callback", window.location.origin);
+    callbackUrl.searchParams.set("next", safeNext);
+
     const { error } = await supabase!.auth.signInWithOAuth({
       provider: "kakao",
       options: {
-        redirectTo: `${window.location.origin}/api/auth/callback`,
+        redirectTo: callbackUrl.toString(),
         scopes: "account_email profile_nickname profile_image talk_message",
       },
     });

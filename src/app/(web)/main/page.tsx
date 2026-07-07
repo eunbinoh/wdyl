@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { Suspense } from "react";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import MyProfile from "@/components/MyProfile";
 import MyTickets from "@/components/MyTickets";
 import ReferralApplier from "@/components/ReferralApplier";
@@ -39,11 +40,24 @@ async function getUser() {
     .eq("id", user?.id ?? guestId)
     .single();
 
-  return { user, profile };
+  return { user, profile, isAuthenticated: !!data?.user };
 }
 
-export default async function MainPage() {
-  const { user, profile } = await getUser();
+type MainPageProps = {
+  searchParams: Promise<{
+    openTicket?: string | string[];
+  }>;
+};
+
+export default async function MainPage({ searchParams }: MainPageProps) {
+  const { user, profile, isAuthenticated } = await getUser();
+  const params = await searchParams;
+  const openTicket = Array.isArray(params.openTicket) ? params.openTicket[0] : params.openTicket;
+
+  if (!isAuthenticated && openTicket) {
+    const next = `/main?openTicket=${encodeURIComponent(openTicket)}`;
+    redirect(`/login?next=${encodeURIComponent(next)}`);
+  }
 
   const avatarUrl = user?.user_metadata?.avatar_url;
   const nickname = profile?.nickname;
