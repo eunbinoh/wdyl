@@ -10,8 +10,11 @@ import styles from "./page.module.css";
 import KakaoShareModal from "@/components/KakaoShareModal";
 import MarketingSection from "@/components/MarketingSection";
 import { USE_TIPS, PRICE } from "@/lib/constants";
+import { sendGAEvent } from "@next/third-parties/google";
+import { useRouter } from "next/navigation";
 
 export default function LandingPage() {
+  const router = useRouter();
   const [user, setUser] = useState<{ id: string; nickname: string } | null>(null);
   const [showKakaoShareModal, setShowKakaoShareModal] = useState(false);
 
@@ -34,7 +37,32 @@ export default function LandingPage() {
     fetchUser();
   }, []);
 
+  const goLoginPage = () => {
+    sendGAEvent({
+      event: "button_click",
+      category: "move_page",
+      action: "go_login_page",
+      label: "로그인_마이_페이지",
+    });
+    router.push(user ? "/main" : "/login");
+  };
+  const goTicketPage = () => {
+    sendGAEvent({
+      event: "button_click",
+      category: "move_page",
+      action: "go_ticket_page",
+      label: "티켓_만들러가기",
+    });
+    router.push(user ? "/main" : "/login");
+  };
+
   const handleKakaoShare = () => {
+    sendGAEvent({
+      event: "button_click",
+      category: "share_button",
+      action: "share_button_main",
+      label: "메인_페이지_공유하기",
+    });
     if (!user?.id) {
       setShowKakaoShareModal(true);
       return;
@@ -70,12 +98,12 @@ export default function LandingPage() {
           height={38}
           className={styles.logo}
         />
-        <Link
-          href={user ? "/main" : "/login"}
+        <button
+          onClick={() => goLoginPage()}
           className={styles.loginBtn}
         >
           {user ? `${user.nickname}님의 마이페이지` : "로그인"}
-        </Link>
+        </button>
       </header>
 
       {/* 메인 카피라이터 */}
@@ -95,6 +123,14 @@ export default function LandingPage() {
       </section>
 
       <MarketingSection />
+      <section className={styles.ctaSection}>
+        <button
+          className={styles.ctaBtn}
+          onClick={() => goTicketPage()}
+        >
+          <span>지금 바로 티켓 만들기</span>
+        </button>
+      </section>
 
       {/* 이용팁 */}
       <section className={styles.tipsSection}>
@@ -116,7 +152,6 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
-
 
       {/* 프로모션 */}
       <section className={styles.pricingSection}>
@@ -164,16 +199,6 @@ export default function LandingPage() {
             <span className={styles.shareBtnText}>공유하기</span>
           </button>
         </div>
-      </section>
-
-      {/* CTA 하단 */}
-      <section className={styles.ctaSection}>
-        <Link
-          href={user ? "/main" : "/login"}
-          className={styles.ctaBtn}
-        >
-          지금 바로 시작하기
-        </Link>
       </section>
 
       <footer className={styles.footer}>

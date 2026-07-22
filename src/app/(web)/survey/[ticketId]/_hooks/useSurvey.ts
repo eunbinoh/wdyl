@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { Ticket, Item, Phase } from "@/types";
+import { sendGAEvent } from "@next/third-parties/google";
+import { getFormattedTime } from "@/lib/helper";
 
 export function useSurvey(ticket: Ticket) {
   const [phase, setPhase] = useState<Phase>(
@@ -17,6 +19,7 @@ export function useSurvey(ticket: Ticket) {
   const [step3Done, setStep3Done] = useState(false);
   const [loading, setLoading] = useState(false);
   const [pickWinnerId, setPickWinnerId] = useState<string>("");
+  const [spentTime, setSpentTime] = useState<Date>(new Date());
 
   useEffect(() => {
     if (!selectedCategory) return;
@@ -33,6 +36,14 @@ export function useSurvey(ticket: Ticket) {
   }, [selectedCategory]);
 
   const handleStart = async () => {
+    setSpentTime(new Date());
+    sendGAEvent({
+      event: "button_click",
+      category: "survey",
+      action: "start_button",
+      label: `설문_시작시각(${getFormattedTime(new Date())})`,
+    });
+
     if (ticket.status === "sent") {
       await supabase!.from("Ticket").update({ status: "progress" }).eq("ticket_id", ticket.ticket_id);
     }
@@ -41,6 +52,13 @@ export function useSurvey(ticket: Ticket) {
 
   const handleCategoryNext = async () => {
     if (!selectedCategory) return;
+    sendGAEvent({
+      event: "button_click",
+      category: "survey",
+      action: "category_select",
+      label: `카테고리_선택시각(${getFormattedTime(new Date())})`,
+    });
+
     const { data } = await supabase!
       .from("Item")
       .select("item_id, item_name, category_code")
@@ -95,6 +113,16 @@ export function useSurvey(ticket: Ticket) {
 
   const handleSubmitResult = async () => {
     if (!step3Done) return;
+
+    const durationMinutes = Number((new Date().getTime() - spentTime.getTime()) / 60000).toFixed(2);
+    sendGAEvent({
+      event: "button_click",
+      category: "survey",
+      action: "submit_result",
+      label: `설문_완료시각(${getFormattedTime(new Date())})`,
+      duration: durationMinutes, //소요시간(분단위)
+    });
+
     setLoading(true);
     const result = medals.map((m) => m?.item_id).join(" / ");
     const pickIds = [pickWinnerId, ...wcWinners.map((w) => w.item_id)].filter(Boolean);

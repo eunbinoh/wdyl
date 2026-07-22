@@ -1,6 +1,7 @@
 "use client";
 
 import { supabase } from "@/lib/supabase";
+import { sendGAEvent } from "@next/third-parties/google";
 import { useRouter } from "next/navigation";
 
 function clearStoredTokens() {
@@ -21,6 +22,12 @@ export default function WithdrawButton() {
   const router = useRouter();
 
   const handleWithdraw = async () => {
+    sendGAEvent({
+      event: "button_click",
+      category: "withdraw_button",
+      action: "withdraw_click",
+      label: "서비스_탈퇴하기",
+    });
     const confirmed = confirm("정말 탈퇴하시겠어요?\n미사용 크레딧은 환불되지 않으며, 모든 데이터가 삭제됩니다.");
     if (!confirmed) return;
 

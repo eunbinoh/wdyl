@@ -8,6 +8,7 @@ import Image from "next/image";
 import styles from "./allComponents.module.css";
 import CreditChargeModal from "./ChargeCreditModal";
 import ReturnCreditModal from "./ReturnCreditModal";
+import { sendGAEvent } from "@next/third-parties/google";
 
 type Props = {
   userId: string;
@@ -34,6 +35,13 @@ export default function ProfileCard({ userId, nickname, email, avatarUrl, credit
     if (!window.Kakao.isInitialized()) {
       window.Kakao.init(process.env.NEXT_PUBLIC_KAKAO_JS_KEY);
     }
+    sendGAEvent({
+      event: "button_click",
+      category: "share_button",
+      action: "share_button_mypage",
+      label: "마이_페이지_공유하기",
+    });
+
     window.Kakao.Share.sendCustom({
       templateId: 133105,
       templateArgs: {
@@ -126,6 +134,12 @@ export default function ProfileCard({ userId, nickname, email, avatarUrl, credit
               <button
                 onClick={() => {
                   setShowRefund(true);
+                  sendGAEvent({
+                    event: "button_click",
+                    category: "refund_button",
+                    action: "credit_refund",
+                    label: "크레딧_환불하기",
+                  });
                 }}
                 style={{
                   background: "none",
@@ -151,6 +165,12 @@ export default function ProfileCard({ userId, nickname, email, avatarUrl, credit
             className={styles["credit-charge-btn"]}
             onClick={() => {
               if (nickname === "GUEST") {
+                sendGAEvent({
+                  event: "button_click",
+                  category: "credit_button",
+                  action: "credit_charge",
+                  label: "크레딧_충전하기",
+                });
                 alert("크레딧을 충전하시려면 먼저 회원 로그인 해주세요.");
                 return;
               }

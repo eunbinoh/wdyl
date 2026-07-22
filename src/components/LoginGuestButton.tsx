@@ -3,6 +3,7 @@
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import styles from "./allComponents.module.css";
+import { sendGAEvent } from "@next/third-parties/google";
 
 type Props = {
   loading: boolean;
@@ -16,6 +17,14 @@ export default function LoginButton({ loading, setLoading }: Props) {
     if (loading) return;
     setLoading(true);
     await supabase?.auth.signOut();
+
+    sendGAEvent({
+      event: "button_click",
+      category: "login_method",
+      action: "guest_login",
+      label: "비회원_로그인",
+    });
+
     router.push("/main");
     setLoading(false);
   };

@@ -64,7 +64,7 @@
 /* Hero */
 .hero {
   text-align: center;
-  padding: 60px 24px 40px;
+  padding: 60px 24px 10px;
   max-width: 600px;
   margin: 0 auto;
   animation: fadeUp 0.6s ease 0.1s both;
@@ -359,6 +359,7 @@
   text-decoration: none;
   letter-spacing: -0.3px;
   transition: all 0.2s ease;
+  cursor: pointer;
 }
 .ctaBtn:hover {
   transform: scale(1.03);

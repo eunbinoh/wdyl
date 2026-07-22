@@ -2,6 +2,7 @@
 
 import { supabase } from "@/lib/supabase";
 import styles from "./allComponents.module.css";
+import { sendGAEvent } from "@next/third-parties/google";
 
 type Props = {
   loading: boolean;
@@ -12,6 +13,12 @@ export default function LoginKakaoButton({ loading, setLoading }: Props) {
   const handleKakaoLogin = async () => {
     if (loading) return;
     setLoading(true);
+    sendGAEvent({
+      event: "button_click",
+      category: "login_method",
+      action: "kakao_login",
+      label: "카카오_로그인",
+    });
     const params = new URLSearchParams(window.location.search);
     const next = params.get("next");
     const safeNext = next?.startsWith("/") && !next.startsWith("//") ? next : "/main";
