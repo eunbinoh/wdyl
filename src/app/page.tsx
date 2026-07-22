@@ -10,8 +10,8 @@ import styles from "./page.module.css";
 import KakaoShareModal from "@/components/KakaoShareModal";
 import MarketingSection from "@/components/MarketingSection";
 import { USE_TIPS, PRICE } from "@/lib/constants";
-import { sendGAEvent } from "@next/third-parties/google";
 import { useRouter } from "next/navigation";
+import { sendGAEvent } from "@next/third-parties/google";
 
 export default function LandingPage() {
   const router = useRouter();
@@ -38,8 +38,7 @@ export default function LandingPage() {
   }, []);
 
   const goLoginPage = () => {
-    sendGAEvent({
-      event: "button_click",
+    sendGAEvent("event", "button_click", {
       category: "move_page",
       action: "go_login_page",
       label: "로그인_마이_페이지",
@@ -47,8 +46,7 @@ export default function LandingPage() {
     router.push(user ? "/main" : "/login");
   };
   const goTicketPage = () => {
-    sendGAEvent({
-      event: "button_click",
+    sendGAEvent("event", "button_click", {
       category: "move_page",
       action: "go_ticket_page",
       label: "티켓_만들러가기",
@@ -57,8 +55,7 @@ export default function LandingPage() {
   };
 
   const handleKakaoShare = () => {
-    sendGAEvent({
-      event: "button_click",
+    sendGAEvent("event", "button_click", {
       category: "share_button",
       action: "share_button_main",
       label: "메인_페이지_공유하기",

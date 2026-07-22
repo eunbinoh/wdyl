@@ -158,8 +158,7 @@ export default function MyTickets({ userId, credits }: Props) {
   };
 
   const handleKakaoSend = async (ticketId: string, receiverName: string) => {
-    sendGAEvent({
-      event: "button_click",
+    sendGAEvent("event", "button_click", {
       category: "send_button",
       action: "ticket_send",
       label: "티켓_발송하기",
@@ -203,8 +202,7 @@ export default function MyTickets({ userId, credits }: Props) {
   };
 
   const handleCancel = async (ticketId: string) => {
-    sendGAEvent({
-      event: "button_click",
+    sendGAEvent("event", "button_click", {
       category: "return_button",
       action: "ticket_return",
       label: "티켓_회수하기",
@@ -258,8 +256,7 @@ export default function MyTickets({ userId, credits }: Props) {
       <button
         className={styles["tickets-new-btn"]}
         onClick={() => {
-          sendGAEvent({
-            event: "button_click",
+          sendGAEvent("event", "button_click", {
             category: "ticket_button",
             action: "ticket_create",
             label: `티켓_생성하기(보유크레딧:${credits})`,
@@ -353,8 +350,7 @@ export default function MyTickets({ userId, credits }: Props) {
                               return;
                             }
                             setResendTicket(ticket);
-                            sendGAEvent({
-                              event: "button_click",
+                            sendGAEvent("event", "button_click", {
                               category: "send_button",
                               action: "ticket_resend",
                               label: "티켓_재발송",
@@ -394,8 +390,7 @@ export default function MyTickets({ userId, credits }: Props) {
                         onClick={(e) => {
                           e.stopPropagation();
                           setResultTicket(ticket);
-                          sendGAEvent({
-                            event: "button_click",
+                          sendGAEvent("event", "button_click", {
                             category: "result_button",
                             action: "ticket_result",
                             label: "티켓_결과보기",

@@ -13,8 +13,7 @@ export default function LoginKakaoButton({ loading, setLoading }: Props) {
   const handleKakaoLogin = async () => {
     if (loading) return;
     setLoading(true);
-    sendGAEvent({
-      event: "button_click",
+    sendGAEvent("event", "button_click", {
       category: "login_method",
       action: "kakao_login",
       label: "카카오_로그인",

@@ -18,8 +18,7 @@ export default function LoginButton({ loading, setLoading }: Props) {
     setLoading(true);
     await supabase?.auth.signOut();
 
-    sendGAEvent({
-      event: "button_click",
+    sendGAEvent("event", "button_click", {
       category: "login_method",
       action: "guest_login",
       label: "비회원_로그인",

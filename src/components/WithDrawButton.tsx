@@ -22,8 +22,7 @@ export default function WithdrawButton() {
   const router = useRouter();
 
   const handleWithdraw = async () => {
-    sendGAEvent({
-      event: "button_click",
+    sendGAEvent("event", "button_click", {
       category: "withdraw_button",
       action: "withdraw_click",
       label: "서비스_탈퇴하기",

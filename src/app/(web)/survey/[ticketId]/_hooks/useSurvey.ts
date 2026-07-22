@@ -37,11 +37,10 @@ export function useSurvey(ticket: Ticket) {
 
   const handleStart = async () => {
     setSpentTime(new Date());
-    sendGAEvent({
-      event: "button_click",
+    sendGAEvent("event", "button_click", {
       category: "survey",
       action: "start_button",
-      label: `설문_시작시각(${getFormattedTime(new Date())})`,
+      label: `설문_시작시각(${getFormattedTime(new Date())}`,
     });
 
     if (ticket.status === "sent") {
@@ -52,11 +51,10 @@ export function useSurvey(ticket: Ticket) {
 
   const handleCategoryNext = async () => {
     if (!selectedCategory) return;
-    sendGAEvent({
-      event: "button_click",
+    sendGAEvent("event", "button_click", {
       category: "survey",
       action: "category_select",
-      label: `카테고리_선택시각(${getFormattedTime(new Date())})`,
+      label: `카테고리_선택시각(${getFormattedTime(new Date())}`,
     });
 
     const { data } = await supabase!
@@ -115,11 +113,10 @@ export function useSurvey(ticket: Ticket) {
     if (!step3Done) return;
 
     const durationMinutes = Number((new Date().getTime() - spentTime.getTime()) / 60000).toFixed(2);
-    sendGAEvent({
-      event: "button_click",
+    sendGAEvent("event", "button_click", {
       category: "survey",
       action: "submit_result",
-      label: `설문_완료시각(${getFormattedTime(new Date())})`,
+      label: `설문_완료시각(${getFormattedTime(new Date())}`,
       duration: durationMinutes, //소요시간(분단위)
     });
 

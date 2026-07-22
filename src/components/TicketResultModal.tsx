@@ -7,6 +7,7 @@ import SwipeableSheet from "./SwipeableSheet";
 import styles from "./allComponents.module.css";
 import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 import { findCategoryName, ITEM_NAME_MAP } from "@/lib/helper";
+import { sendGAEvent } from "@next/third-parties/google";
 
 const RANK = [
   {
@@ -168,6 +169,13 @@ export default function TicketResultModal({ ticketId, receiverName, onClose }: P
                             href={item.link_url}
                             target="_blank"
                             rel="noopener noreferrer"
+                            onClick={() => {
+                              sendGAEvent("event", "button_click", {
+                                category: "recommend_link_button",
+                                action: "recommend_click",
+                                label: `추천링크클릭(${i}순위,${item?.item_name})`,
+                              });
+                            }}
                             style={{
                               background: p.barColor,
                               width: "100%",
@@ -195,6 +203,13 @@ export default function TicketResultModal({ ticketId, receiverName, onClose }: P
                                 justifyContent: "center",
                                 textDecoration: "none",
                                 opacity: 0.75,
+                              }}
+                              onClick={() => {
+                                sendGAEvent("event", "button_click", {
+                                  category: "coupang_link_button",
+                                  action: "coupang_click",
+                                  label: `직접구매링크클릭(${i}순위,${item?.item_name})`,
+                                });
                               }}
                             >
                               <span style={{ fontSize: 12, fontWeight: 500, color: "#fff" }}>직접구매링크</span>
