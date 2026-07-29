@@ -139,7 +139,7 @@ export default function DetailTicketModal({ ticketId, onClose, onFetched }: Prop
             marginRight: 6,
             display: "flex",
             alignItems: "center",
-            color: "#f9b233",
+            color: isSkip ? "#1C1C1C" : "#f9b233",
             letterSpacing: 0.2,
             fontSize: 14,
             fontWeight: 500,
@@ -154,7 +154,7 @@ export default function DetailTicketModal({ ticketId, onClose, onFetched }: Prop
           SKIP
           <FastForward
             size={16}
-            color="#f9b233"
+            color={isSkip ? "#1C1C1C" : "#f9b233"}
           />
         </div>
       )}

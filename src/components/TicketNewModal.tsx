@@ -110,7 +110,7 @@ export default function CreateTicketModal({ userId, credits, onClose, onSuccess 
             marginRight: 6,
             display: "flex",
             alignItems: "center",
-            color: "#f9b233",
+            color: isSkip ? "#1C1C1C" : "#f9b233",
             letterSpacing: 0.2,
             fontSize: 14,
             fontWeight: 500,
@@ -125,7 +125,7 @@ export default function CreateTicketModal({ userId, credits, onClose, onSuccess 
           SKIP
           <FastForward
             size={16}
-            color="#f9b233"
+            color={isSkip ? "#1C1C1C" : "#f9b233"}
           />
         </div>
       )}
