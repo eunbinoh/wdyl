@@ -292,6 +292,11 @@
     text-sm px-3 py-1.5 rounded-lg z-20 whitespace-nowrap font-normal
     shadow-[0_4px_12px_rgba(205,202,202,0.85)];
 }
+.modal-tooltip-box-sub {
+  @apply absolute top-[25px] right-6 bg-black text-white
+    text-sm px-3 py-1.5 rounded-lg z-20 whitespace-nowrap font-normal
+    shadow-[0_4px_12px_rgba(205,202,202,0.85)];
+}
 
 .modal-input-wrap {
   @apply bg-white border-[1.5px] border-[#EDE9E1] rounded-xl
@@ -306,6 +311,11 @@
     color: gray;
     -webkit-text-fill-color: gray;
     opacity: 1;
+  }
+  &:disabled {
+    opacity: 0.5;
+    background-color: #f1f5f9;
+    cursor: not-allowed;
   }
 }
 

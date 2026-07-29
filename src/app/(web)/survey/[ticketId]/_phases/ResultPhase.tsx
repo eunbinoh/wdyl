@@ -104,56 +104,58 @@ export function ResultPhase({ ticket, ts, pageStyle, cardStyle, medals }: Props)
       <div style={{ fontSize: 20, fontWeight: 700, color: ts.subText, letterSpacing: 2, marginBottom: 40 }}>
         분석 결과
       </div>
-      <div style={{ ...cardStyle, textAlign: "center", marginBottom: 20 }}>
-        <div
-          style={{
-            fontSize: 16,
-            fontWeight: 500,
-            color: ts.subText,
-            lineHeight: 1.6,
-            whiteSpace: "pre-line",
-            wordBreak: "keep-all",
-            overflowWrap: "break-word",
-            marginBottom: 8,
-          }}
-        >
-          {renderParts(
-            THEME_RESULT_MSG[ticket.theme]?.parts,
-            {
-              ITEM: displayMedals[0]?.item_name ?? "",
-              KEYWORD1: keywords[0],
-              KEYWORD2: keywords[1],
-              KEYWORD3: keywords[2],
-            },
-            { default: { color: ts.accent, fontWeight: 800 } }
-          )}
+      {!keywords.every((keyword) => keyword === "") && (
+        <div style={{ ...cardStyle, textAlign: "center", marginBottom: 20 }}>
+          <div
+            style={{
+              fontSize: 16,
+              fontWeight: 500,
+              color: ts.subText,
+              lineHeight: 1.6,
+              whiteSpace: "pre-line",
+              wordBreak: "keep-all",
+              overflowWrap: "break-word",
+              marginBottom: 8,
+            }}
+          >
+            {renderParts(
+              THEME_RESULT_MSG[ticket.theme]?.parts,
+              {
+                ITEM: displayMedals[0]?.item_name ?? "",
+                KEYWORD1: keywords[0],
+                KEYWORD2: keywords[1],
+                KEYWORD3: keywords[2],
+              },
+              { default: { color: ts.accent, fontWeight: 800 } }
+            )}
+          </div>
+          <div
+            style={{
+              fontSize: 16,
+              fontWeight: 500,
+              color: ts.subText,
+              lineHeight: 1.6,
+              whiteSpace: "pre-line",
+              wordBreak: "keep-all",
+              overflowWrap: "break-word",
+            }}
+          >
+            {renderParts(
+              THEME_RESULT_SUB[ticket.theme]?.parts,
+              {
+                ITEM: displayMedals[0]?.item_name ?? "",
+                KEYWORD1: keywords[0],
+                KEYWORD2: keywords[1],
+                KEYWORD3: keywords[2],
+              },
+              {
+                ITEM: { color: ts.text, fontWeight: 900, fontSize: 18 },
+                default: { color: ts.accent, fontWeight: 700 },
+              }
+            )}
+          </div>
         </div>
-        <div
-          style={{
-            fontSize: 16,
-            fontWeight: 500,
-            color: ts.subText,
-            lineHeight: 1.6,
-            whiteSpace: "pre-line",
-            wordBreak: "keep-all",
-            overflowWrap: "break-word",
-          }}
-        >
-          {renderParts(
-            THEME_RESULT_SUB[ticket.theme]?.parts,
-            {
-              ITEM: displayMedals[0]?.item_name ?? "",
-              KEYWORD1: keywords[0],
-              KEYWORD2: keywords[1],
-              KEYWORD3: keywords[2],
-            },
-            {
-              ITEM: { color: ts.text, fontWeight: 900, fontSize: 18 },
-              default: { color: ts.accent, fontWeight: 700 },
-            }
-          )}
-        </div>
-      </div>
+      )}
       <div style={{ ...cardStyle, padding: "12px 20px" }}>
         <div
           style={{
@@ -257,7 +259,7 @@ export function ResultPhase({ ticket, ts, pageStyle, cardStyle, medals }: Props)
           어쩌면, 이미 누군가가 당신을 위해
           <br />이 선물을 준비하고 있을지도 몰라요! ✨
           <button
-              onClick={() => {
+            onClick={() => {
               window.location.href = "https://wdyl.vercel.app/";
             }}
             style={{

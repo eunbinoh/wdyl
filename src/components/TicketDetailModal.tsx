@@ -3,7 +3,7 @@
 import { useRef, useState, useEffect } from "react";
 import SwipeableSheet from "./SwipeableSheet";
 import { supabase } from "@/lib/supabase";
-import { CircleHelp } from "lucide-react";
+import { CircleHelp, FastForward } from "lucide-react";
 import styles from "./allComponents.module.css";
 import { showToast } from "./ToastAlert";
 import { TOOLTIPS, THEMES } from "@/lib/constants";
@@ -49,10 +49,10 @@ export default function DetailTicketModal({ ticketId, onClose, onFetched }: Prop
 
   const [previewPage, setPreviewPage] = useState(0);
   const setTrait = (i: number, v: string) => setTraits((prev) => prev.map((t, idx) => (idx === i ? v : t)));
-
+  const [isSkip, setIsSkip] = useState(false);
   const isEditable = status === "created" || status === "sent";
   const displayName = toName.trim() || "OO";
-  const filledTraits = traits.map((t, i) => t.trim() || `특징${i + 1}`);
+  const filledTraits = isSkip ? traits.map((t) => t.trim()) : traits.map((t, i) => t.trim() || `특징${i + 1}`);
   const overlayDownRef = useRef(false);
 
   // 티켓 조회
@@ -103,8 +103,8 @@ export default function DetailTicketModal({ ticketId, onClose, onFetched }: Prop
   }, []);
 
   const handleModify = async () => {
-    if (!toName.trim()) return alert("받는 사람 이름을 입력해주세요.");
-    if (traits.some((t) => !t.trim())) return alert("특징 3가지를 모두 입력해주세요.");
+    if (!toName.trim()) return alert("받는 분 이름을 입력해주세요.");
+    if (!isSkip && traits.some((t) => !t.trim())) return alert("특징 3가지를 모두 입력해주세요.");
 
     const { data: ticketCheck } = await supabase!.from("Ticket").select("status").eq("ticket_id", ticketId).single();
 
@@ -132,6 +132,32 @@ export default function DetailTicketModal({ ticketId, onClose, onFetched }: Prop
   const sectionLabel = (key: string) => (
     <div className={styles["modal-section-label"]}>
       <span className={styles["modal-section-label-text"]}>{key}</span>
+      {key === "WHO" && (
+        <div
+          style={{
+            cursor: "pointer",
+            marginRight: 6,
+            display: "flex",
+            alignItems: "center",
+            color: "#f9b233",
+            letterSpacing: 0.2,
+            fontSize: 14,
+            fontWeight: 500,
+          }}
+          onClick={(e) => {
+            e.stopPropagation();
+            setTraits(["", "", ""]);
+            setIsSkip((prev) => !prev);
+            setTooltip((prev) => (prev === "SKIP" ? null : "SKIP"));
+          }}
+        >
+          SKIP
+          <FastForward
+            size={16}
+            color="#f9b233"
+          />
+        </div>
+      )}
       <span
         onClick={(e) => {
           e.stopPropagation();
@@ -145,6 +171,7 @@ export default function DetailTicketModal({ ticketId, onClose, onFetched }: Prop
         />
       </span>
       {tooltip === key && <div className={styles["modal-tooltip-box"]}>{TOOLTIPS[key]}</div>}
+      {key === "WHO" && isSkip && <div className={styles["modal-tooltip-box-sub"]}>{TOOLTIPS["SKIP"]}</div>}
     </div>
   );
 
@@ -217,12 +244,15 @@ export default function DetailTicketModal({ ticketId, onClose, onFetched }: Prop
                 <input
                   className={styles["modal-input"]}
                   style={{ fontSize: 15, fontWeight: 400, opacity: isEditable ? 1 : 0.6 }}
+                  disabled={isSkip}
                   placeholder={
-                    [
-                      "특징 한단어 (집순이,여행중독,파워J..)",
-                      "매력/장점 형용사 (귀여운,똑똑한,센스있는..)",
-                      "떠오르는 이미지 (햄찌,짱구,연예인..)",
-                    ][i]
+                    isSkip
+                      ? ""
+                      : [
+                          "특징 한단어 (집순이,여행중독,파워J..)",
+                          "매력/장점 형용사 (귀여운,똑똑한,센스있는..)",
+                          "떠오르는 이미지 (햄찌,짱구,연예인..)",
+                        ][i]
                   }
                   value={trait}
                   onChange={(e) => isEditable && setTrait(i, e.target.value)}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Mails, MessageSquareMore, CalendarClock, ChevronDown, RefreshCcw, Loader2 } from "lucide-react";
+import { Mails, MessageSquareMore, CalendarClock, ChevronDown, Loader2, RotateCcw } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import { Status, Ticket } from "@/types";
@@ -278,15 +278,17 @@ export default function MyTickets({ userId, credits }: Props) {
           <button
             onClick={() => getTickets(10)}
             style={{
-              marginRight: 8,
+              marginRight: 6,
+              marginBottom: 2,
               cursor: "pointer",
               border: "none",
               background: "none",
               alignItems: "center",
+              verticalAlign: "middle",
             }}
           >
-            <RefreshCcw
-              size={12}
+            <RotateCcw
+              size={16}
               color="#f9b233"
               strokeWidth={3}
               style={{

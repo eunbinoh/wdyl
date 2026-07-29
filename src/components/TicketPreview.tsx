@@ -288,58 +288,65 @@ export function TicketPreview({ theme, displayName, filledTraits, page }: Props)
       <div
         style={{ background: ts.cardBg, borderRadius: 16, padding: "10px 16px", width: "100%", textAlign: "center" }}
       >
-        <div
-          style={{
-            fontSize: 14,
-            color: ts.subText,
-            whiteSpace: "pre-line",
-            wordBreak: "keep-all",
-            overflowWrap: "break-word",
-            lineHeight: 1.5,
-            marginBottom: 4,
-          }}
-        >
-          {renderParts(
-            THEME_RESULT_MSG[theme]?.parts,
-            {
-              KEYWORD1: filledTraits[0],
-              KEYWORD2: filledTraits[1],
-              KEYWORD3: filledTraits[2],
-            },
-            {
-              default: {
-                color: theme === "SURVIVAL" ? "#fff" : ts.accent,
-                fontWeight: 700,
-              },
-            }
-          )}
-        </div>
+        {!filledTraits.every((trait) => trait === "") && (
+          <>
+            <div
+              style={{
+                fontSize: 14,
+                color: ts.subText,
+                whiteSpace: "pre-line",
+                wordBreak: "keep-all",
+                overflowWrap: "break-word",
+                lineHeight: 1.5,
+                marginBottom: 4,
+              }}
+            >
+              {renderParts(
+                THEME_RESULT_MSG[theme]?.parts,
+                {
+                  KEYWORD1: filledTraits[0],
+                  KEYWORD2: filledTraits[1],
+                  KEYWORD3: filledTraits[2],
+                },
+                {
+                  default: {
+                    color: theme === "SURVIVAL" ? "#fff" : ts.accent,
+                    fontWeight: 700,
+                  },
+                }
+              )}
+            </div>
 
-        <div
-          style={{
-            fontSize: 14,
-            color: ts.subText,
-            whiteSpace: "pre-line",
-            wordBreak: "keep-all",
-            overflowWrap: "break-word",
-            fontWeight: 400,
-            lineHeight: 1.5,
-          }}
-        >
-          {renderParts(
-            THEME_RESULT_SUB[theme]?.parts,
-            {
-              ITEM: "[아이템]",
-              KEYWORD1: filledTraits[0],
-              KEYWORD2: filledTraits[1],
-              KEYWORD3: filledTraits[2],
-            },
-            {
-              ITEM: { color: ts.text, fontWeight: 900, fontSize: 14 },
-              default: { color: ts.accent, fontWeight: 700 },
-            }
-          )}
-        </div>
+            <div
+              style={{
+                fontSize: 14,
+                color: ts.subText,
+                whiteSpace: "pre-line",
+                wordBreak: "keep-all",
+                overflowWrap: "break-word",
+                fontWeight: 400,
+                lineHeight: 1.5,
+              }}
+            >
+              {renderParts(
+                THEME_RESULT_SUB[theme]?.parts,
+                {
+                  ITEM: "[아이템]",
+                  KEYWORD1: filledTraits[0],
+                  KEYWORD2: filledTraits[1],
+                  KEYWORD3: filledTraits[2],
+                },
+                {
+                  ITEM: { color: ts.text, fontWeight: 900, fontSize: 14 },
+                  default: { color: ts.accent, fontWeight: 700 },
+                }
+              )}
+            </div>
+          </>
+        )}
+        {filledTraits.every((trait) => trait === "") && (
+          <div style={{ fontSize: 14, fontWeight: 700, color: ts.subText, textAlign: "center" }}>취향 분석 결과</div>
+        )}
       </div>
       <div style={{ ...cardStyle, padding: "12px 20px", marginTop: 10 }}>
         <div

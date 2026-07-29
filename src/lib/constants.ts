@@ -37,11 +37,11 @@ export const USE_TIPS = [
   },
 ];
 
-
 export const TOOLTIPS: Record<string, string> = {
   TO: "받는 분 이름 - 첫 화면 타이틀에 사용돼요.",
   WHO: "받는 분 특징 - 설문 결과 화면에 적용돼요.",
   CONCEPT: "컨셉 - 설문 테마/스타일을 결정해요.",
+  SKIP: "특징 묘사 없이 설문링크가 생성돼요.",
 };
 
 export const TRAIT_SUFFIX: Record<Theme, string[]> = {
